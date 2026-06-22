@@ -10,9 +10,11 @@ import Checkbox from '../components/Checkbox';
 import { PersonIcon, MailIcon, LockIcon, ArrowForwardIcon } from '../components/Icons';
 import { registerSchema, type RegisterFormData } from '@/lib/validations';
 import { authAPI } from '@/lib/api';
+import { useAuth } from '../context/AuthContext';
 
 const SignupPage = () => {
   const router = useRouter();
+  const { refreshUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -42,7 +44,8 @@ const SignupPage = () => {
       const response = await authAPI.register(registerData);
 
       if (response.success) {
-        router.push("/dashboard");
+        await refreshUser();
+        router.push("/app-dashboard");
       } else {
         setApiError(response.message || "Registration failed");
       }

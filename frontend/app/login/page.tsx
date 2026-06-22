@@ -10,9 +10,11 @@ import SocialButton from '../components/SocialButton';
 import { MailIcon, LockIcon } from '../components/Icons';
 import { loginSchema, type LoginFormData } from '@/lib/validations';
 import { authAPI } from '@/lib/api';
+import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
   const router = useRouter();
+  const { refreshUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
 
@@ -32,6 +34,7 @@ const LoginPage = () => {
       const response = await authAPI.login(data);
 
       if (response.success) {
+        await refreshUser();
         router.push("/app-dashboard");
       } else {
         setApiError(response.message || "Login failed");

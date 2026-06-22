@@ -11,7 +11,7 @@ const apiClient = axios.create({
   },
 });
 
-// Add auth token to requests
+// Automatically attach JWT token
 apiClient.interceptors.request.use((config) => {
   const token = Cookies.get("authToken");
   if (token) {
@@ -29,14 +29,36 @@ interface RegisterPayload {
   email: string;
   password: string;
   name: string;
+  username?: string;
+  phoneNumber?: string;
+  gender?: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  username: string;
+  email: string;
+  phoneNumber: string;
+  gender: string;
+  role: string;
+  profilePhoto?: string;
+}
+
+interface WhoAmIResponse {
+  success: boolean;
+  message: string;
+  user: User;
 }
 
 export const authAPI = {
   register: async (data: RegisterPayload): Promise<AuthResponse> => {
     try {
-      const response = await apiClient.post<AuthResponse>("/api/auth/register", data);
-      
-      // Store token in cookie
+      const response = await apiClient.post<AuthResponse>(
+        "/api/v1/auth/register",
+        data
+      );
+
       if (response.data.token) {
         Cookies.set("authToken", response.data.token, {
           expires: 7,
@@ -44,19 +66,23 @@ export const authAPI = {
           sameSite: "strict",
         });
       }
-      
+
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError<AuthResponse>;
-      throw new Error(axiosError.response?.data?.message || "Registration failed");
+      throw new Error(
+        axiosError.response?.data?.message || "Registration failed"
+      );
     }
   },
 
   login: async (data: LoginPayload): Promise<AuthResponse> => {
     try {
-      const response = await apiClient.post<AuthResponse>("/api/auth/login", data);
-      
-      // Store token in cookie
+      const response = await apiClient.post<AuthResponse>(
+        "/api/v1/auth/login",
+        data
+      );
+
       if (response.data.token) {
         Cookies.set("authToken", response.data.token, {
           expires: 7,
@@ -64,11 +90,47 @@ export const authAPI = {
           sameSite: "strict",
         });
       }
-      
+
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError<AuthResponse>;
-      throw new Error(axiosError.response?.data?.message || "Login failed");
+      throw new Error(
+        axiosError.response?.data?.message || "Login failed"
+      );
+    }
+  },
+
+  whoAmI: async (): Promise<WhoAmIResponse> => {
+    try {
+      const response = await apiClient.get<WhoAmIResponse>(
+        "/api/v1/auth/whoami"
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Unable to fetch user"
+      );
+    }
+  },
+
+  updateProfile: async (formData: FormData): Promise<WhoAmIResponse> => {
+    try {
+      const response = await apiClient.put<WhoAmIResponse>(
+        "/api/v1/auth/update",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Profile update failed"
+      );
     }
   },
 
@@ -80,3 +142,5 @@ export const authAPI = {
     return Cookies.get("authToken");
   },
 };
+
+export default apiClient;
