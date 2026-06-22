@@ -119,4 +119,48 @@ export class UserController {
             );
         }
     }
+
+    async updateProfile(req: Request, res: Response) {
+        try {
+            const userId = (req.user as IUser)._id.toString();
+            
+            const updateData: Record<string, any> = {};
+            if (req.body.name) updateData.name = req.body.name;
+            if (req.body.username) updateData.username = req.body.username;
+            if (req.body.email) updateData.email = req.body.email;
+            if (req.body.phoneNumber) updateData.phoneNumber = req.body.phoneNumber;
+            if (req.body.gender) updateData.gender = req.body.gender;
+            
+            if (req.body.password && req.body.password.trim() !== "") {
+                updateData.password = req.body.password;
+            }
+
+            if (req.file) {
+                updateData.profilePhoto = `/uploads/avatars/${req.file.filename}`;
+            }
+
+            const updatedUser = await userService.updateUser(userId, updateData);
+
+            return res.status(200).json({
+                success: true,
+                message: "Profile updated successfully",
+                user: {
+                    id: updatedUser._id,
+                    name: updatedUser.name,
+                    username: updatedUser.username,
+                    email: updatedUser.email,
+                    phoneNumber: updatedUser.phoneNumber,
+                    gender: updatedUser.gender,
+                    role: updatedUser.role,
+                    profilePhoto: updatedUser.profilePhoto
+                }
+            });
+        } catch (error: Error | any | unknown) {
+            return ApiResponseHelper.error(
+                res,
+                error.message || "Internal Server Error",
+                error.status || 500
+            );
+        }
+    }
 }

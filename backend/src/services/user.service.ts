@@ -63,4 +63,32 @@ export class UserService {
             throw new HttpException(500, "Avatar upload failed");
         }
     }
+
+    async updateUser(userId: string, updateData: Partial<IUser> & { password?: string }): Promise<IUser> {
+        if (updateData.email) {
+            const existingEmail = await userRepository.getUserByEmail(updateData.email);
+            if (existingEmail && existingEmail._id.toString() !== userId) {
+                throw new HttpException(400, "Email already exists");
+            }
+        }
+        
+        if (updateData.username) {
+            const existingUsername = await userRepository.getUserByUsername(updateData.username);
+            if (existingUsername && existingUsername._id.toString() !== userId) {
+                throw new HttpException(400, "Username already exists");
+            }
+        }
+
+        if (updateData.password) {
+            updateData.password = await bcrypt.hash(updateData.password, 10);
+        } else {
+            delete updateData.password;
+        }
+
+        const updatedUser = await userRepository.update(userId, updateData);
+        if (!updatedUser) {
+            throw new HttpException(404, "User not found");
+        }
+        return updatedUser;
+    }
 }
