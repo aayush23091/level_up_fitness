@@ -4,8 +4,11 @@ import { UserSchema } from "../types/user.type";
 // Create a DTO for creating a user
 export const CreateUserDTO = UserSchema.pick({
     name: true,
+    username: true,
     email: true,
-    password: true
+    password: true,
+    phoneNumber: true,
+    gender: true
 });
 export type CreateUserDTO = z.infer<typeof CreateUserDTO>;
 

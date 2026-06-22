@@ -1,10 +1,12 @@
 import express, { Application, NextFunction, Request, Response } from "express";
+import path from "path";
 import { HttpException } from "./exceptions/http-exception";
 import { ApiResponseHelper } from "./utils/apihelper.util";
 import cors from "cors";
 import morgan from "morgan";
 
 // routes
+import authRoutes from "./routes/auth.route";
 import userRoutes from "./routes/user.route";
 
 const app: Application = express();
@@ -18,7 +20,9 @@ app.use(express.json()); // json input
 app.use(express.urlencoded({ extended: true })); // x-www-form-urlencoded
 app.use(morgan("combined")); // log all requests
 
-app.use("/api/auth", userRoutes); // user related routes
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 // global api handler (at the last)
 app.use(

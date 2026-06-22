@@ -19,24 +19,22 @@ export const authorizedMiddleware =
         try {
             const authHeader = req.headers.authorization;
             if (!authHeader || !authHeader.startsWith('Bearer '))
-                throw new HttpException(401, 'Unauthorized JWT invalid');
-            // JWT token should start with "Bearer <token>"
-            const token = authHeader.split(' ')[1]; // 0 -> Bearer, 1 -> token
-            if (!token) throw new HttpException(401, 'Unauthorized JWT missing');
+                throw new HttpException(401, 'Unauthorized');
+            const token = authHeader.split(' ')[1];
+            if (!token) throw new HttpException(401, 'Unauthorized');
             const decodedToken = jwt.verify(token, SECRET_KEY) as Record<string, any>;
-            if (!decodedToken || !decodedToken.id) {
-                throw new HttpException(401, 'Unauthorized JWT unverified');
-            } // make function async
-            const user = await userRepository.getUserById(decodedToken.id);
-            if (!user) throw new HttpException(401, 'Unauthorized user not found');
-            req.user = user; // attach user to request (like tag)
+            const userId = decodedToken?.userId ?? decodedToken?.id;
+            if (!userId) {
+                throw new HttpException(401, 'Unauthorized');
+            }
+            const user = await userRepository.getUserById(String(userId));
+            if (!user) throw new HttpException(401, 'Unauthorized');
+            req.user = user;
             return next();
         } catch (err: Error | any) {
-            return ApiResponseHelper.error(
-                res,
-                err.message || 'Internal Server Error',
-                err.status || 500
-            );
+            const status = err.status || (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError' ? 401 : 500);
+            const message = status === 401 ? 'Unauthorized' : (err.message || 'Internal Server Error');
+            return ApiResponseHelper.error(res, message, status);
         }
     }
 

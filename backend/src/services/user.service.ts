@@ -16,6 +16,11 @@ export class UserService {
             throw new HttpException(400, "Email already exists");
         }
         
+        const existingUsername = await userRepository.getUserByUsername(userData.username);
+        if (existingUsername) {
+            throw new HttpException(400, "Username already exists");
+        }
+        
         // hash password
         const hashedPassword = await bcrypt.hash(userData.password, 10);
         userData.password = hashedPassword;
@@ -50,5 +55,12 @@ export class UserService {
             { expiresIn: "30d" }
         );
         return { user, token };
+    }
+
+    async updateProfilePhoto(userId: string, profilePhoto: string): Promise<void> {
+        const updated = await userRepository.update(userId, { profilePhoto });
+        if (!updated) {
+            throw new HttpException(500, "Avatar upload failed");
+        }
     }
 }
