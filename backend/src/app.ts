@@ -22,6 +22,7 @@ app.use(morgan("combined")); // log all requests
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/auth", authRoutes);
+app.use("/api/v1/auth", authRoutes);
 app.use("/api/users", userRoutes);
 
 // global api handler (at the last)

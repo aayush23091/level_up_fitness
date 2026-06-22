@@ -1,10 +1,12 @@
 import { UserController } from "../controllers/user.controller";
 import { Router } from "express";
+import { authorizedMiddleware } from "../middlewares/authorized.middleware";
 
 const authRouter = Router();
 const userController = new UserController();
 
 authRouter.post("/register", userController.createUser);
 authRouter.post("/login", userController.loginUser);
+authRouter.get("/whoami", authorizedMiddleware, userController.whoAmI);
 
 export default authRouter;

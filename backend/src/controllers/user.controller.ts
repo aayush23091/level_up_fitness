@@ -93,4 +93,30 @@ export class UserController {
             return res.status(status).json({ message });
         }
     }
+
+    async whoAmI(req: Request, res: Response) {
+        try {
+            const user = req.user as IUser;
+            return res.status(200).json({
+                success: true,
+                message: "User fetched successfully",
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    username: user.username,
+                    email: user.email,
+                    phoneNumber: user.phoneNumber,
+                    gender: user.gender,
+                    role: user.role,
+                    profilePhoto: user.profilePhoto
+                }
+            });
+        } catch (error: Error | any | unknown) {
+            return ApiResponseHelper.error(
+                res,
+                error.message || "Internal Server Error",
+                error.status || 500
+            );
+        }
+    }
 }
