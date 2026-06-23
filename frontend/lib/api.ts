@@ -2,7 +2,8 @@ import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import { AuthResponse } from "../../backend/src/types/user.type";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -14,9 +15,15 @@ const apiClient = axios.create({
 // Automatically attach JWT token
 apiClient.interceptors.request.use((config) => {
   const token = Cookies.get("authToken");
+
+  console.log("JWT Token:", token);
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  console.log("Authorization:", config.headers.Authorization);
+
   return config;
 });
 
@@ -26,16 +33,17 @@ interface LoginPayload {
 }
 
 interface RegisterPayload {
-  email: string;
-  password: string;
   name: string;
   username?: string;
+  email: string;
+  password: string;
   phoneNumber?: string;
   gender?: string;
 }
 
 export interface User {
-  id: string;
+  _id?: string;
+  id?: string;
   name: string;
   username: string;
   email: string;
@@ -46,9 +54,10 @@ export interface User {
 }
 
 interface WhoAmIResponse {
+  status: number;
   success: boolean;
   message: string;
-  user: User;
+  data: User;
 }
 
 export const authAPI = {
@@ -59,8 +68,12 @@ export const authAPI = {
         data
       );
 
-      if (response.data.token) {
-        Cookies.set("authToken", response.data.token, {
+      console.log("Register Response:", response.data);
+
+      const token = response.data.data.token;
+
+      if (token) {
+        Cookies.set("authToken", token, {
           expires: 7,
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
@@ -70,6 +83,7 @@ export const authAPI = {
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError<AuthResponse>;
+
       throw new Error(
         axiosError.response?.data?.message || "Registration failed"
       );
@@ -83,8 +97,12 @@ export const authAPI = {
         data
       );
 
-      if (response.data.token) {
-        Cookies.set("authToken", response.data.token, {
+      console.log("Login Response:", response.data);
+
+      const token = response.data.data.token;
+
+      if (token) {
+        Cookies.set("authToken", token, {
           expires: 7,
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
@@ -94,6 +112,7 @@ export const authAPI = {
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError<AuthResponse>;
+
       throw new Error(
         axiosError.response?.data?.message || "Login failed"
       );
@@ -105,16 +124,22 @@ export const authAPI = {
       const response = await apiClient.get<WhoAmIResponse>(
         "/api/v1/auth/whoami"
       );
+
+      console.log("WhoAmI Response:", response.data);
+
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError<any>;
+
       throw new Error(
         axiosError.response?.data?.message || "Unable to fetch user"
       );
     }
   },
 
-  updateProfile: async (formData: FormData): Promise<WhoAmIResponse> => {
+  updateProfile: async (
+    formData: FormData
+  ): Promise<WhoAmIResponse> => {
     try {
       const response = await apiClient.put<WhoAmIResponse>(
         "/api/v1/auth/update",
@@ -125,9 +150,13 @@ export const authAPI = {
           },
         }
       );
+
+      console.log("Update Profile Response:", response.data);
+
       return response.data;
     } catch (error) {
       const axiosError = error as AxiosError<any>;
+
       throw new Error(
         axiosError.response?.data?.message || "Profile update failed"
       );

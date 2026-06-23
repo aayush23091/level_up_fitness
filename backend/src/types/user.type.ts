@@ -11,16 +11,21 @@ export const UserSchema = z.object({
 export type UserType = z.infer<typeof UserSchema>;
 
 export interface AuthResponse {
-    success: boolean;
-    message: string;
-    token?: string;
-    user?: {
-        id: string;
-        name: string;
-        username: string;
-        email: string;
-        phoneNumber: string;
-        gender: string;
-        role: string;
+  status: number;
+  success: boolean;
+  message: string;
+  data: {
+    token: string;
+    user: {
+      id: string;
+      name: string;
+      username: string;
+      email: string;
+      phoneNumber: string;
+      gender: string;
+      role: string;
+      profilePhoto?: string;
     };
-}
+  };
+}
+

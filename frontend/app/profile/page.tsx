@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import { useAuth } from "../context/AuthContext";
 import { authAPI } from "@/lib/api";
+import { getProfileImageUrl } from "@/lib/getProfileImageUrl";
+
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
@@ -77,14 +79,8 @@ export default function ProfilePage() {
     }
   };
 
-  const getAvatarUrl = () => {
-    if (user?.profilePhoto) {
-      return user.profilePhoto.startsWith("http")
-        ? user.profilePhoto
-        : `http://localhost:5000${user.profilePhoto}`;
-    }
-    return null;
-  };
+  const avatarUrl = getProfileImageUrl(user?.profilePhoto);
+
 
   const getInitials = () => {
     if (!user?.name) return "U";
@@ -133,9 +129,10 @@ export default function ProfilePage() {
               
               {/* Avatar image container */}
               <div className="relative group mb-4">
-                {getAvatarUrl() ? (
+                {avatarUrl ? (
                   <img
-                    src={getAvatarUrl()!}
+                    src={avatarUrl}
+
                     alt={user?.name || "Profile Photo"}
                     className="w-28 h-28 lg:w-32 lg:h-32 rounded-full object-cover border-2 border-yellow-500/20"
                   />
@@ -308,10 +305,11 @@ export default function ProfilePage() {
                       alt="Avatar Preview"
                       className="w-16 h-16 rounded-full object-cover border border-yellow-500/40"
                     />
-                  ) : getAvatarUrl() ? (
+                  ) : avatarUrl ? (
                     <img
-                      src={getAvatarUrl()!}
+                      src={avatarUrl}
                       alt="Current Avatar"
+
                       className="w-16 h-16 rounded-full object-cover border border-yellow-500/20"
                     />
                   ) : (

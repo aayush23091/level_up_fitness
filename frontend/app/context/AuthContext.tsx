@@ -31,10 +31,10 @@ export function AuthProvider({
       const response = await authAPI.whoAmI();
 
       if (response.success) {
-        setUser(response.user);
-      } else {
-        setUser(null);
-      }
+  setUser(response.data);
+} else {
+  setUser(null);
+}
     } catch {
       setUser(null);
     } finally {
