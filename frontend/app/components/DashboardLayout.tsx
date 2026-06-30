@@ -4,6 +4,7 @@ import React, { ReactNode, useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { useAuth } from "@/app/context/AuthContext";
+import { getDashboardPath } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 
 interface DashboardLayoutProps {
@@ -16,8 +17,17 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push("/login");
+    if (loading) {
+      return;
+    }
+
+    if (!user) {
+      router.replace("/login");
+      return;
+    }
+
+    if (user.role === "admin") {
+      router.replace(getDashboardPath(user.role));
     }
   }, [user, loading, router]);
 
@@ -30,7 +40,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     );
   }
 
-  if (!user) {
+  if (!user || user.role === "admin") {
     return null;
   }
 

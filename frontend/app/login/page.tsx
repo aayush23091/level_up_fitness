@@ -12,6 +12,7 @@ import { MailIcon, LockIcon } from "../components/Icons";
 
 import { loginSchema, type LoginFormData } from "@/lib/validations";
 import { authAPI } from "@/lib/api";
+import { getDashboardPath } from "@/lib/auth";
 import { useAuth } from "../context/AuthContext";
 
 const LoginPage = () => {
@@ -30,46 +31,25 @@ const LoginPage = () => {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    console.log("========== LOGIN START ==========");
-    console.log("Form Data:", data);
-
     setIsLoading(true);
     setApiError("");
 
     try {
-      console.log("Calling authAPI.login()...");
-
       const response = await authAPI.login(data);
 
-      console.log("Login Response:");
-      console.log(response);
-
       if (response.success) {
-        console.log("Login successful!");
-
-        console.log("Refreshing user...");
-        await refreshUser();
-
-        console.log("Redirecting...");
-        router.push("/app-dashboard");
+        const loggedInUser = await refreshUser();
+        const role = loggedInUser?.role ?? response.data.user?.role;
+        router.replace(getDashboardPath(role));
       } else {
-        console.log("Backend returned success = false");
-        console.log(response.message);
-
         setApiError(response.message || "Login failed");
       }
     } catch (error) {
-      console.error("========== LOGIN ERROR ==========");
-      console.error(error);
-
       const errorMessage =
         error instanceof Error ? error.message : "An error occurred";
 
-      console.log("Error Message:", errorMessage);
-
       setApiError(errorMessage);
     } finally {
-      console.log("Finished.");
       setIsLoading(false);
     }
   };

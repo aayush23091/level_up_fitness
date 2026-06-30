@@ -12,7 +12,7 @@ import { authAPI, User } from "@/lib/api";
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  refreshUser: () => Promise<void>;
+  refreshUser: () => Promise<User | null>;
   logout: () => void;
 }
 
@@ -26,17 +26,20 @@ export function AuthProvider({
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const refreshUser = async () => {
+  const refreshUser = async (): Promise<User | null> => {
     try {
       const response = await authAPI.whoAmI();
 
       if (response.success) {
-  setUser(response.data);
-} else {
-  setUser(null);
-}
+        setUser(response.data);
+        return response.data;
+      }
+
+      setUser(null);
+      return null;
     } catch {
       setUser(null);
+      return null;
     } finally {
       setLoading(false);
     }

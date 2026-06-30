@@ -172,4 +172,134 @@ export const authAPI = {
   },
 };
 
+export interface PaginatedUsersResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: User[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface SingleUserResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: User;
+}
+
+export interface AdminCreateUserPayload {
+  name: string;
+  username: string;
+  email: string;
+  password?: string;
+  phoneNumber: string;
+  gender: string;
+  role?: string;
+}
+
+export type AdminUpdateUserPayload = Partial<AdminCreateUserPayload>;
+
+export const adminAPI = {
+  getUsers: async (
+    page: number = 1,
+    limit: number = 10,
+    search?: string
+  ): Promise<PaginatedUsersResponse> => {
+    try {
+      const params: Record<string, any> = { page, limit };
+      if (search) {
+        params.search = search;
+      }
+
+      const response = await apiClient.get<PaginatedUsersResponse>(
+        "/api/v1/admin/users",
+        { params }
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch users"
+      );
+    }
+  },
+
+  getUser: async (id: string): Promise<SingleUserResponse> => {
+    try {
+      const response = await apiClient.get<SingleUserResponse>(
+        `/api/v1/admin/users/${id}`
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch user"
+      );
+    }
+  },
+
+  createUser: async (
+    data: AdminCreateUserPayload
+  ): Promise<SingleUserResponse> => {
+    try {
+      const response = await apiClient.post<SingleUserResponse>(
+        "/api/v1/admin/users",
+        data
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to create user"
+      );
+    }
+  },
+
+  updateUser: async (
+    id: string,
+    data: AdminUpdateUserPayload
+  ): Promise<SingleUserResponse> => {
+    try {
+      const response = await apiClient.put<SingleUserResponse>(
+        `/api/v1/admin/users/${id}`,
+        data
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to update user"
+      );
+    }
+  },
+
+  deleteUser: async (
+    id: string
+  ): Promise<{ status: number; success: boolean; message: string }> => {
+    try {
+      const response = await apiClient.delete<{
+        status: number;
+        success: boolean;
+        message: string;
+      }>(`/api/v1/admin/users/${id}`);
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to delete user"
+      );
+    }
+  },
+};
+
 export default apiClient;
