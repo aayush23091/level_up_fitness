@@ -8,6 +8,7 @@ import morgan from "morgan";
 // routes
 import authRoutes from "./routes/auth.route";
 import userRoutes from "./routes/user.route";
+import adminRoutes from "./routes/admin.route";
 
 const app: Application = express();
 const corsOptions = {
@@ -24,6 +25,7 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/auth", authRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/v1/admin/users", adminRoutes);
 
 // global api handler (at the last)
 app.use(
