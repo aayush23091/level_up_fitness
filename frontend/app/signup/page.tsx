@@ -22,6 +22,7 @@ import {
 } from "@/lib/validations";
 
 import { authAPI } from "@/lib/api";
+import { getDashboardPath } from "@/lib/auth";
 import { useAuth } from "../context/AuthContext";
 
 export default function SignupPage() {
@@ -55,8 +56,9 @@ export default function SignupPage() {
       const response = await authAPI.register(registerData);
 
       if (response.success) {
-        await refreshUser();
-        router.push("/app-dashboard");
+        const loggedInUser = await refreshUser();
+        const role = loggedInUser?.role ?? response.data.user?.role;
+        router.replace(getDashboardPath(role));
       } else {
         setApiError(response.message);
       }
