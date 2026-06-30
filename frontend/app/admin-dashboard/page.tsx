@@ -3,6 +3,7 @@
 import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
+import { withProtectedRoute } from "@/lib/protectedRoute";
 
 function DashboardContent() {
   const searchParams = useSearchParams();
@@ -161,7 +162,7 @@ function DashboardContent() {
   );
 }
 
-export default function AdminDashboardPage() {
+function AdminDashboardPage() {
   return (
     <Suspense
       fallback={
@@ -175,3 +176,5 @@ export default function AdminDashboardPage() {
     </Suspense>
   );
 }
+
+export default withProtectedRoute(AdminDashboardPage, ["admin"]);

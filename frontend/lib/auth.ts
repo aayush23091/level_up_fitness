@@ -8,7 +8,7 @@ export function getDashboardPath(role?: string | null): string {
   if (role === "admin") {
     return "/admin-dashboard";
   }
-  return "/app-dashboard";
+  return "/dashboard";
 }
 
 export function getRoleFromToken(token: string): string | null {
