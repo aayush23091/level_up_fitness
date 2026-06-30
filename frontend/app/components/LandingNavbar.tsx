@@ -9,7 +9,7 @@ export default function LandingNavbar() {
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const getStartedPath = !user ? "/signup" : getDashboardPath(user.role);
+  const getStartedPath = !user ? "/role" : getDashboardPath(user.role);
   const dashboardPath = !user ? "/login" : getDashboardPath(user.role);
 
   return (

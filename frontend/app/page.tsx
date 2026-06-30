@@ -11,7 +11,7 @@ export default function LandingPage() {
 
   const handleGetStarted = () => {
     if (!user) {
-      return "/signup";
+      return "/role";
     }
     return getDashboardPath(user.role);
   };
