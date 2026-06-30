@@ -14,3 +14,6 @@
 
 # Test coverage
 /coverage
+
+# Local dev utilities
+reset-admin-pwd.ts
