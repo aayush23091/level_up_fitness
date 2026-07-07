@@ -11,6 +11,7 @@ import userRoutes from "./routes/user.route";
 import adminRoutes from "./routes/admin.route";
 import coachRoutes from "./routes/coach.route";
 import workoutRoutes from "./routes/workout.route";
+import exerciseRoutes from "./routes/exercise.route";
 
 const app: Application = express();
 const corsOptions = {
@@ -30,6 +31,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/v1/admin/users", adminRoutes);
 app.use("/api/v1/coach", coachRoutes);
 app.use("/api/v1/workouts", workoutRoutes);
+app.use("/api/v1/exercises", exerciseRoutes);
 
 // global api handler (at the last)
 app.use(

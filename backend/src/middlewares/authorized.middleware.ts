@@ -77,3 +77,23 @@ export const coachMiddleware = async (
         );
     }
 }
+
+export const adminOrCoachMiddleware = async (
+    req: Request, res: Response, next: NextFunction
+) => {
+    try {
+        if (!req.user) {
+            throw new HttpException(401, 'Unauthorized no user info');
+        }
+        if (req.user.role !== 'admin' && req.user.role !== 'coach') {
+            throw new HttpException(403, 'Forbidden not admin or coach');
+        }
+        return next();
+    } catch (err: Error | any) {
+        return ApiResponseHelper.error(
+            res,
+            err.message || 'Internal Server Error',
+            err.status || 500
+        );
+    }
+}
