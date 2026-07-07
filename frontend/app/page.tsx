@@ -3,19 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import LandingNavbar from "./components/LandingNavbar";
-import { useAuth } from "./context/AuthContext";
-import { getDashboardPath } from "@/lib/auth";
 
 export default function LandingPage() {
-  const { user } = useAuth();
-
-  const handleGetStarted = () => {
-    if (!user) {
-      return "/role";
-    }
-    return getDashboardPath(user.role);
-  };
-
   return (
     <div className="min-h-screen bg-[#0B0B0D]">
       <LandingNavbar />
@@ -50,7 +39,7 @@ export default function LandingPage() {
 
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link
-                    href={handleGetStarted()}
+                    href="/role"
                     className="px-8 py-4 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-full transition-all shadow-lg shadow-yellow-400/25 hover:shadow-yellow-400/40 text-center"
                   >
                     Get Started

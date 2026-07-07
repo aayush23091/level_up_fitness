@@ -9,7 +9,6 @@ export default function LandingNavbar() {
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const getStartedPath = !user ? "/role" : getDashboardPath(user.role);
   const dashboardPath = !user ? "/login" : getDashboardPath(user.role);
 
   return (
@@ -36,7 +35,7 @@ export default function LandingNavbar() {
                   Dashboard
                 </Link>
                 <Link
-                  href={getStartedPath}
+                  href="/role"
                   className="px-6 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full transition-all shadow-lg shadow-yellow-400/20 hover:shadow-yellow-400/30 text-sm"
                 >
                   Get Started
@@ -51,7 +50,7 @@ export default function LandingNavbar() {
                   Login
                 </Link>
                 <Link
-                  href="/signup"
+                  href="/role"
                   className="px-6 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full transition-all shadow-lg shadow-yellow-400/20 hover:shadow-yellow-400/30 text-sm"
                 >
                   Get Started
@@ -86,7 +85,7 @@ export default function LandingNavbar() {
                     Dashboard
                   </Link>
                   <Link
-                    href={getStartedPath}
+                    href="/role"
                     className="px-6 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full transition-all text-sm text-center"
                   >
                     Get Started
@@ -101,7 +100,7 @@ export default function LandingNavbar() {
                     Login
                   </Link>
                   <Link
-                    href="/signup"
+                    href="/role"
                     className="px-6 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full transition-all text-sm text-center"
                   >
                     Get Started
