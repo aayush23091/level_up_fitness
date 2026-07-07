@@ -9,6 +9,7 @@ import morgan from "morgan";
 import authRoutes from "./routes/auth.route";
 import userRoutes from "./routes/user.route";
 import adminRoutes from "./routes/admin.route";
+import coachRoutes from "./routes/coach.route";
 
 const app: Application = express();
 const corsOptions = {
@@ -26,6 +27,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/v1/admin/users", adminRoutes);
+app.use("/api/v1/coach", coachRoutes);
 
 // global api handler (at the last)
 app.use(

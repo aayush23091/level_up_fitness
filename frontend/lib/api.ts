@@ -303,4 +303,31 @@ export const adminAPI = {
   },
 };
 
+export const coachAPI = {
+  getAthletes: async (
+    page: number = 1,
+    limit: number = 10,
+    search?: string
+  ): Promise<PaginatedUsersResponse> => {
+    try {
+      const params: Record<string, any> = { page, limit };
+      if (search) {
+        params.search = search;
+      }
+
+      const response = await apiClient.get<PaginatedUsersResponse>(
+        "/api/v1/coach/athletes",
+        { params }
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch athletes"
+      );
+    }
+  },
+};
+
 export default apiClient;

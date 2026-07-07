@@ -1,6 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import CoachAthletesTable from "@/components/coach/CoachAthletesTable";
 
 const statCards = [
   {
@@ -100,7 +102,50 @@ const upcomingSessions = [
   },
 ];
 
-export default function CoachDashboardPage() {
+function CoachDashboardContent() {
+  const searchParams = useSearchParams();
+  const tab = searchParams.get("tab") || "dashboard";
+
+  if (tab === "athletes") {
+    return <CoachAthletesTable />;
+  }
+
+  if (tab === "workout-plans" || tab === "analytics" || tab === "settings") {
+    const getTabName = () => {
+      switch (tab) {
+        case "workout-plans":
+          return "Workout Plans";
+        case "analytics":
+          return "Analytics";
+        case "settings":
+          return "Settings";
+        default:
+          return tab;
+      }
+    };
+    return (
+      <div className="space-y-6">
+        <section className="border-b border-zinc-800 pb-5">
+          <h1 className="text-2xl lg:text-3xl font-black text-white uppercase tracking-wider">
+            {getTabName()}
+          </h1>
+          <p className="text-zinc-500 text-xs mt-1">Manage your coach {tab}.</p>
+        </section>
+        <div className="bg-[#0e0e12]/40 border border-zinc-800/80 rounded-2xl p-8 text-center space-y-3">
+          <div className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-600">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 className="text-sm font-bold text-white uppercase tracking-wider">Coming Soon</h3>
+          <p className="text-xs text-zinc-500 max-w-sm mx-auto">
+            This section is currently disabled.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 lg:space-y-8">
       <section className="border-b border-zinc-800 pb-5">
@@ -190,5 +235,22 @@ export default function CoachDashboardPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CoachDashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[400px] flex flex-col items-center justify-center gap-4 text-white">
+          <span className="w-8 h-8 border-3 border-yellow-500 border-t-transparent rounded-full animate-spin"></span>
+          <p className="text-zinc-500 font-mono text-xs tracking-wider uppercase">
+            Loading views...
+          </p>
+        </div>
+      }
+    >
+      <CoachDashboardContent />
+    </Suspense>
   );
 }
