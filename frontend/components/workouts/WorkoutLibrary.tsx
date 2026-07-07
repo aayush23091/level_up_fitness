@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { workoutAPI, Workout } from "@/lib/api";
 
 export default function WorkoutLibrary() {
+  const router = useRouter();
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -185,7 +187,8 @@ export default function WorkoutLibrary() {
             return (
               <div
                 key={workoutIdStr}
-                className="group bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl hover:border-yellow-500/30 transition-all relative overflow-hidden flex flex-col justify-between"
+                onClick={() => router.push(`/dashboard/training/${workoutIdStr}`)}
+                className="group bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl hover:border-yellow-500/30 transition-all relative overflow-hidden flex flex-col justify-between cursor-pointer"
               >
                 {/* Decorative corner glow */}
                 <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/5 rounded-full filter blur-xl group-hover:bg-yellow-500/10 transition-all pointer-events-none" />
