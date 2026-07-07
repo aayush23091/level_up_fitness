@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { CoachService } from "../services/coach.service";
 import { ApiResponseHelper } from "../utils/apihelper.util";
+import { HttpException } from "../exceptions/http-exception";
 
 const coachService = new CoachService();
 
@@ -29,6 +30,25 @@ export class CoachController {
       });
 
       return ApiResponseHelper.success(res, sanitizedUsers, "Athletes fetched successfully", 200, meta as any);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
+
+  // GET /api/v1/coach/athletes/:id
+  getAthleteById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id as string;
+      if (!id) {
+        throw new HttpException(400, "Athlete ID is required");
+      }
+
+      const athlete = await coachService.getAthleteById(id);
+
+      const u = athlete.toObject ? athlete.toObject() : athlete;
+      const { password, ...sanitizedAthlete } = u;
+
+      return ApiResponseHelper.success(res, sanitizedAthlete, "Athlete fetched successfully", 200);
     } catch (err: any) {
       return next(err);
     }

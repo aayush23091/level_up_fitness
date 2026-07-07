@@ -22,4 +22,8 @@ export class CoachRepository {
 
     return { users, total };
   }
+
+  async getAthleteById(id: string): Promise<IUser | null> {
+    return UserModel.findById(id).exec();
+  }
 }
