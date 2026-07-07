@@ -330,4 +330,83 @@ export const coachAPI = {
   },
 };
 
+export interface Workout {
+  _id?: string;
+  id?: string;
+  title: string;
+  description: string;
+  image: string;
+  category: string;
+  difficulty: string;
+  durationMinutes: number;
+  xpReward: number;
+  coinReward: number;
+  exercisesCount: number;
+  isPremium: boolean;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface PaginatedWorkoutsResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: Workout[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface SingleWorkoutResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: Workout;
+}
+
+export const workoutAPI = {
+  getWorkouts: async (
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+    category?: string,
+    difficulty?: string
+  ): Promise<PaginatedWorkoutsResponse> => {
+    try {
+      const params: Record<string, any> = { page, limit };
+      if (search) params.search = search;
+      if (category && category !== "all") params.category = category;
+      if (difficulty && difficulty !== "all") params.difficulty = difficulty;
+
+      const response = await apiClient.get<PaginatedWorkoutsResponse>(
+        "/api/v1/workouts",
+        { params }
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch workouts"
+      );
+    }
+  },
+
+  getWorkout: async (id: string): Promise<SingleWorkoutResponse> => {
+    try {
+      const response = await apiClient.get<SingleWorkoutResponse>(
+        `/api/v1/workouts/${id}`
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch workout details"
+      );
+    }
+  },
+};
+
 export default apiClient;

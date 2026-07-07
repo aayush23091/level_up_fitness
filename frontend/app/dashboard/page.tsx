@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { withProtectedRoute } from "@/lib/protectedRoute";
+import WorkoutLibrary from "@/components/workouts/WorkoutLibrary";
 
 function DashboardPageContent() {
   const { user } = useAuth();
@@ -239,59 +240,8 @@ function DashboardPageContent() {
         </div>
 
         <section className="space-y-4">
-          <h2 className="text-lg font-bold text-white">Recommended Workouts</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="group bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl hover:border-yellow-500/30 transition-all relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/5 rounded-full filter blur-xl group-hover:bg-yellow-500/10 transition-all"></div>
-              <span className="text-xs text-yellow-500 font-bold uppercase tracking-widest font-mono">
-                Strength
-              </span>
-              <h3 className="text-lg font-bold text-white mt-1 group-hover:text-yellow-500 transition-colors">
-                Full Body Hypertrophy
-              </h3>
-              <p className="text-xs text-gray-500 mt-2">
-                A high volume resistance workout targets all muscle groups.
-              </p>
-              <div className="flex justify-between items-center mt-6 text-xs text-gray-400 font-semibold font-mono">
-                <span>⏱️ 55 Min</span>
-                <span>🔥 Intermediate</span>
-              </div>
-            </div>
-
-            <div className="group bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl hover:border-yellow-500/30 transition-all relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/5 rounded-full filter blur-xl group-hover:bg-red-500/10 transition-all"></div>
-              <span className="text-xs text-red-500 font-bold uppercase tracking-widest font-mono">
-                HIIT Cardio
-              </span>
-              <h3 className="text-lg font-bold text-white mt-1 group-hover:text-red-500 transition-colors">
-                Tabata Cardio Shred
-              </h3>
-              <p className="text-xs text-gray-500 mt-2">
-                Fast-paced intervals designed to maximize metabolic burn.
-              </p>
-              <div className="flex justify-between items-center mt-6 text-xs text-gray-400 font-semibold font-mono">
-                <span>⏱️ 30 Min</span>
-                <span>🔥 Advanced</span>
-              </div>
-            </div>
-
-            <div className="group bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl hover:border-yellow-500/30 transition-all relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full filter blur-xl group-hover:bg-blue-500/10 transition-all"></div>
-              <span className="text-xs text-blue-500 font-bold uppercase tracking-widest font-mono">
-                Mobility
-              </span>
-              <h3 className="text-lg font-bold text-white mt-1 group-hover:text-blue-500 transition-colors">
-                Deep Stretch & Release
-              </h3>
-              <p className="text-xs text-gray-500 mt-2">
-                Focused alignment, breathing techniques, and active recovery.
-              </p>
-              <div className="flex justify-between items-center mt-6 text-xs text-gray-400 font-semibold font-mono">
-                <span>⏱️ 20 Min</span>
-                <span>🔥 Beginner</span>
-              </div>
-            </div>
-          </div>
+          <h2 className="text-lg font-bold text-white">Workout Library</h2>
+          <WorkoutLibrary />
         </section>
       </div>
     </DashboardLayout>
