@@ -256,10 +256,10 @@ export default function WorkoutDetailsPage() {
           {/* Left Side: Image and General Info Card */}
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl overflow-hidden shadow-xl">
-              {workout.image && (
+              {workout.thumbnail && (
                 <div className="relative h-64 sm:h-80 w-full border-b border-[#1e1e24]">
                   <img
-                    src={workout.image}
+                    src={workout.thumbnail}
                     alt={workout.title}
                     className="w-full h-full object-cover"
                   />
@@ -315,7 +315,7 @@ export default function WorkoutDetailsPage() {
                   <span className="block text-[10px] text-zinc-500 uppercase tracking-widest mb-1">
                     Duration
                   </span>
-                  <span className="text-white text-sm">⏱️ {workout.durationMinutes} Mins</span>
+                  <span className="text-white text-sm">⏱️ {workout.duration} Mins</span>
                 </div>
 
                 <div>

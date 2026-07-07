@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { WorkoutService } from "../services/workout.service";
 import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
+import { CreateWorkoutDTO, UpdateWorkoutDTO } from "../dtos/workout.dto";
 
 const workoutService = new WorkoutService();
 
@@ -48,6 +49,59 @@ export class WorkoutController {
 
       const workout = await workoutService.getWorkoutById(id);
       return ApiResponseHelper.success(res, workout, "Workout fetched successfully", 200);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
+
+  // POST /api/v1/workouts
+  createWorkout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const validatedData = CreateWorkoutDTO.parse(req.body);
+      const coachId = (req.user as any)._id.toString();
+      
+      const workout = await workoutService.createWorkout(validatedData, coachId);
+      return ApiResponseHelper.success(res, workout, "Workout created successfully", 201);
+    } catch (err: any) {
+      if (err.name === "ZodError") {
+        return next(new HttpException(400, err.errors[0].message));
+      }
+      return next(err);
+    }
+  };
+
+  // PUT /api/v1/workouts/:id
+  updateWorkout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id as string;
+      if (!id) {
+        throw new HttpException(400, "Workout ID is required");
+      }
+
+      const validatedData = UpdateWorkoutDTO.parse(req.body);
+      const coachId = (req.user as any)._id.toString();
+      
+      const workout = await workoutService.updateWorkout(id, validatedData, coachId);
+      return ApiResponseHelper.success(res, workout, "Workout updated successfully", 200);
+    } catch (err: any) {
+      if (err.name === "ZodError") {
+        return next(new HttpException(400, err.errors[0].message));
+      }
+      return next(err);
+    }
+  };
+
+  // DELETE /api/v1/workouts/:id
+  deleteWorkout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id as string;
+      if (!id) {
+        throw new HttpException(400, "Workout ID is required");
+      }
+
+      const coachId = (req.user as any)._id.toString();
+      await workoutService.deleteWorkout(id, coachId);
+      return ApiResponseHelper.success(res, null, "Workout deleted successfully", 200);
     } catch (err: any) {
       return next(err);
     }

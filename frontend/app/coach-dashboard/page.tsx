@@ -3,6 +3,7 @@
 import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import CoachAthletesTable from "@/components/coach/CoachAthletesTable";
+import CoachWorkoutPlans from "@/components/coach/CoachWorkoutPlans";
 
 const statCards = [
   {
@@ -110,11 +111,13 @@ function CoachDashboardContent() {
     return <CoachAthletesTable />;
   }
 
-  if (tab === "workout-plans" || tab === "analytics" || tab === "settings") {
+  if (tab === "workout-plans") {
+    return <CoachWorkoutPlans />;
+  }
+
+  if (tab === "analytics" || tab === "settings") {
     const getTabName = () => {
       switch (tab) {
-        case "workout-plans":
-          return "Workout Plans";
         case "analytics":
           return "Analytics";
         case "settings":

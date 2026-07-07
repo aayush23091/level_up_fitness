@@ -195,9 +195,9 @@ export default function WorkoutLibrary() {
 
                 <div>
                   {/* Workout Image */}
-                  {workout.image && (
+                  {workout.thumbnail && (
                     <img
-                      src={workout.image}
+                      src={workout.thumbnail}
                       alt={workout.title}
                       className="w-full h-40 object-cover rounded-xl mb-4 border border-[#1e1e24] group-hover:border-yellow-500/20 transition-all"
                     />
@@ -226,19 +226,16 @@ export default function WorkoutLibrary() {
                 {/* Workout Specs Grid */}
                 <div className="grid grid-cols-2 gap-2.5 mt-5 pt-4 border-t border-[#1e1e24] text-[11px] text-gray-400 font-semibold font-mono">
                   <div className="flex items-center gap-1.5">
-                    <span>⏱️</span> {workout.durationMinutes} Min
+                    <span>⏱️</span> {workout.duration} Min
                   </div>
                   <div className="flex items-center gap-1.5 capitalize">
                     <span>⚡</span> {workout.difficulty}
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span>🏋️‍♂️</span> {workout.exercisesCount} Exercises
-                  </div>
-                  <div className="flex items-center gap-1.5">
                     <span className="text-yellow-500">✨</span> {workout.xpReward} XP
                   </div>
-                  <div className="flex items-center gap-1.5 col-span-2 text-yellow-500">
-                    <span>🪙</span> {workout.coinReward} Coins reward
+                  <div className="flex items-center gap-1.5 text-yellow-500">
+                    <span>🪙</span> {workout.coinReward} Coins
                   </div>
                 </div>
               </div>

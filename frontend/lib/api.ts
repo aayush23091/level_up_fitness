@@ -335,16 +335,18 @@ export interface Workout {
   id?: string;
   title: string;
   description: string;
-  image: string;
+  thumbnail: string;
   category: string;
   difficulty: string;
-  durationMinutes: number;
+  duration: number;
   xpReward: number;
   coinReward: number;
-  exercisesCount: number;
   isPremium: boolean;
-  createdBy: string;
-  createdAt: string;
+  createdBy?: string;
+  assignedUsers?: string[];
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface PaginatedWorkoutsResponse {
@@ -404,6 +406,57 @@ export const workoutAPI = {
       const axiosError = error as AxiosError<any>;
       throw new Error(
         axiosError.response?.data?.message || "Failed to fetch workout details"
+      );
+    }
+  },
+
+  createWorkout: async (
+    data: Partial<Workout>
+  ): Promise<SingleWorkoutResponse> => {
+    try {
+      const response = await apiClient.post<SingleWorkoutResponse>(
+        "/api/v1/workouts",
+        data
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to create workout"
+      );
+    }
+  },
+
+  updateWorkout: async (
+    id: string,
+    data: Partial<Workout>
+  ): Promise<SingleWorkoutResponse> => {
+    try {
+      const response = await apiClient.put<SingleWorkoutResponse>(
+        `/api/v1/workouts/${id}`,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to update workout"
+      );
+    }
+  },
+
+  deleteWorkout: async (id: string): Promise<{ status: number; success: boolean; message: string }> => {
+    try {
+      const response = await apiClient.delete<{
+        status: number;
+        success: boolean;
+        message: string;
+      }>(`/api/v1/workouts/${id}`);
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to delete workout"
       );
     }
   },

@@ -4,15 +4,16 @@ export interface IWorkout extends Document {
   _id: mongoose.Types.ObjectId;
   title: string;
   description: string;
-  image: string;
+  thumbnail: string;
   category: string;
   difficulty: string;
-  durationMinutes: number;
+  duration: number;
   xpReward: number;
   coinReward: number;
-  exercisesCount: number;
   isPremium: boolean;
-  createdBy: string;
+  createdBy: mongoose.Types.ObjectId;
+  assignedUsers: mongoose.Types.ObjectId[];
+  status: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,15 +22,16 @@ const WorkoutSchema: Schema = new Schema<IWorkout>(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
-    image: { type: String, required: true },
+    thumbnail: { type: String, required: true },
     category: { type: String, required: true },
     difficulty: { type: String, required: true },
-    durationMinutes: { type: Number, required: true },
-    xpReward: { type: Number, required: true },
-    coinReward: { type: Number, required: true },
-    exercisesCount: { type: Number, required: true },
+    duration: { type: Number, required: true },
+    xpReward: { type: Number, default: 0 },
+    coinReward: { type: Number, default: 0 },
     isPremium: { type: Boolean, default: false },
-    createdBy: { type: String, default: "admin" },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    assignedUsers: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    status: { type: String, default: "active" },
   },
   {
     timestamps: true,
