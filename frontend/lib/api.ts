@@ -39,6 +39,7 @@ interface RegisterPayload {
   password: string;
   phoneNumber?: string;
   gender?: string;
+  role?: "user" | "coach";
 }
 
 export interface User {

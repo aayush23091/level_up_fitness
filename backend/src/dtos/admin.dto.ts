@@ -3,7 +3,7 @@ import { UserSchema } from "../types/user.type";
 
 // DTO for creating user from Admin
 export const AdminCreateUserDTO = UserSchema.extend({
-  role: z.enum(["admin", "user"]).default("user").optional(),
+  role: z.enum(["admin", "user", "coach"]).default("user").optional(),
 });
 export type AdminCreateUserDTO = z.infer<typeof AdminCreateUserDTO>;
 

@@ -7,6 +7,7 @@ export function proxy(request: NextRequest) {
   const protectedRoutes = [
     "/app-dashboard",
     "/admin-dashboard",
+    "/coach-dashboard",
     "/profile",
     "/profile/password",
   ];
@@ -28,7 +29,14 @@ export function proxy(request: NextRequest) {
   if (pathname.startsWith("/admin-dashboard") && token) {
     const role = getRoleFromToken(token);
     if (role !== "admin") {
-      return NextResponse.redirect(new URL("/app-dashboard", request.url));
+      return NextResponse.redirect(new URL(getDashboardPath(role), request.url));
+    }
+  }
+
+  if (pathname.startsWith("/coach-dashboard") && token) {
+    const role = getRoleFromToken(token);
+    if (role !== "coach") {
+      return NextResponse.redirect(new URL(getDashboardPath(role), request.url));
     }
   }
 
@@ -46,6 +54,7 @@ export const config = {
     "/signup",
     "/app-dashboard/:path*",
     "/admin-dashboard/:path*",
+    "/coach-dashboard/:path*",
     "/profile/:path*",
   ],
 };

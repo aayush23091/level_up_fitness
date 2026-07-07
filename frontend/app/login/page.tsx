@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -15,8 +15,17 @@ import { authAPI } from "@/lib/api";
 import { getDashboardPath } from "@/lib/auth";
 import { useAuth } from "../context/AuthContext";
 
-const LoginPage = () => {
+function getSignupHref(role: string | null): string {
+  if (role === "coach" || role === "user") {
+    return `/signup?role=${role}`;
+  }
+  return "/signup";
+}
+
+const LoginPageContent = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedRole = searchParams.get("role");
   const { refreshUser } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -126,7 +135,7 @@ const LoginPage = () => {
           <div className="mt-4 text-center text-sm text-gray-400">
             Don't have an account?{" "}
             <a
-              href="/signup"
+              href={getSignupHref(selectedRole)}
               className="text-yellow-400 hover:underline"
             >
               Start Training
@@ -141,6 +150,14 @@ const LoginPage = () => {
         <a href="#">COOKIE POLICY</a>
       </footer>
     </div>
+  );
+};
+
+const LoginPage = () => {
+  return (
+    <Suspense fallback={null}>
+      <LoginPageContent />
+    </Suspense>
   );
 };
 

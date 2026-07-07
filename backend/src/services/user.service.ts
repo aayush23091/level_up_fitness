@@ -23,9 +23,12 @@ export class UserService {
         
         // hash password
         const hashedPassword = await bcrypt.hash(userData.password, 10);
-        userData.password = hashedPassword;
-        
-        const user = await userRepository.createUser(userData);
+
+        const user = await userRepository.createUser({
+            ...userData,
+            password: hashedPassword,
+            role: userData.role ?? "user",
+        });
         
         // generate token
         const token = jwt.sign(

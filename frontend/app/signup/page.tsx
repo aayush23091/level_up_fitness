@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -25,8 +25,20 @@ import { authAPI } from "@/lib/api";
 import { getDashboardPath } from "@/lib/auth";
 import { useAuth } from "../context/AuthContext";
 
-export default function SignupPage() {
+const SIGNUP_ROLES = ["user", "coach"] as const;
+type SignupRole = (typeof SIGNUP_ROLES)[number];
+
+function resolveSignupRole(role: string | null): SignupRole {
+  if (role === "coach") {
+    return "coach";
+  }
+  return "user";
+}
+
+function SignupPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedRole = resolveSignupRole(searchParams.get("role"));
   const { refreshUser } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +65,10 @@ export default function SignupPage() {
     try {
       const { confirmPassword, ...registerData } = data;
 
-      const response = await authAPI.register(registerData);
+      const response = await authAPI.register({
+        ...registerData,
+        role: selectedRole,
+      });
 
       if (response.success) {
         const loggedInUser = await refreshUser();
@@ -81,7 +96,7 @@ export default function SignupPage() {
 
         <div>
           <a
-            href="/login"
+            href={selectedRole === "coach" ? "/login?role=coach" : "/login"}
             className="text-gray-300 mr-6 hover:underline"
           >
             Login
@@ -227,7 +242,7 @@ export default function SignupPage() {
           <div className="text-center mt-6 text-gray-400 text-sm">
             Already have an account?{" "}
             <a
-              href="/login"
+              href={selectedRole === "coach" ? "/login?role=coach" : "/login"}
               className="text-yellow-400 hover:underline"
             >
               Login to LevelUp
@@ -236,5 +251,13 @@ export default function SignupPage() {
         </AuthCard>
       </main>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignupPageContent />
+    </Suspense>
   );
 }
