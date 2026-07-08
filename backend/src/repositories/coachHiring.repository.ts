@@ -5,20 +5,20 @@ import { UserModel, IUser } from "../models/user.model";
 export class CoachHiringRepository {
     async getAllCoaches(): Promise<ICoachProfile[]> {
         return CoachProfileModel.find({ available: true })
-            .populate("userId", "name email profilePhoto")
+            .populate("userId", "name username email profilePhoto")
             .sort({ rating: -1 })
             .exec();
     }
 
     async getCoachById(id: string): Promise<ICoachProfile | null> {
         return CoachProfileModel.findById(id)
-            .populate("userId", "name email profilePhoto")
+            .populate("userId", "name username email profilePhoto")
             .exec();
     }
 
     async getCoachByUserId(userId: string): Promise<ICoachProfile | null> {
         return CoachProfileModel.findOne({ userId })
-            .populate("userId", "name email profilePhoto")
+            .populate("userId", "name username email profilePhoto")
             .exec();
     }
 

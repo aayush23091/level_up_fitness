@@ -7,16 +7,34 @@ import { HttpException } from "../exceptions/http-exception";
 const coachHiringRepository = new CoachHiringRepository();
 
 export class CoachHiringService {
-    async getAllCoaches(): Promise<ICoachProfile[]> {
-        return coachHiringRepository.getAllCoaches();
+    async getAllCoaches(): Promise<any[]> {
+        const coaches = await coachHiringRepository.getAllCoaches();
+        return coaches.map(coach => this.transformCoachProfile(coach));
     }
 
-    async getCoachById(id: string): Promise<ICoachProfile> {
+    async getCoachById(id: string): Promise<any> {
         const coach = await coachHiringRepository.getCoachById(id);
         if (!coach) {
             throw new HttpException(404, "Coach not found");
         }
-        return coach;
+        return this.transformCoachProfile(coach);
+    }
+
+    private transformCoachProfile(coach: any): any {
+        const user = coach.userId || {};
+        return {
+            _id: coach._id,
+            name: user.name || "Coach",
+            username: user.username || "",
+            profilePhoto: user.profilePhoto || null,
+            bio: coach.bio,
+            specialization: coach.specialization,
+            experience: coach.experience,
+            rating: coach.rating,
+            hireCost: coach.hireCost,
+            available: coach.available,
+            totalClients: coach.totalClients
+        };
     }
 
     async hireCoach(coachId: string, athleteId: string): Promise<{ coachClient: ICoachClient; updatedUser: IUser }> {

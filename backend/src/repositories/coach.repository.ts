@@ -1,4 +1,5 @@
 import { UserModel, IUser } from "../models/user.model";
+import { CoachClientModel, ICoachClient } from "../models/coachClient.model";
 
 export class CoachRepository {
   async getAthletes(
@@ -7,19 +8,35 @@ export class CoachRepository {
     limit: number,
     search?: string
   ): Promise<{ users: IUser[]; total: number }> {
-    const query: any = { role: "user", coachId };
-
-    if (search) {
-      const regex = new RegExp(search, "i");
-      query.$or = [{ name: regex }, { email: regex }];
-    }
-
     const skip = (page - 1) * limit;
 
-    const [users, total] = await Promise.all([
-      UserModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }).exec(),
-      UserModel.countDocuments(query).exec(),
-    ]);
+    // Build base query for active CoachClient relationships
+    const coachClientQuery: any = { coachId, status: "active" };
+
+    // Get total count of active relationships
+    const total = await CoachClientModel.countDocuments(coachClientQuery).exec();
+
+    // Get paginated active relationships and populate athlete info
+    const coachClients = await CoachClientModel
+      .find(coachClientQuery)
+      .skip(skip)
+      .limit(limit)
+      .populate("athleteId")
+      .sort({ createdAt: -1 })
+      .exec();
+
+    // Extract users from populated relationships
+    let users = coachClients
+      .map((cc: any) => cc.athleteId)
+      .filter((user: any) => user !== null && user !== undefined);
+
+    // Apply search filter if provided
+    if (search) {
+      const regex = new RegExp(search, "i");
+      users = users.filter((user: any) => 
+        regex.test(user.name) || regex.test(user.email)
+      );
+    }
 
     return { users, total };
   }

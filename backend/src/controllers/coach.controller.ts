@@ -14,32 +14,20 @@ export class CoachController {
         throw new HttpException(401, "Unauthorized: Coach ID not found");
       }
 
-      const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
-      const search = (req.query.search as string) || undefined;
-
-      const { users, total } = await coachService.getAthletes(coachId, page, limit, search);
-      const totalPages = Math.ceil(total / limit);
-
-      const meta = {
-        page,
-        limit,
-        total,
-        totalPages,
-      };
+      const { users } = await coachService.getAthletes(coachId, 1, 1000);
 
       const sanitizedUsers = users.map((user) => {
         const u = user.toObject ? user.toObject() : user;
         return {
-          _id: u._id,
+          id: u._id.toString(),
           name: u.name,
           email: u.email,
           level: u.level || 0,
-          xp: u.xp || 0,
+          coins: u.coins || 0,
         };
       });
 
-      return ApiResponseHelper.success(res, sanitizedUsers, "Athletes fetched successfully", 200, meta as any);
+      return ApiResponseHelper.success(res, sanitizedUsers, "Athletes fetched successfully", 200);
     } catch (err: any) {
       return next(err);
     }
