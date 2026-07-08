@@ -31,10 +31,10 @@ export class CoachHiringController {
         }
     };
 
-    // POST /api/v1/coaches/:id/hire
+    // POST /api/v1/coaches/:coachId/hire
     hireCoach = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const coachId = req.params.id as string;
+            const coachId = req.params.coachId as string;
             if (!coachId) {
                 throw new HttpException(400, "Coach ID is required");
             }
@@ -45,11 +45,11 @@ export class CoachHiringController {
             }
 
             const athleteId = user._id.toString();
-            const { coachClient, updatedUser } = await coachHiringService.hireCoach(coachId, athleteId);
+            const remainingCoins = await coachHiringService.hireCoach(coachId, athleteId);
 
             return ApiResponseHelper.success(
                 res,
-                { coachClient, updatedUser },
+                { remainingCoins },
                 "Coach hired successfully",
                 200
             );

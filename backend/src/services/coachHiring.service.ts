@@ -37,7 +37,7 @@ export class CoachHiringService {
         };
     }
 
-    async hireCoach(coachId: string, athleteId: string): Promise<{ coachClient: ICoachClient; updatedUser: IUser }> {
+    async hireCoach(coachId: string, athleteId: string): Promise<number> {
         // Check if coach exists and is available
         const coach = await coachHiringRepository.getCoachById(coachId);
         if (!coach) {
@@ -53,20 +53,20 @@ export class CoachHiringService {
             throw new HttpException(404, "Athlete not found");
         }
 
-        // Check if athlete has user role
+        // Check if athlete has user role (not admin or coach)
         if (athlete.role !== "user") {
             throw new HttpException(403, "Only users can hire coaches");
         }
 
         // Check if athlete has enough coins
         if ((athlete.coins || 0) < coach.hireCost) {
-            throw new HttpException(400, `Insufficient coins. Required: ${coach.hireCost}, Available: ${athlete.coins || 0}`);
+            throw new HttpException(400, "Insufficient coins");
         }
 
-        // Check for duplicate hiring
+        // Check for duplicate hiring (only active relationships)
         const existingRelationship = await coachHiringRepository.getCoachClientRelationship(coachId, athleteId);
         if (existingRelationship) {
-            throw new HttpException(400, "You have already hired this coach");
+            throw new HttpException(400, "Already hired this coach");
         }
 
         // Deduct coins from athlete
@@ -77,11 +77,11 @@ export class CoachHiringService {
         }
 
         // Create coach-client relationship
-        const coachClient = await coachHiringRepository.createCoachClient(coachId, athleteId);
+        await coachHiringRepository.createCoachClient(coachId, athleteId);
 
         // Increment coach's total clients
         await coachHiringRepository.incrementCoachTotalClients(coachId);
 
-        return { coachClient, updatedUser };
+        return updatedUser.coins || 0;
     }
 }

@@ -11,7 +11,7 @@ coachHiringRouter.get("/coaches", coachHiringController.getAllCoaches);
 // GET /api/v1/coaches/:id - Get coach by ID (public)
 coachHiringRouter.get("/coaches/:id", coachHiringController.getCoachById);
 
-// POST /api/v1/coaches/:id/hire - Hire a coach (authenticated users only)
-coachHiringRouter.post("/coaches/:id/hire", authorizedMiddleware, coachHiringController.hireCoach);
+// POST /api/v1/coaches/:coachId/hire - Hire a coach (authenticated users only)
+coachHiringRouter.post("/coaches/:coachId/hire", authorizedMiddleware, coachHiringController.hireCoach);
 
 export default coachHiringRouter;

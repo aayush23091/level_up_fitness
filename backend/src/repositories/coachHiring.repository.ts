@@ -32,7 +32,7 @@ export class CoachHiringRepository {
     }
 
     async getCoachClientRelationship(coachId: string, athleteId: string): Promise<ICoachClient | null> {
-        return CoachClientModel.findOne({ coachId, athleteId }).exec();
+        return CoachClientModel.findOne({ coachId, athleteId, status: "active" }).exec();
     }
 
     async getUserById(userId: string): Promise<IUser | null> {
