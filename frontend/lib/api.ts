@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { AuthResponse } from "../../backend/src/types/user.type";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  process.env.NEXT_PUBLIC_API_URL || "";
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -330,6 +330,87 @@ export const coachAPI = {
   },
 };
 
+export interface Exercise {
+  _id?: string;
+  id?: string;
+  name: string;
+  category: "Strength" | "Cardio" | "Mobility" | "Core" | "HIIT";
+  bodyPart: "Chest" | "Back" | "Legs" | "Arms" | "Shoulders" | "Core" | "Full Body";
+  equipment: string;
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  description: string;
+  instructions: string;
+  thumbnail?: string;
+  videoUrl?: string;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PaginatedExercisesResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: Exercise[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface SingleExerciseResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: Exercise;
+}
+
+export const exerciseAPI = {
+  getExercises: async (
+    page: number = 1,
+    limit: number = 50,
+    search?: string,
+    category?: string,
+    bodyPart?: string,
+    difficulty?: string
+  ): Promise<PaginatedExercisesResponse> => {
+    try {
+      const params: Record<string, any> = { page, limit };
+      if (search) params.search = search;
+      if (category && category !== "all") params.category = category;
+      if (bodyPart && bodyPart !== "all") params.bodyPart = bodyPart;
+      if (difficulty && difficulty !== "all") params.difficulty = difficulty;
+
+      const response = await apiClient.get<PaginatedExercisesResponse>(
+        "/api/v1/exercises",
+        { params }
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch exercises"
+      );
+    }
+  },
+
+  getExercise: async (id: string): Promise<SingleExerciseResponse> => {
+    try {
+      const response = await apiClient.get<SingleExerciseResponse>(
+        `/api/v1/exercises/${id}`
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch exercise"
+      );
+    }
+  },
+};
+
 export interface Workout {
   _id?: string;
   id?: string;
@@ -457,6 +538,143 @@ export const workoutAPI = {
       const axiosError = error as AxiosError<any>;
       throw new Error(
         axiosError.response?.data?.message || "Failed to delete workout"
+      );
+    }
+  },
+};
+
+export interface WorkoutPlanExercise {
+  exerciseId: string;
+  exerciseName?: string;
+  exerciseCategory?: string;
+  exerciseBodyPart?: string;
+  exerciseEquipment?: string;
+  exerciseDifficulty?: string;
+  sets: number;
+  reps: string;
+  restSeconds: number;
+  notes?: string;
+  order: number;
+}
+
+export interface WorkoutPlan {
+  _id?: string;
+  id?: string;
+  coachId?: string;
+  title: string;
+  description: string;
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  estimatedDuration: number;
+  status: "Draft" | "Published";
+  exercises: WorkoutPlanExercise[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PaginatedWorkoutPlansResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: WorkoutPlan[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface SingleWorkoutPlanResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: WorkoutPlan;
+}
+
+export const workoutPlanAPI = {
+  getWorkoutPlans: async (
+    page: number = 1,
+    limit: number = 10,
+    status?: string
+  ): Promise<PaginatedWorkoutPlansResponse> => {
+    try {
+      const params: Record<string, any> = { page, limit };
+      if (status && status !== "all") params.status = status;
+
+      const response = await apiClient.get<PaginatedWorkoutPlansResponse>(
+        "/api/v1/coach/workout-plans",
+        { params }
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch workout plans"
+      );
+    }
+  },
+
+  getWorkoutPlan: async (id: string): Promise<SingleWorkoutPlanResponse> => {
+    try {
+      const response = await apiClient.get<SingleWorkoutPlanResponse>(
+        `/api/v1/coach/workout-plans/${id}`
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch workout plan"
+      );
+    }
+  },
+
+  createWorkoutPlan: async (
+    data: Partial<WorkoutPlan>
+  ): Promise<SingleWorkoutPlanResponse> => {
+    try {
+      const response = await apiClient.post<SingleWorkoutPlanResponse>(
+        "/api/v1/coach/workout-plans",
+        data
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to create workout plan"
+      );
+    }
+  },
+
+  updateWorkoutPlan: async (
+    id: string,
+    data: Partial<WorkoutPlan>
+  ): Promise<SingleWorkoutPlanResponse> => {
+    try {
+      const response = await apiClient.put<SingleWorkoutPlanResponse>(
+        `/api/v1/coach/workout-plans/${id}`,
+        data
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to update workout plan"
+      );
+    }
+  },
+
+  deleteWorkoutPlan: async (id: string): Promise<{ status: number; success: boolean; message: string }> => {
+    try {
+      const response = await apiClient.delete<{
+        status: number;
+        success: boolean;
+        message: string;
+      }>(`/api/v1/coach/workout-plans/${id}`);
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to delete workout plan"
       );
     }
   },
