@@ -2,11 +2,12 @@ import { UserModel, IUser } from "../models/user.model";
 
 export class CoachRepository {
   async getAthletes(
+    coachId: string,
     page: number,
     limit: number,
     search?: string
   ): Promise<{ users: IUser[]; total: number }> {
-    const query: any = { role: "user" };
+    const query: any = { role: "user", coachId };
 
     if (search) {
       const regex = new RegExp(search, "i");

@@ -6,11 +6,12 @@ const coachRepository = new CoachRepository();
 
 export class CoachService {
   async getAthletes(
+    coachId: string,
     page: number,
     limit: number,
     search?: string
   ): Promise<{ users: IUser[]; total: number }> {
-    return coachRepository.getAthletes(page, limit, search);
+    return coachRepository.getAthletes(coachId, page, limit, search);
   }
 
   async getAthleteById(id: string): Promise<IUser> {

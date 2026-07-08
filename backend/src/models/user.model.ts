@@ -10,6 +10,9 @@ export interface IUser extends Document {
     gender: string;
     role: string;
     profilePhoto?: string;
+    coachId?: mongoose.Types.ObjectId;
+    level?: number;
+    xp?: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -22,7 +25,10 @@ const UserMongoSchema: Schema = new Schema<IUser>(
   phoneNumber: { type: String, required: true },
   gender: { type: String, required: true },
   role: { type: String, enum: ["admin", "user", "coach"], default: "user" },
-  profilePhoto: { type: String, required: false }
+  profilePhoto: { type: String, required: false },
+  coachId: { type: Schema.Types.ObjectId, ref: "User", required: false },
+  level: { type: Number, default: 0 },
+  xp: { type: Number, default: 0 }
 },
     {
         timestamps: true // createdAt and updatedAt will be automatically added and managed by mongoose

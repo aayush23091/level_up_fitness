@@ -9,11 +9,16 @@ export class CoachController {
   // GET /api/v1/coach/athletes
   getAthletes = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const coachId = (req.user as any)._id.toString();
+      if (!coachId) {
+        throw new HttpException(401, "Unauthorized: Coach ID not found");
+      }
+
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
       const search = (req.query.search as string) || undefined;
 
-      const { users, total } = await coachService.getAthletes(page, limit, search);
+      const { users, total } = await coachService.getAthletes(coachId, page, limit, search);
       const totalPages = Math.ceil(total / limit);
 
       const meta = {
@@ -25,8 +30,13 @@ export class CoachController {
 
       const sanitizedUsers = users.map((user) => {
         const u = user.toObject ? user.toObject() : user;
-        const { password, ...rest } = u;
-        return rest;
+        return {
+          _id: u._id,
+          name: u.name,
+          email: u.email,
+          level: u.level || 0,
+          xp: u.xp || 0,
+        };
       });
 
       return ApiResponseHelper.success(res, sanitizedUsers, "Athletes fetched successfully", 200, meta as any);
