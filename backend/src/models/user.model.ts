@@ -13,6 +13,7 @@ export interface IUser extends Document {
     coachId?: mongoose.Types.ObjectId;
     level?: number;
     xp?: number;
+    coins?: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -28,7 +29,8 @@ const UserMongoSchema: Schema = new Schema<IUser>(
   profilePhoto: { type: String, required: false },
   coachId: { type: Schema.Types.ObjectId, ref: "User", required: false },
   level: { type: Number, default: 0 },
-  xp: { type: Number, default: 0 }
+  xp: { type: Number, default: 0 },
+  coins: { type: Number, default: 0 }
 },
     {
         timestamps: true // createdAt and updatedAt will be automatically added and managed by mongoose
