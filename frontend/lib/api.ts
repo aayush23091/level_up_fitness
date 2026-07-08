@@ -52,6 +52,7 @@ export interface User {
   gender: string;
   role: string;
   profilePhoto?: string;
+  coins?: number;
 }
 
 interface WhoAmIResponse {
@@ -303,6 +304,54 @@ export const adminAPI = {
   },
 };
 
+export interface Coach {
+  _id?: string;
+  id?: string;
+  name: string;
+  username: string;
+  email: string;
+  phoneNumber: string;
+  gender: string;
+  role: string;
+  profilePhoto?: string;
+  bio?: string;
+  specialization?: string[];
+  rating?: number;
+  experience?: number;
+  hireCost?: number;
+  isHired?: boolean;
+}
+
+export interface PaginatedCoachesResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: Coach[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface SingleCoachResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: Coach;
+}
+
+export interface HireCoachResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: {
+    coach: Coach;
+    user: User;
+  };
+}
+
 export const coachAPI = {
   getAthletes: async (
     page: number = 1,
@@ -325,6 +374,61 @@ export const coachAPI = {
       const axiosError = error as AxiosError<any>;
       throw new Error(
         axiosError.response?.data?.message || "Failed to fetch athletes"
+      );
+    }
+  },
+
+  getCoaches: async (
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+    specialization?: string
+  ): Promise<PaginatedCoachesResponse> => {
+    try {
+      const params: Record<string, any> = { page, limit };
+      if (search) params.search = search;
+      if (specialization && specialization !== "all") params.specialization = specialization;
+
+      const response = await apiClient.get<PaginatedCoachesResponse>(
+        "/api/v1/coaches",
+        { params }
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch coaches"
+      );
+    }
+  },
+
+  getCoach: async (id: string): Promise<SingleCoachResponse> => {
+    try {
+      const response = await apiClient.get<SingleCoachResponse>(
+        `/api/v1/coaches/${id}`
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch coach"
+      );
+    }
+  },
+
+  hireCoach: async (id: string): Promise<HireCoachResponse> => {
+    try {
+      const response = await apiClient.post<HireCoachResponse>(
+        `/api/v1/coaches/${id}/hire`
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to hire coach"
       );
     }
   },
