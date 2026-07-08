@@ -17,11 +17,10 @@ function CoachProfilePageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Hire modal state
-  const [showHireModal, setShowHireModal] = useState(false);
+  // Hire state
   const [hiring, setHiring] = useState(false);
-  const [hireError, setHireError] = useState<string | null>(null);
   const [hireSuccess, setHireSuccess] = useState(false);
+  const [remainingCoins, setRemainingCoins] = useState<number | null>(null);
 
   const fetchCoach = async () => {
     setLoading(true);
@@ -59,37 +58,42 @@ function CoachProfilePageContent() {
 
   const handleHireCoach = async () => {
     setHiring(true);
-    setHireError(null);
+    setRemainingCoins(null);
     try {
       const response = await coachAPI.hireCoach(coachId);
       if (response.success) {
         setHireSuccess(true);
+        setRemainingCoins(response.data.user.coins || 0);
         // Refresh user state to update coins
         await refreshUser();
         // Refresh coach data to update isHired status
         await fetchCoach();
-        // Close modal after success
-        setTimeout(() => {
-          setShowHireModal(false);
-          setHireSuccess(false);
-        }, 2000);
       } else {
-        setHireError(response.message || "Failed to hire coach.");
+        const message = response.message || "Failed to hire coach.";
+        if (message.toLowerCase().includes("insufficient")) {
+          alert("Insufficient coins");
+        } else if (message.toLowerCase().includes("already hired")) {
+          alert("Already hired this coach");
+        } else {
+          alert(message);
+        }
       }
     } catch (err: any) {
-      setHireError(err.message || "An error occurred while hiring coach.");
+      const errorMessage = err.message || "An error occurred while hiring coach.";
+      if (errorMessage.toLowerCase().includes("unauthorized") || err.response?.status === 401) {
+        router.push("/login");
+      } else if (errorMessage.toLowerCase().includes("insufficient")) {
+        alert("Insufficient coins");
+      } else if (errorMessage.toLowerCase().includes("already hired")) {
+        alert("Already hired this coach");
+      } else {
+        alert(errorMessage);
+      }
     } finally {
       setHiring(false);
     }
   };
 
-  const getUserCoins = () => {
-    return user?.coins || 0;
-  };
-
-  const getRemainingCoins = () => {
-    return getUserCoins() - (coach?.hireCost || 0);
-  };
 
   return (
     <div className="min-h-screen bg-[#030303]">
@@ -176,10 +180,11 @@ function CoachProfilePageContent() {
                 </div>
                 {!coach.isHired && (
                   <button
-                    onClick={() => setShowHireModal(true)}
-                    className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-black text-sm font-bold rounded-xl uppercase tracking-wider transition-colors shadow-lg shadow-yellow-500/10"
+                    onClick={handleHireCoach}
+                    disabled={hiring || hireSuccess}
+                    className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-black text-sm font-bold rounded-xl uppercase tracking-wider transition-colors shadow-lg shadow-yellow-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Hire Coach
+                    {hiring ? 'Hiring...' : hireSuccess ? 'Hired ✓' : 'Hire Coach'}
                   </button>
                 )}
               </div>
@@ -238,101 +243,15 @@ function CoachProfilePageContent() {
         ) : null}
       </div>
 
-      {/* Hire Confirmation Modal */}
-      {showHireModal && coach && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-6 lg:p-8 max-w-md w-full shadow-2xl">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-white">Hire Coach</h3>
-              <button
-                onClick={() => {
-                  setShowHireModal(false);
-                  setHireError(null);
-                  setHireSuccess(false);
-                }}
-                className="p-2 bg-[#121216] border border-[#1e1e24] hover:border-yellow-500/40 text-gray-400 hover:text-white rounded-lg transition-all"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+      {/* Success Notification */}
+      {hireSuccess && remainingCoins !== null && (
+        <div className="fixed bottom-6 right-6 bg-[#0e0e12] border border-[#1e1e24] rounded-xl p-4 shadow-2xl z-50 animate-in slide-in-from-bottom-6">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">✅</span>
+            <div>
+              <p className="text-white font-bold text-sm">Coach hired successfully</p>
+              <p className="text-gray-400 text-xs">Remaining coins: {remainingCoins}</p>
             </div>
-
-            {hireSuccess ? (
-              // Success State
-              <div className="text-center py-8">
-                <span className="text-5xl block mb-4">✅</span>
-                <h4 className="text-lg font-bold text-white mb-2">Coach Hired Successfully!</h4>
-                <p className="text-gray-400 text-sm">
-                  You have successfully hired {coach.name}. You can now start your fitness journey together.
-                </p>
-              </div>
-            ) : (
-              // Confirmation State
-              <div className="space-y-6">
-                <div className="flex items-center gap-4 p-4 bg-[#121216] border border-[#1e1e24] rounded-xl">
-                  {getAvatarUrl(coach.profilePhoto) ? (
-                    <img
-                      src={getAvatarUrl(coach.profilePhoto)!}
-                      alt={coach.name}
-                      className="w-12 h-12 rounded-full object-cover border border-yellow-500/30"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-600/40 border border-yellow-500/30 text-yellow-500 flex items-center justify-center text-sm font-bold font-mono">
-                      {getInitials(coach.name)}
-                    </div>
-                  )}
-                  <div>
-                    <p className="text-sm font-bold text-white">{coach.name}</p>
-                    <p className="text-xs text-gray-500">@{coach.username}</p>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-400">Required Coins</span>
-                    <span className="text-white font-bold">{coach.hireCost || 0} 🪙</span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-400">Your Coins</span>
-                    <span className="text-white font-bold">{getUserCoins()} 🪙</span>
-                  </div>
-                  <div className="h-px bg-[#1e1e24]"></div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-400">Remaining Coins</span>
-                    <span className={`font-bold ${getRemainingCoins() >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      {getRemainingCoins()} 🪙
-                    </span>
-                  </div>
-                </div>
-
-                {hireError && (
-                  <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-lg">
-                    {hireError}
-                  </div>
-                )}
-
-                <div className="flex gap-3 pt-2">
-                  <button
-                    onClick={() => {
-                      setShowHireModal(false);
-                      setHireError(null);
-                    }}
-                    disabled={hiring}
-                    className="flex-1 px-4 py-3 bg-[#121216] border border-[#1e1e24] hover:border-yellow-500/40 text-gray-400 hover:text-white text-xs font-bold rounded-xl uppercase tracking-wider transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleHireCoach}
-                    disabled={hiring || getRemainingCoins() < 0}
-                    className="flex-1 px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold rounded-xl uppercase tracking-wider transition-colors shadow-lg shadow-yellow-500/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-yellow-500"
-                  >
-                    {hiring ? 'Hiring...' : 'Confirm Hire'}
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       )}
