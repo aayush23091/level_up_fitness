@@ -25,15 +25,24 @@ export class CoachRepository {
       .sort({ createdAt: -1 })
       .exec();
 
-    // Extract users from populated relationships
+    // Extract users from populated relationships and attach coachClient data
     let users = coachClients
-      .map((cc: any) => cc.athleteId)
+      .map((cc: any) => {
+        if (!cc.athleteId) return null;
+        const user = cc.athleteId.toObject ? cc.athleteId.toObject() : cc.athleteId;
+        // Attach coachClient data to user object
+        user.coachClient = {
+          status: cc.status,
+          hiredAt: cc.hiredAt,
+        };
+        return user;
+      })
       .filter((user: any) => user !== null && user !== undefined);
 
     // Apply search filter if provided
     if (search) {
       const regex = new RegExp(search, "i");
-      users = users.filter((user: any) => 
+      users = users.filter((user: any) =>
         regex.test(user.name) || regex.test(user.email)
       );
     }

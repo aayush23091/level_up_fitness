@@ -148,9 +148,11 @@ export default function CoachAthletesTable() {
               <tr className="bg-zinc-900/50 border-b border-zinc-800 text-[10px] font-black uppercase tracking-wider text-zinc-400">
                 <th className="px-6 py-4">Avatar</th>
                 <th className="px-6 py-4">Name</th>
-                <th className="px-6 py-4">Email</th>
+                <th className="px-6 py-4">Username</th>
+                <th className="px-6 py-4">Level</th>
+                <th className="px-6 py-4">XP</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Joined Date</th>
+                <th className="px-6 py-4">Hired Date</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
@@ -169,7 +171,13 @@ export default function CoachAthletesTable() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-36"></div>
+                      <div className="h-4 bg-zinc-800/60 rounded w-20"></div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="h-4 bg-zinc-800/60 rounded w-12"></div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="h-4 bg-zinc-800/60 rounded w-12"></div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="h-6 bg-zinc-800/60 rounded-full w-16"></div>
@@ -185,7 +193,7 @@ export default function CoachAthletesTable() {
               ) : athletes.length === 0 ? (
                 // Empty State Rows
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center">
+                  <td colSpan={8} className="px-6 py-12 text-center">
                     <div className="space-y-3">
                       <span className="text-3xl">👥</span>
                       <h4 className="text-sm font-bold text-white uppercase tracking-wider">No athletes found</h4>
@@ -223,22 +231,25 @@ export default function CoachAthletesTable() {
                           <p className="font-bold text-white group-hover:text-yellow-400 transition-colors">
                             {athlete.name}
                           </p>
-                          <p className="text-[10px] text-zinc-500">
-                            @{athlete.username || "username"}
-                          </p>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-zinc-300 font-medium">
-                        {athlete.email}
+                      <td className="px-6 py-4 text-zinc-300 font-medium text-xs">
+                        @{athlete.username || "username"}
+                      </td>
+                      <td className="px-6 py-4 text-zinc-300 font-medium text-xs">
+                        {athlete.level || 0}
+                      </td>
+                      <td className="px-6 py-4 text-zinc-300 font-medium text-xs">
+                        {athlete.xp || 0}
                       </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                           <span className="w-1 h-1 rounded-full bg-emerald-400"></span>
-                          Active
+                          {(athlete as any).status || "active"}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-zinc-400 text-xs">
-                        {formatDate((athlete as any).createdAt)}
+                        {formatDate((athlete as any).hiredAt)}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
@@ -336,46 +347,19 @@ export default function CoachAthletesTable() {
               <div className="grid grid-cols-2 gap-4 text-xs">
                 <div>
                   <span className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">
-                    Email Address
+                    Level
                   </span>
                   <p className="text-sm text-zinc-100 bg-[#121216] border border-zinc-900 rounded-xl px-4 py-2.5">
-                    {viewingAthlete.email}
+                    {viewingAthlete.level || 0}
                   </p>
                 </div>
 
                 <div>
                   <span className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">
-                    Phone Number
+                    XP
                   </span>
                   <p className="text-sm text-zinc-100 bg-[#121216] border border-zinc-900 rounded-xl px-4 py-2.5">
-                    {viewingAthlete.phoneNumber || "N/A"}
-                  </p>
-                </div>
-
-                <div>
-                  <span className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">
-                    Gender
-                  </span>
-                  <p className="text-sm text-zinc-100 bg-[#121216] border border-zinc-900 rounded-xl px-4 py-2.5">
-                    {viewingAthlete.gender || "N/A"}
-                  </p>
-                </div>
-
-                <div>
-                  <span className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">
-                    Role
-                  </span>
-                  <p className="text-sm text-zinc-100 bg-[#121216] border border-zinc-900 rounded-xl px-4 py-2.5 capitalize">
-                    {viewingAthlete.role}
-                  </p>
-                </div>
-
-                <div>
-                  <span className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">
-                    Joined Date
-                  </span>
-                  <p className="text-sm text-zinc-100 bg-[#121216] border border-zinc-900 rounded-xl px-4 py-2.5">
-                    {formatDate((viewingAthlete as any).createdAt)}
+                    {viewingAthlete.xp || 0}
                   </p>
                 </div>
 
@@ -385,8 +369,17 @@ export default function CoachAthletesTable() {
                   </span>
                   <div className="text-sm text-zinc-100 bg-[#121216] border border-zinc-900 rounded-xl px-4 py-2 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    <span>Active</span>
+                    <span>{(viewingAthlete as any).status || "active"}</span>
                   </div>
+                </div>
+
+                <div>
+                  <span className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">
+                    Hired Date
+                  </span>
+                  <p className="text-sm text-zinc-100 bg-[#121216] border border-zinc-900 rounded-xl px-4 py-2.5">
+                    {formatDate((viewingAthlete as any).hiredAt)}
+                  </p>
                 </div>
               </div>
             </div>

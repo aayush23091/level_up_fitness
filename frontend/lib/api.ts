@@ -53,6 +53,11 @@ export interface User {
   role: string;
   profilePhoto?: string;
   coins?: number;
+  level?: number;
+  xp?: number;
+  status?: string;
+  hiredAt?: string;
+  createdAt?: string;
 }
 
 interface WhoAmIResponse {

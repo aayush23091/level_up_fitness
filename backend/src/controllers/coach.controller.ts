@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { CoachService } from "../services/coach.service";
 import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
+import { CoachProfileModel } from "../models/coachProfile.model";
 
 const coachService = new CoachService();
 
@@ -9,25 +10,58 @@ export class CoachController {
   // GET /api/v1/coach/athletes
   getAthletes = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const coachId = (req.user as any)._id.toString();
-      if (!coachId) {
-        throw new HttpException(401, "Unauthorized: Coach ID not found");
+      const userId = (req.user as any)._id.toString();
+      if (!userId) {
+        throw new HttpException(401, "Unauthorized: User ID not found");
       }
 
-      const { users } = await coachService.getAthletes(coachId, 1, 1000);
+      // Find CoachProfile using logged-in coach userId
+      const coachProfile = await CoachProfileModel.findOne({ userId });
+      if (!coachProfile) {
+        throw new HttpException(404, "Coach profile not found");
+      }
 
-      const sanitizedUsers = users.map((user) => {
+      const coachId = coachProfile._id.toString();
+
+      // Get pagination and search parameters
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const search = req.query.search as string;
+
+      const { users, total } = await coachService.getAthletes(coachId, page, limit, search);
+
+      const sanitizedUsers = users.map((user: any) => {
         const u = user.toObject ? user.toObject() : user;
+        const coachClient = user.coachClient || {};
         return {
+          _id: u._id.toString(),
           id: u._id.toString(),
           name: u.name,
+          username: u.username,
           email: u.email,
+          profilePhoto: u.profilePhoto,
           level: u.level || 0,
-          coins: u.coins || 0,
+          xp: u.xp || 0,
+          status: coachClient.status || "active",
+          hiredAt: coachClient.hiredAt,
+          createdAt: u.createdAt,
         };
       });
 
-      return ApiResponseHelper.success(res, sanitizedUsers, "Athletes fetched successfully", 200);
+      const totalPages = Math.ceil(total / limit);
+
+      return ApiResponseHelper.success(
+        res,
+        sanitizedUsers,
+        "Athletes fetched successfully",
+        200,
+        {
+          page,
+          limit,
+          total,
+          totalPages,
+        }
+      );
     } catch (err: any) {
       return next(err);
     }
