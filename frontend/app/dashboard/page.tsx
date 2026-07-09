@@ -1,16 +1,20 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import { useAuth } from "../context/AuthContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { withProtectedRoute } from "@/lib/protectedRoute";
 import WorkoutLibrary from "@/components/workouts/WorkoutLibrary";
+import { workoutPlanAPI } from "@/lib/api";
 
 function DashboardPageContent() {
   const { user } = useAuth();
   const router = useRouter();
+  const [assignedWorkoutPlans, setAssignedWorkoutPlans] = useState<any[]>([]);
+  const [loadingPlans, setLoadingPlans] = useState(true);
+  const [plansError, setPlansError] = useState<string | null>(null);
 
   const getAvatarUrl = () => {
     if (user?.profilePhoto) {
@@ -40,6 +44,27 @@ function DashboardPageContent() {
     { day: "Sat", active: false, value: 0 },
     { day: "Sun", active: false, value: 0 },
   ];
+
+  useEffect(() => {
+    const fetchAssignedWorkoutPlans = async () => {
+      setLoadingPlans(true);
+      setPlansError(null);
+      try {
+        const response = await workoutPlanAPI.getUserWorkoutPlans();
+        if (response.success) {
+          setAssignedWorkoutPlans(response.data);
+        } else {
+          setPlansError(response.message || "Failed to fetch workout plans");
+        }
+      } catch (err: any) {
+        setPlansError(err.message || "An error occurred while loading workout plans");
+      } finally {
+        setLoadingPlans(false);
+      }
+    };
+
+    fetchAssignedWorkoutPlans();
+  }, []);
 
   return (
     <DashboardLayout>
@@ -238,6 +263,82 @@ function DashboardPageContent() {
             </Link>
           </div>
         </div>
+
+        {/* My Workout Plans Section */}
+        <section className="space-y-4">
+          <h2 className="text-lg font-bold text-white">My Workout Plans</h2>
+          
+          {plansError && (
+            <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <span>⚠️</span>
+                <p>{plansError}</p>
+              </div>
+            </div>
+          )}
+
+          {loadingPlans ? (
+            <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-8 text-center space-y-4">
+              <span className="w-8 h-8 border-3 border-yellow-500 border-t-transparent rounded-full animate-spin inline-block"></span>
+              <p className="text-gray-500 font-mono text-xs tracking-wider uppercase">Loading workout plans...</p>
+            </div>
+          ) : assignedWorkoutPlans.length === 0 ? (
+            <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-12 text-center">
+              <div className="space-y-3">
+                <span className="text-4xl block">📋</span>
+                <h4 className="text-sm font-bold text-white uppercase tracking-wider">No workout plans assigned</h4>
+                <p className="text-xs text-gray-500 max-w-xs mx-auto">
+                  Your coach hasn't assigned any workout plans yet. Check back later!
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {assignedWorkoutPlans.map((plan) => (
+                <div key={plan._id} className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl overflow-hidden hover:border-yellow-500/20 transition-all">
+                  <div className="p-6 space-y-4">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="text-sm font-bold text-white mb-1">{plan.title}</h3>
+                        <p className="text-xs text-gray-500">by {plan.coach}</p>
+                      </div>
+                      <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${
+                        plan.difficulty === "Beginner" 
+                          ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                          : plan.difficulty === "Intermediate"
+                          ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+                          : "bg-red-500/10 text-red-400 border border-red-500/20"
+                      }`}>
+                        {plan.difficulty}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-4 text-xs text-gray-400">
+                      <span className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {plan.estimatedDuration} min
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        {plan.exercises?.length || 0} exercises
+                      </span>
+                    </div>
+
+                    <div className="pt-4 border-t border-[#1e1e24]">
+                      <button className="w-full py-2.5 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-colors">
+                        Start Workout
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
 
         <section className="space-y-4">
           <h2 className="text-lg font-bold text-white">Workout Library</h2>

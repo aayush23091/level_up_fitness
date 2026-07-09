@@ -808,6 +808,49 @@ export const workoutPlanAPI = {
       );
     }
   },
+
+  assignWorkoutPlan: async (planId: string, athleteId: string): Promise<SingleWorkoutPlanResponse> => {
+    try {
+      const response = await apiClient.post<SingleWorkoutPlanResponse>(
+        `/api/v1/coach/workout-plans/${planId}/assign`,
+        { athleteId }
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to assign workout plan"
+      );
+    }
+  },
+
+  getCoachAssignedPlans: async (): Promise<any> => {
+    try {
+      const response = await apiClient.get<any>(
+        "/api/v1/coach/assigned-plans"
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch assigned plans"
+      );
+    }
+  },
+
+  getUserWorkoutPlans: async (): Promise<any> => {
+    try {
+      const response = await apiClient.get<any>(
+        "/api/v1/user/workout-plans"
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch workout plans"
+      );
+    }
+  },
 };
 
 export default apiClient;

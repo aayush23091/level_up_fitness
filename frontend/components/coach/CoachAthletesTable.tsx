@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { coachAPI, User } from "@/lib/api";
+import { coachAPI, workoutPlanAPI, User, WorkoutPlan } from "@/lib/api";
 
 export default function CoachAthletesTable() {
   const [athletes, setAthletes] = useState<User[]>([]);
@@ -18,6 +18,14 @@ export default function CoachAthletesTable() {
 
   // View Profile Modal State
   const [viewingAthlete, setViewingAthlete] = useState<User | null>(null);
+
+  // Assign Workout Plan Modal State
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [selectedAthlete, setSelectedAthlete] = useState<User | null>(null);
+  const [publishedWorkoutPlans, setPublishedWorkoutPlans] = useState<WorkoutPlan[]>([]);
+  const [selectedWorkoutPlan, setSelectedWorkoutPlan] = useState<string>("");
+  const [isAssigning, setIsAssigning] = useState(false);
+  const [assignError, setAssignError] = useState<string | null>(null);
 
   // Debounce search term (same 400ms as Admin)
   useEffect(() => {
@@ -75,6 +83,45 @@ export default function CoachAthletesTable() {
       });
     } catch (e) {
       return "N/A";
+    }
+  };
+
+  const fetchPublishedWorkoutPlans = async () => {
+    try {
+      const response = await workoutPlanAPI.getWorkoutPlans(1, 100, "Published");
+      if (response.success) {
+        setPublishedWorkoutPlans(response.data);
+      }
+    } catch (err: any) {
+      console.error("Failed to fetch workout plans:", err);
+    }
+  };
+
+  const openAssignModal = (athlete: User) => {
+    setSelectedAthlete(athlete);
+    setSelectedWorkoutPlan("");
+    setAssignError(null);
+    setIsAssignModalOpen(true);
+    fetchPublishedWorkoutPlans();
+  };
+
+  const handleAssignWorkoutPlan = async () => {
+    if (!selectedAthlete || !selectedWorkoutPlan) {
+      setAssignError("Please select a workout plan");
+      return;
+    }
+
+    setIsAssigning(true);
+    setAssignError(null);
+    try {
+      await workoutPlanAPI.assignWorkoutPlan(selectedWorkoutPlan, selectedAthlete._id || selectedAthlete.id || "");
+      setIsAssignModalOpen(false);
+      setSelectedAthlete(null);
+      setSelectedWorkoutPlan("");
+    } catch (err: any) {
+      setAssignError(err.message || "Failed to assign workout plan");
+    } finally {
+      setIsAssigning(false);
     }
   };
 
@@ -254,6 +301,15 @@ export default function CoachAthletesTable() {
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
+                            onClick={() => openAssignModal(athlete)}
+                            className="p-1.5 text-zinc-500 hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-all cursor-pointer"
+                            title="Assign Workout Plan"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                          </button>
+                          <button
                             onClick={() => setViewingAthlete(athlete)}
                             className="p-1.5 text-zinc-500 hover:text-yellow-400 hover:bg-[#121216]/80 rounded-lg transition-all cursor-pointer"
                             title="View Athlete Profile"
@@ -392,6 +448,97 @@ export default function CoachAthletesTable() {
                 className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assign Workout Plan Modal */}
+      {isAssignModalOpen && selectedAthlete && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0e0e12] border border-zinc-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/40">
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                Assign Workout Plan
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsAssignModalOpen(false)}
+                className="p-1 rounded text-zinc-500 hover:text-white hover:bg-zinc-800 transition-all focus:outline-none cursor-pointer"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-3 pb-4 border-b border-zinc-900">
+                {selectedAthlete.profilePhoto ? (
+                  <img
+                    src={
+                      selectedAthlete.profilePhoto.startsWith("http")
+                        ? selectedAthlete.profilePhoto
+                        : `http://localhost:5000${selectedAthlete.profilePhoto}`
+                    }
+                    alt={selectedAthlete.name}
+                    className="w-12 h-12 rounded-full object-cover border border-zinc-800"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700/30 flex items-center justify-center text-sm font-bold font-mono">
+                    {getInitials(selectedAthlete.name)}
+                  </div>
+                )}
+                <div>
+                  <p className="text-sm font-bold text-white">{selectedAthlete.name}</p>
+                  <p className="text-xs text-zinc-500">@{selectedAthlete.username}</p>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">
+                  Select Workout Plan
+                </label>
+                <select
+                  value={selectedWorkoutPlan}
+                  onChange={(e) => setSelectedWorkoutPlan(e.target.value)}
+                  className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-xs text-white rounded-xl px-4 py-3 focus:outline-none transition-all cursor-pointer"
+                >
+                  <option value="">Choose a workout plan...</option>
+                  {publishedWorkoutPlans.map((plan) => (
+                    <option key={plan._id || plan.id} value={plan._id || plan.id || ""}>
+                      {plan.title} ({plan.difficulty}) - {plan.estimatedDuration} min
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {assignError && (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-lg">
+                  {assignError}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions */}
+            <div className="px-6 py-4 border-t border-zinc-800 flex justify-end gap-3 bg-zinc-900/20">
+              <button
+                type="button"
+                onClick={() => setIsAssignModalOpen(false)}
+                className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleAssignWorkoutPlan}
+                disabled={isAssigning || !selectedWorkoutPlan}
+                className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isAssigning ? "Assigning..." : "Assign Plan"}
               </button>
             </div>
           </div>

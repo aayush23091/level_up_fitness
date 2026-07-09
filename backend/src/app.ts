@@ -29,6 +29,7 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/auth", authRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/admin/users", adminRoutes);
 app.use("/api/v1/coach", coachRoutes);
 app.use("/api/v1/workouts", workoutRoutes);
