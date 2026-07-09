@@ -15,6 +15,11 @@ coachRouter.use(authorizedMiddleware, coachMiddleware);
 coachRouter.get("/athletes", coachController.getAthletes);
 coachRouter.get("/dashboard/stats", coachController.getDashboardStats);
 
+// Analytics routes
+coachRouter.get("/analytics/overview", coachController.getAnalyticsOverview);
+coachRouter.get("/analytics/athletes", coachController.getAnalyticsAthletes);
+coachRouter.get("/analytics/plans", coachController.getAnalyticsPlans);
+
 // Workout Plan routes
 coachRouter.get("/workout-plans", workoutPlanController.getWorkoutPlans);
 coachRouter.get("/workout-plans/:id", workoutPlanController.getWorkoutPlanById);

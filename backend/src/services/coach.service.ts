@@ -25,4 +25,16 @@ export class CoachService {
   async getDashboardStats(coachId: string) {
     return coachRepository.getDashboardStats(coachId);
   }
+
+  async getAnalyticsOverview(coachId: string) {
+    return coachRepository.getAnalyticsOverview(coachId);
+  }
+
+  async getAnalyticsAthletes(coachId: string) {
+    return coachRepository.getAnalyticsAthletes(coachId);
+  }
+
+  async getAnalyticsPlans(coachId: string) {
+    return coachRepository.getAnalyticsPlans(coachId);
+  }
 }

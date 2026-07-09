@@ -114,4 +114,82 @@ export class CoachController {
       return next(err);
     }
   };
+
+  // GET /api/v1/coach/analytics/overview
+  getAnalyticsOverview = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = (req.user as any)._id.toString();
+      if (!userId) {
+        throw new HttpException(401, "Unauthorized: User ID not found");
+      }
+
+      const coach = await UserModel.findById(userId);
+      if (!coach || coach.role !== "coach") {
+        throw new HttpException(403, "Access denied: Only coaches can view analytics");
+      }
+
+      const overview = await coachService.getAnalyticsOverview(coach._id.toString());
+
+      return ApiResponseHelper.success(
+        res,
+        overview,
+        "Analytics overview fetched successfully",
+        200
+      );
+    } catch (err: any) {
+      return next(err);
+    }
+  };
+
+  // GET /api/v1/coach/analytics/athletes
+  getAnalyticsAthletes = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = (req.user as any)._id.toString();
+      if (!userId) {
+        throw new HttpException(401, "Unauthorized: User ID not found");
+      }
+
+      const coach = await UserModel.findById(userId);
+      if (!coach || coach.role !== "coach") {
+        throw new HttpException(403, "Access denied: Only coaches can view analytics");
+      }
+
+      const athletes = await coachService.getAnalyticsAthletes(coach._id.toString());
+
+      return ApiResponseHelper.success(
+        res,
+        athletes,
+        "Analytics athletes fetched successfully",
+        200
+      );
+    } catch (err: any) {
+      return next(err);
+    }
+  };
+
+  // GET /api/v1/coach/analytics/plans
+  getAnalyticsPlans = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = (req.user as any)._id.toString();
+      if (!userId) {
+        throw new HttpException(401, "Unauthorized: User ID not found");
+      }
+
+      const coach = await UserModel.findById(userId);
+      if (!coach || coach.role !== "coach") {
+        throw new HttpException(403, "Access denied: Only coaches can view analytics");
+      }
+
+      const plans = await coachService.getAnalyticsPlans(coach._id.toString());
+
+      return ApiResponseHelper.success(
+        res,
+        plans,
+        "Analytics plans fetched successfully",
+        200
+      );
+    } catch (err: any) {
+      return next(err);
+    }
+  };
 }

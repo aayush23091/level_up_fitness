@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import DashboardLayout from "../components/DashboardLayout";
 import { useAuth } from "../context/AuthContext";
 import { authAPI } from "@/lib/api";
@@ -129,6 +130,8 @@ export default function ProfilePage() {
   };
 
   const avatarUrl = getProfileImageUrl(user?.profilePhoto);
+  const router = useRouter();
+  const isCoach = user?.role === "coach";
 
 
   const getInitials = () => {
@@ -165,13 +168,17 @@ export default function ProfilePage() {
             <h1 className="text-2xl lg:text-3xl font-black text-white uppercase tracking-wider">
               MY <span className="text-yellow-500">PROFILE</span>
             </h1>
-            <p className="text-gray-500 text-xs mt-1">Manage your account information, tracking, and fitness statistics.</p>
+            <p className="text-gray-500 text-xs mt-1">
+              {isCoach
+                ? "Manage your coach profile and professional details."
+                : "Manage your account information, tracking, and fitness statistics."}
+            </p>
           </div>
         </section>
 
         {/* Profile Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          
+        <div className={`grid grid-cols-1 ${isCoach ? "lg:grid-cols-2" : "lg:grid-cols-3"} gap-8 items-start`}>
+
           {/* Left Column: User details card */}
           <div className="space-y-6">
             <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-6 flex flex-col items-center text-center shadow-lg relative">
@@ -222,9 +229,18 @@ export default function ProfilePage() {
               >
                 Edit Profile
               </button>
+
+              {isCoach && (
+                <button
+                  onClick={() => router.push(`/coaches/${user?.id || user?._id}`)}
+                  className="w-full mt-3 py-2.5 bg-[#1e1e24] hover:bg-[#2e2e38] text-yellow-500 border border-yellow-500/20 text-xs font-bold rounded-lg uppercase tracking-wider transition-colors"
+                >
+                  View Marketplace Profile
+                </button>
+              )}
             </div>
 
-            {/* XP and Level Card */}
+            {!isCoach && (
             <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-6 space-y-4">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3">
                 XP & LEVEL STATUS
@@ -251,6 +267,7 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
+            )}
 
             {/* Coach Marketplace Profile Card - Only for coaches */}
             {user?.role === "coach" && (
@@ -302,6 +319,20 @@ export default function ProfilePage() {
                     <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Hire Cost</p>
                     <p className="text-sm font-bold text-yellow-500 mt-0.5">{user.coachProfile?.hireCost || 0} Coins</p>
                   </div>
+                  {user.coachProfile?.category && (
+                    <div className="col-span-2">
+                      <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Category</p>
+                      <p className="text-sm font-bold text-white mt-0.5 capitalize">{user.coachProfile.category}</p>
+                    </div>
+                  )}
+                  {user.coachProfile?.rating !== undefined && user.coachProfile?.rating !== null && (
+                    <div className="col-span-2">
+                      <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Rating</p>
+                      <p className="text-sm font-bold text-yellow-500 mt-0.5">
+                        {"★".repeat(Math.round(user.coachProfile.rating))} {user.coachProfile.rating}/5
+                      </p>
+                    </div>
+                  )}
                   <div className="col-span-2">
                     <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Availability</p>
                     <p className={`text-sm font-bold mt-0.5 ${user.coachProfile?.availability ? 'text-green-500' : 'text-red-500'}`}>
@@ -309,11 +340,18 @@ export default function ProfilePage() {
                     </p>
                   </div>
                 </div>
+
+                <button
+                  onClick={() => router.push(`/coaches/${user?.id || user?._id}`)}
+                  className="w-full mt-4 py-2.5 bg-[#1e1e24] hover:bg-[#2e2e38] text-yellow-500 border border-yellow-500/20 text-xs font-bold rounded-lg uppercase tracking-wider transition-colors"
+                >
+                  View Marketplace Profile
+                </button>
               </div>
             )}
           </div>
 
-          {/* Right Column: Statistics & Achievements */}
+          {!isCoach && (
           <div className="lg:col-span-2 space-y-6">
             
             {/* Stat Cards */}
@@ -382,6 +420,7 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
+          )}
         </div>
 
         {/* EDIT PROFILE MODAL */}

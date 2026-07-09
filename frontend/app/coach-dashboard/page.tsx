@@ -4,6 +4,7 @@ import React, { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import CoachAthletesTable from "@/components/coach/CoachAthletesTable";
 import CoachWorkoutPlans from "@/components/coach/CoachWorkoutPlans";
+import CoachAnalytics from "@/components/coach/CoachAnalytics";
 import { coachAPI } from "@/lib/api";
 
 function CoachDashboardContent() {
@@ -40,24 +41,18 @@ function CoachDashboardContent() {
     return <CoachWorkoutPlans />;
   }
 
-  if (tab === "analytics" || tab === "settings") {
-    const getTabName = () => {
-      switch (tab) {
-        case "analytics":
-          return "Analytics";
-        case "settings":
-          return "Settings";
-        default:
-          return tab;
-      }
-    };
+  if (tab === "analytics") {
+    return <CoachAnalytics />;
+  }
+
+  if (tab === "settings") {
     return (
       <div className="space-y-6">
         <section className="border-b border-zinc-800 pb-5">
           <h1 className="text-2xl lg:text-3xl font-black text-white uppercase tracking-wider">
-            {getTabName()}
+            Settings
           </h1>
-          <p className="text-zinc-500 text-xs mt-1">Manage your coach {tab}.</p>
+          <p className="text-zinc-500 text-xs mt-1">Manage your coach settings.</p>
         </section>
         <div className="bg-[#0e0e12]/40 border border-zinc-800/80 rounded-2xl p-8 text-center space-y-3">
           <div className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-600">

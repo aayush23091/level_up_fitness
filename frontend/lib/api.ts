@@ -48,6 +48,8 @@ export interface CoachProfile {
   experience?: number;
   hireCost?: number;
   availability?: boolean;
+  category?: string;
+  rating?: number;
 }
 
 export interface User {
@@ -377,6 +379,63 @@ export interface DashboardStatsResponse {
   };
 }
 
+export interface RecentActivity {
+  type: "client_hire" | "plan_created" | "plan_assigned";
+  title: string;
+  description: string;
+  date: string;
+}
+
+export interface AnalyticsOverviewResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: {
+    totalAthletes: number;
+    activeAthletes: number;
+    totalWorkoutPlans: number;
+    publishedPlans: number;
+    draftPlans: number;
+    assignedPlans: number;
+    totalRevenue: number;
+    averageAthleteLevel: number;
+    recentActivities: RecentActivity[];
+  };
+}
+
+export interface AnalyticsAthlete {
+  name: string;
+  username: string;
+  level: number;
+  xp: number;
+  coins: number;
+  assignedPlans: number;
+  joinedDate: string;
+}
+
+export interface AnalyticsAthletesResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: AnalyticsAthlete[];
+}
+
+export interface AnalyticsPlan {
+  title: string;
+  difficulty: string;
+  status: string;
+  exerciseCount: number;
+  assignedCount: number;
+  createdAt: string;
+}
+
+export interface AnalyticsPlansResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: AnalyticsPlan[];
+}
+
 export const coachAPI = {
   getDashboardStats: async (): Promise<DashboardStatsResponse> => {
     try {
@@ -388,6 +447,48 @@ export const coachAPI = {
       const axiosError = error as AxiosError<any>;
       throw new Error(
         axiosError.response?.data?.message || "Failed to fetch dashboard stats"
+      );
+    }
+  },
+
+  getAnalyticsOverview: async (): Promise<AnalyticsOverviewResponse> => {
+    try {
+      const response = await apiClient.get<AnalyticsOverviewResponse>(
+        "/api/v1/coach/analytics/overview"
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch analytics overview"
+      );
+    }
+  },
+
+  getAnalyticsAthletes: async (): Promise<AnalyticsAthletesResponse> => {
+    try {
+      const response = await apiClient.get<AnalyticsAthletesResponse>(
+        "/api/v1/coach/analytics/athletes"
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch analytics athletes"
+      );
+    }
+  },
+
+  getAnalyticsPlans: async (): Promise<AnalyticsPlansResponse> => {
+    try {
+      const response = await apiClient.get<AnalyticsPlansResponse>(
+        "/api/v1/coach/analytics/plans"
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch analytics plans"
       );
     }
   },
