@@ -85,11 +85,10 @@ export class UserController {
                 throw new HttpException(401, "Unauthorized");
             }
 
-            // multer stores file at req.file and middleware ensures file exists/validity for this route.
-            const file = (req as any).file as Express.Multer.File | undefined;
-            const profilePhoto = file?.path
-                ? toUploadsUrl(file.path)
-                : undefined;
+            // multer stores file on req.file (field name: "photo")
+            const file = (req as any).file as { path?: string } | undefined;
+            const profilePhoto = file?.path ? toUploadsUrl(file.path) : undefined;
+
 
             const { name, username, phoneNumber, gender, password, bio, specialization, experience, hireCost, availability } = req.body ?? {};
 
@@ -134,11 +133,12 @@ export class UserController {
 
             const parsed = ChangePasswordDTO.safeParse(req.body ?? {});
             if (!parsed.success) {
-                const message = parsed.error.errors[0]?.message || "Invalid payload";
+                const message = parsed.error.issues[0]?.message || "Invalid payload";
                 throw new HttpException(400, message);
             }
 
             const { currentPassword, newPassword } = parsed.data;
+
 
             await userService.changePassword(
                 user._id.toString(),

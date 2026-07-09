@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "../components/DashboardLayout";
+import CoachLayout from "@/components/coach/CoachLayout";
 import { useAuth } from "../context/AuthContext";
 import { authAPI } from "@/lib/api";
 import { getProfileImageUrl } from "@/lib/getProfileImageUrl";
 
-
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCoachProfileModalOpen, setIsCoachProfileModalOpen] = useState(false);
 
@@ -54,7 +55,11 @@ export default function ProfilePage() {
       setSpecialization(user.coachProfile?.specialization?.join(", ") || "");
       setExperience(user.coachProfile?.experience?.toString() || "");
       setHireCost(user.coachProfile?.hireCost?.toString() || "");
-      setAvailability(user.coachProfile?.availability !== undefined ? user.coachProfile.availability : true);
+      setAvailability(
+        user.coachProfile?.availability !== undefined
+          ? user.coachProfile.availability
+          : true
+      );
     }
   }, [user, isCoachProfileModalOpen]);
 
@@ -133,7 +138,6 @@ export default function ProfilePage() {
   const router = useRouter();
   const isCoach = user?.role === "coach";
 
-
   const getInitials = () => {
     if (!user?.name) return "U";
     return user.name
@@ -146,22 +150,64 @@ export default function ProfilePage() {
 
   // Mock statistics for profile
   const stats = [
-    { label: "Total Workouts", value: "48", icon: "🏋️‍♂️", color: "text-yellow-500 bg-yellow-500/10" },
-    { label: "Active Calories", value: "18,400 kcal", icon: "🔥", color: "text-red-500 bg-red-500/10" },
-    { label: "Time Exercising", value: "2,400 min", icon: "⏱️", color: "text-blue-500 bg-blue-500/10" },
+    {
+      label: "Total Workouts",
+      value: "48",
+      icon: "🏋️‍♂️",
+      color: "text-yellow-500 bg-yellow-500/10",
+    },
+    {
+      label: "Active Calories",
+      value: "18,400 kcal",
+      icon: "🔥",
+      color: "text-red-500 bg-red-500/10",
+    },
+    {
+      label: "Time Exercising",
+      value: "2,400 min",
+      icon: "⏱️",
+      color: "text-blue-500 bg-blue-500/10",
+    },
   ];
 
   // Achievements
   const achievements = [
-    { title: "Onboarding Master", description: "Completed setup and first training", icon: "🚀", unlocked: true },
-    { title: "Streak Champion", description: "Maintained a 5-day active workout streak", icon: "🔥", unlocked: true },
-    { title: "Heavy Lifter", description: "Lifted a total of 1000kg in workouts", icon: "💪", unlocked: true },
-    { title: "Early Bird", description: "Completed a workout before 6:00 AM", icon: "🌅", unlocked: false },
-    { title: "Consistency King", description: "Exercised 4 weeks in a row", icon: "👑", unlocked: false },
+    {
+      title: "Onboarding Master",
+      description: "Completed setup and first training",
+      icon: "🚀",
+      unlocked: true,
+    },
+    {
+      title: "Streak Champion",
+      description: "Maintained a 5-day active workout streak",
+      icon: "🔥",
+      unlocked: true,
+    },
+    {
+      title: "Heavy Lifter",
+      description: "Lifted a total of 1000kg in workouts",
+      icon: "💪",
+      unlocked: true,
+    },
+    {
+      title: "Early Bird",
+      description: "Completed a workout before 6:00 AM",
+      icon: "🌅",
+      unlocked: false,
+    },
+    {
+      title: "Consistency King",
+      description: "Exercised 4 weeks in a row",
+      icon: "👑",
+      unlocked: false,
+    },
   ];
 
+  const PageShell = isCoach ? CoachLayout : DashboardLayout;
+
   return (
-    <DashboardLayout>
+    <PageShell>
       <div className="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
         <section className="flex items-center justify-between border-b border-[#1e1e24] pb-5">
           <div>
@@ -176,259 +222,311 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        {/* Profile Content Grid */}
-        <div className={`grid grid-cols-1 ${isCoach ? "lg:grid-cols-2" : "lg:grid-cols-3"} gap-8 items-start`}>
+        {/*
+          Coach layout fix:
+          - Desktop/tablet: 2 columns
+          - Mobile: 1 column
+        */}
+        {isCoach ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            {/* Edit Profile card */}
+            <div className="space-y-6">
+              <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-6 flex flex-col items-center text-center shadow-lg relative">
+                {/* Avatar image container */}
+                <div className="relative group mb-4">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={user?.name || "Profile Photo"}
+                      className="w-28 h-28 lg:w-32 lg:h-32 rounded-full object-cover border-2 border-yellow-500/20"
+                    />
+                  ) : (
+                    <div className="w-28 h-28 lg:w-32 lg:h-32 rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-600/40 text-yellow-500 border border-yellow-500/20 flex items-center justify-center text-3xl font-black font-mono">
+                      {getInitials()}
+                    </div>
+                  )}
+                  <span className="absolute bottom-1.5 right-1.5 w-4 h-4 bg-green-500 rounded-full border-2 border-[#0e0e12]"></span>
+                </div>
 
-          {/* Left Column: User details card */}
-          <div className="space-y-6">
-            <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-6 flex flex-col items-center text-center shadow-lg relative">
-              
-              {/* Avatar image container */}
-              <div className="relative group mb-4">
-                {avatarUrl ? (
-                  <img
-                    src={avatarUrl}
+                <h2 className="text-xl font-bold text-white tracking-wide">{user?.name}</h2>
+                <p className="text-xs text-yellow-500 font-mono mt-0.5">@{user?.username}</p>
+                <span className="mt-3 px-3 py-1 bg-yellow-500/10 text-yellow-500 text-[10px] uppercase font-bold tracking-widest rounded-full">
+                  {user?.role || "MEMBER"}
+                </span>
 
-                    alt={user?.name || "Profile Photo"}
-                    className="w-28 h-28 lg:w-32 lg:h-32 rounded-full object-cover border-2 border-yellow-500/20"
-                  />
-                ) : (
-                  <div className="w-28 h-28 lg:w-32 lg:h-32 rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-600/40 text-yellow-500 border border-yellow-500/20 flex items-center justify-center text-3xl font-black font-mono">
-                    {getInitials()}
+                {/* Info fields */}
+                <div className="w-full mt-6 space-y-3.5 border-t border-[#1e1e24] pt-6 text-left">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-gray-500">Email Address</span>
+                    <span className="text-white font-medium truncate max-w-[180px]">{user?.email}</span>
                   </div>
-                )}
-                <span className="absolute bottom-1.5 right-1.5 w-4 h-4 bg-green-500 rounded-full border-2 border-[#0e0e12]"></span>
-              </div>
-
-              <h2 className="text-xl font-bold text-white tracking-wide">{user?.name}</h2>
-              <p className="text-xs text-yellow-500 font-mono mt-0.5">@{user?.username}</p>
-              <span className="mt-3 px-3 py-1 bg-yellow-500/10 text-yellow-500 text-[10px] uppercase font-bold tracking-widest rounded-full">
-                {user?.role || "MEMBER"}
-              </span>
-
-              {/* Info fields */}
-              <div className="w-full mt-6 space-y-3.5 border-t border-[#1e1e24] pt-6 text-left">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-500">Email Address</span>
-                  <span className="text-white font-medium truncate max-w-[180px]">{user?.email}</span>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-gray-500">Phone Number</span>
+                    <span className="text-white font-medium">{user?.phoneNumber || "N/A"}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-gray-500">Gender</span>
+                    <span className="text-white font-medium capitalize">{user?.gender || "N/A"}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-500">Phone Number</span>
-                  <span className="text-white font-medium">{user?.phoneNumber || "N/A"}</span>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-500">Gender</span>
-                  <span className="text-white font-medium capitalize">{user?.gender || "N/A"}</span>
-                </div>
-              </div>
 
-              {/* Edit button */}
-              <button
-                onClick={() => setIsEditModalOpen(true)}
-                className="w-full mt-6 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-colors shadow-lg shadow-yellow-500/5"
-              >
-                Edit Profile
-              </button>
-
-              {isCoach && (
                 <button
-                  onClick={() => router.push(`/coaches/${user?.id || user?._id}`)}
-                  className="w-full mt-3 py-2.5 bg-[#1e1e24] hover:bg-[#2e2e38] text-yellow-500 border border-yellow-500/20 text-xs font-bold rounded-lg uppercase tracking-wider transition-colors"
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="w-full mt-6 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-colors shadow-lg shadow-yellow-500/5"
                 >
-                  View Marketplace Profile
+                  Edit Profile
                 </button>
-              )}
+
+                {isCoach && (
+                  <button
+                    onClick={() => router.push(`/coaches/${user?.id || user?._id}`)}
+                    className="w-full mt-3 py-2.5 bg-[#1e1e24] hover:bg-[#2e2e38] text-yellow-500 border border-yellow-500/20 text-xs font-bold rounded-lg uppercase tracking-wider transition-colors"
+                  >
+                    View Marketplace Profile
+                  </button>
+                )}
+              </div>
             </div>
 
-            {!isCoach && (
+            {/* Coach Marketplace card */}
             <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-6 space-y-4">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3">
-                XP & LEVEL STATUS
-              </h3>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between border-b border-[#1e1e24] pb-3">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                  COACH MARKETPLACE PROFILE
+                </h3>
+                <button
+                  onClick={() => setIsCoachProfileModalOpen(true)}
+                  className="text-xs text-yellow-500 hover:text-yellow-400 font-semibold uppercase tracking-wider transition-colors"
+                >
+                  Edit Coach Profile
+                </button>
+              </div>
+
+              {/* Bio */}
+              {user.coachProfile?.bio && (
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">Current Status</p>
-                  <p className="text-2xl font-black text-white mt-0.5">Level 12</p>
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Bio</p>
+                  <p className="text-sm text-gray-300 leading-relaxed">{user.coachProfile.bio}</p>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs text-gray-500 font-medium">Daily Streak</p>
-                  <p className="text-2xl font-black text-yellow-500 mt-0.5 flex items-center justify-end gap-1">
-                    ⚡ 5 Days
+              )}
+
+              {/* Specialization */}
+              {user.coachProfile?.specialization && user.coachProfile.specialization.length > 0 && (
+                <div>
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">Specialization</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {user.coachProfile.specialization.map((spec, idx) => (
+                      <span
+                        key={idx}
+                        className="text-[10px] text-yellow-500 font-semibold uppercase tracking-wider bg-yellow-500/10 px-2 py-0.5 rounded"
+                      >
+                        {spec}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Coach Stats */}
+              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-[#1e1e24]">
+                <div>
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Experience</p>
+                  <p className="text-sm font-bold text-white mt-0.5">{user.coachProfile?.experience || 0} Years</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Hire Cost</p>
+                  <p className="text-sm font-bold text-yellow-500 mt-0.5">{user.coachProfile?.hireCost || 0} Coins</p>
+                </div>
+                {user.coachProfile?.category && (
+                  <div className="col-span-2">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Category</p>
+                    <p className="text-sm font-bold text-white mt-0.5 capitalize">{user.coachProfile.category}</p>
+                  </div>
+                )}
+                {user.coachProfile?.rating !== undefined && user.coachProfile?.rating !== null && (
+                  <div className="col-span-2">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Rating</p>
+                    <p className="text-sm font-bold text-yellow-500 mt-0.5">
+                      {"★".repeat(Math.round(user.coachProfile.rating))} {user.coachProfile.rating}/5
+                    </p>
+                  </div>
+                )}
+                <div className="col-span-2">
+                  <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Availability</p>
+                  <p
+                    className={`text-sm font-bold mt-0.5 ${
+                      user.coachProfile?.availability ? "text-green-500" : "text-red-500"
+                    }`}
+                  >
+                    {user.coachProfile?.availability ? "Available for hire" : "Not available"}
                   </p>
                 </div>
               </div>
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs text-gray-400 font-medium">
-                  <span>Level Progress</span>
-                  <span>2,450 / 3,000 XP</span>
-                </div>
-                <div className="w-full bg-[#1c1c24] h-2 rounded-full overflow-hidden">
-                  <div className="bg-yellow-500 h-full rounded-full" style={{ width: "81%" }}></div>
-                </div>
-              </div>
+
+              <button
+                onClick={() => router.push(`/coaches/${user?.id || user?._id}`)}
+                className="w-full mt-4 py-2.5 bg-[#1e1e24] hover:bg-[#2e2e38] text-yellow-500 border border-yellow-500/20 text-xs font-bold rounded-lg uppercase tracking-wider transition-colors"
+              >
+                View Marketplace Profile
+              </button>
             </div>
-            )}
-
-            {/* Coach Marketplace Profile Card - Only for coaches */}
-            {user?.role === "coach" && (
-              <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-6 space-y-4">
-                <div className="flex items-center justify-between border-b border-[#1e1e24] pb-3">
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                    COACH MARKETPLACE PROFILE
-                  </h3>
-                  <button
-                    onClick={() => setIsCoachProfileModalOpen(true)}
-                    className="text-xs text-yellow-500 hover:text-yellow-400 font-semibold uppercase tracking-wider transition-colors"
-                  >
-                    Edit Coach Profile
-                  </button>
+          </div>
+        ) : (
+          <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 items-start`}>
+            {/* Left column: User details card */}
+            <div className="space-y-6">
+              <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-6 flex flex-col items-center text-center shadow-lg relative">
+                {/* Avatar image container */}
+                <div className="relative group mb-4">
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={user?.name || "Profile Photo"}
+                      className="w-28 h-28 lg:w-32 lg:h-32 rounded-full object-cover border-2 border-yellow-500/20"
+                    />
+                  ) : (
+                    <div className="w-28 h-28 lg:w-32 lg:h-32 rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-600/40 text-yellow-500 border border-yellow-500/20 flex items-center justify-center text-3xl font-black font-mono">
+                      {getInitials()}
+                    </div>
+                  )}
+                  <span className="absolute bottom-1.5 right-1.5 w-4 h-4 bg-green-500 rounded-full border-2 border-[#0e0e12]"></span>
                 </div>
 
-                {/* Bio */}
-                {user.coachProfile?.bio && (
-                  <div>
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Bio</p>
-                    <p className="text-sm text-gray-300 leading-relaxed">{user.coachProfile.bio}</p>
-                  </div>
-                )}
+                <h2 className="text-xl font-bold text-white tracking-wide">{user?.name}</h2>
+                <p className="text-xs text-yellow-500 font-mono mt-0.5">@{user?.username}</p>
+                <span className="mt-3 px-3 py-1 bg-yellow-500/10 text-yellow-500 text-[10px] uppercase font-bold tracking-widest rounded-full">
+                  {user?.role || "MEMBER"}
+                </span>
 
-                {/* Specialization */}
-                {user.coachProfile?.specialization && user.coachProfile.specialization.length > 0 && (
-                  <div>
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">Specialization</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {user.coachProfile.specialization.map((spec, idx) => (
-                        <span
-                          key={idx}
-                          className="text-[10px] text-yellow-500 font-semibold uppercase tracking-wider bg-yellow-500/10 px-2 py-0.5 rounded"
-                        >
-                          {spec}
-                        </span>
-                      ))}
-                    </div>
+                {/* Info fields */}
+                <div className="w-full mt-6 space-y-3.5 border-t border-[#1e1e24] pt-6 text-left">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-gray-500">Email Address</span>
+                    <span className="text-white font-medium truncate max-w-[180px]">{user?.email}</span>
                   </div>
-                )}
-
-                {/* Coach Stats */}
-                <div className="grid grid-cols-2 gap-3 pt-2 border-t border-[#1e1e24]">
-                  <div>
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Experience</p>
-                    <p className="text-sm font-bold text-white mt-0.5">{user.coachProfile?.experience || 0} Years</p>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-gray-500">Phone Number</span>
+                    <span className="text-white font-medium">{user?.phoneNumber || "N/A"}</span>
                   </div>
-                  <div>
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Hire Cost</p>
-                    <p className="text-sm font-bold text-yellow-500 mt-0.5">{user.coachProfile?.hireCost || 0} Coins</p>
-                  </div>
-                  {user.coachProfile?.category && (
-                    <div className="col-span-2">
-                      <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Category</p>
-                      <p className="text-sm font-bold text-white mt-0.5 capitalize">{user.coachProfile.category}</p>
-                    </div>
-                  )}
-                  {user.coachProfile?.rating !== undefined && user.coachProfile?.rating !== null && (
-                    <div className="col-span-2">
-                      <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Rating</p>
-                      <p className="text-sm font-bold text-yellow-500 mt-0.5">
-                        {"★".repeat(Math.round(user.coachProfile.rating))} {user.coachProfile.rating}/5
-                      </p>
-                    </div>
-                  )}
-                  <div className="col-span-2">
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Availability</p>
-                    <p className={`text-sm font-bold mt-0.5 ${user.coachProfile?.availability ? 'text-green-500' : 'text-red-500'}`}>
-                      {user.coachProfile?.availability ? 'Available for hire' : 'Not available'}
-                    </p>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-gray-500">Gender</span>
+                    <span className="text-white font-medium capitalize">{user?.gender || "N/A"}</span>
                   </div>
                 </div>
 
                 <button
-                  onClick={() => router.push(`/coaches/${user?.id || user?._id}`)}
-                  className="w-full mt-4 py-2.5 bg-[#1e1e24] hover:bg-[#2e2e38] text-yellow-500 border border-yellow-500/20 text-xs font-bold rounded-lg uppercase tracking-wider transition-colors"
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="w-full mt-6 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-colors shadow-lg shadow-yellow-500/5"
                 >
-                  View Marketplace Profile
+                  Edit Profile
                 </button>
               </div>
-            )}
-          </div>
 
-          {!isCoach && (
-          <div className="lg:col-span-2 space-y-6">
-            
-            {/* Stat Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {stats.map((stat, index) => (
-                <div key={index} className="bg-[#0e0e12] border border-[#1e1e24] p-5 rounded-2xl flex items-center gap-4 hover:border-yellow-500/10 transition-all">
-                  <span className={`w-12 h-12 flex items-center justify-center rounded-xl text-xl ${stat.color}`}>
-                    {stat.icon}
-                  </span>
-                  <div>
-                    <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">{stat.label}</p>
-                    <p className="text-lg font-black text-white mt-0.5">{stat.value}</p>
+              {!isCoach && (
+                <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-6 space-y-4">
+                  <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3">
+                    XP & LEVEL STATUS
+                  </h3>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-gray-500 font-medium">Current Status</p>
+                      <p className="text-2xl font-black text-white mt-0.5">Level 12</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500 font-medium">Daily Streak</p>
+                      <p className="text-2xl font-black text-yellow-500 mt-0.5 flex items-center justify-end gap-1">
+                        ⚡ 5 Days
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs text-gray-400 font-medium">
+                      <span>Level Progress</span>
+                      <span>2,450 / 3,000 XP</span>
+                    </div>
+                    <div className="w-full bg-[#1c1c24] h-2 rounded-full overflow-hidden">
+                      <div className="bg-yellow-500 h-full rounded-full" style={{ width: "81%" }}></div>
+                    </div>
                   </div>
                 </div>
-              ))}
+              )}
             </div>
 
-            {/* Weekly Activity Placeholder */}
-            <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl space-y-4">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3">
-                WEEKLY PERFORMANCE OVERVIEW
-              </h3>
-              <div className="h-44 flex items-end justify-between px-2 pt-4">
-                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, idx) => {
-                  const heights = [40, 75, 20, 95, 60, 10, 5];
-                  const height = heights[idx];
-                  return (
-                    <div key={idx} className="flex flex-col items-center gap-2 w-8">
-                      <div className="w-full bg-[#121216] h-32 rounded-md relative flex items-end overflow-hidden">
-                        <div
-                          className="w-full bg-gradient-to-t from-yellow-600 to-yellow-400 rounded-t-md"
-                          style={{ height: `${height}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-[10px] text-gray-500 font-medium">{day}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Achievements Section */}
-            <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl space-y-4">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3">
-                UNLOCKED ACHIEVEMENTS
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {achievements.map((ach, index) => (
+            <div className="lg:col-span-2 space-y-6">
+              {/* Stat Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {stats.map((stat, index) => (
                   <div
                     key={index}
-                    className={`flex items-start gap-3 p-4 bg-[#121216] border rounded-xl transition-all ${
-                      ach.unlocked
-                        ? "border-[#1e1e24] hover:border-yellow-500/10"
-                        : "border-[#1e1e24]/40 opacity-40"
-                    }`}
+                    className="bg-[#0e0e12] border border-[#1e1e24] p-5 rounded-2xl flex items-center gap-4 hover:border-yellow-500/10 transition-all"
                   >
-                    <span className="text-2xl p-2 bg-[#1c1c24] rounded-lg shrink-0">
-                      {ach.icon}
+                    <span className={`w-12 h-12 flex items-center justify-center rounded-xl text-xl ${stat.color}`}>
+                      {stat.icon}
                     </span>
                     <div>
-                      <p className="text-sm font-bold text-white">{ach.title}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">{ach.description}</p>
+                      <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">{stat.label}</p>
+                      <p className="text-lg font-black text-white mt-0.5">{stat.value}</p>
                     </div>
                   </div>
                 ))}
               </div>
+
+              {/* Weekly Activity Placeholder */}
+              <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl space-y-4">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3">
+                  WEEKLY PERFORMANCE OVERVIEW
+                </h3>
+                <div className="h-44 flex items-end justify-between px-2 pt-4">
+                  {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, idx) => {
+                    const heights = [40, 75, 20, 95, 60, 10, 5];
+                    const height = heights[idx];
+                    return (
+                      <div key={idx} className="flex flex-col items-center gap-2 w-8">
+                        <div className="w-full bg-[#121216] h-32 rounded-md relative flex items-end overflow-hidden">
+                          <div
+                            className="w-full bg-gradient-to-t from-yellow-600 to-yellow-400 rounded-t-md"
+                            style={{ height: `${height}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-[10px] text-gray-500 font-medium">{day}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Achievements Section */}
+              <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl space-y-4">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3">
+                  UNLOCKED ACHIEVEMENTS
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {achievements.map((ach, index) => (
+                    <div
+                      key={index}
+                      className={`flex items-start gap-3 p-4 bg-[#121216] border rounded-xl transition-all ${
+                        ach.unlocked
+                          ? "border-[#1e1e24] hover:border-yellow-500/10"
+                          : "border-[#1e1e24]/40 opacity-40"
+                      }`}
+                    >
+                      <span className="text-2xl p-2 bg-[#1c1c24] rounded-lg shrink-0">{ach.icon}</span>
+                      <div>
+                        <p className="text-sm font-bold text-white">{ach.title}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{ach.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-          )}
-        </div>
+        )}
 
         {/* EDIT PROFILE MODAL */}
         {isEditModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto">
             <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden transform transition-all duration-300">
-              
-              {/* Modal Header */}
               <div className="h-16 px-6 border-b border-[#1e1e24] flex items-center justify-between bg-[#121216]">
                 <h3 className="text-sm font-black text-white uppercase tracking-widest">
                   EDIT <span className="text-yellow-500">PROFILE DETAILS</span>
@@ -443,9 +541,7 @@ export default function ProfilePage() {
                 </button>
               </div>
 
-              {/* Modal Body / Form */}
               <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[calc(100vh-10rem)] overflow-y-auto">
-                {/* Image Upload Row */}
                 <div className="flex flex-col sm:flex-row items-center gap-4 border-b border-[#1e1e24] pb-4">
                   {photoPreview ? (
                     <img
@@ -454,12 +550,7 @@ export default function ProfilePage() {
                       className="w-16 h-16 rounded-full object-cover border border-yellow-500/40"
                     />
                   ) : avatarUrl ? (
-                    <img
-                      src={avatarUrl}
-                      alt="Current Avatar"
-
-                      className="w-16 h-16 rounded-full object-cover border border-yellow-500/20"
-                    />
+                    <img src={avatarUrl} alt="Current Avatar" className="w-16 h-16 rounded-full object-cover border border-yellow-500/20" />
                   ) : (
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-600/40 text-yellow-500 flex items-center justify-center text-lg font-bold font-mono">
                       {getInitials()}
@@ -472,20 +563,12 @@ export default function ProfilePage() {
                     >
                       Change Photo
                     </label>
-                    <input
-                      id="photo-upload"
-                      type="file"
-                      accept="image/*"
-                      onChange={handlePhotoChange}
-                      className="hidden"
-                    />
+                    <input id="photo-upload" type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
                     <p className="text-[10px] text-gray-500">PNG, JPG, or WEBP. Max 5MB.</p>
                   </div>
                 </div>
 
-                {/* Form fields */}
                 <div className="space-y-4">
-                  {/* Name field */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Full Name</label>
                     <input
@@ -498,7 +581,6 @@ export default function ProfilePage() {
                     />
                   </div>
 
-                  {/* Username field */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Username</label>
                     <input
@@ -511,7 +593,6 @@ export default function ProfilePage() {
                     />
                   </div>
 
-                  {/* Email field */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Email Address</label>
                     <input
@@ -524,7 +605,6 @@ export default function ProfilePage() {
                     />
                   </div>
 
-                  {/* Phone field */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Phone Number</label>
                     <input
@@ -537,7 +617,6 @@ export default function ProfilePage() {
                     />
                   </div>
 
-                  {/* Gender selection */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Gender</label>
                     <select
@@ -554,7 +633,6 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* Error/Success Feedback */}
                 {errorMsg && (
                   <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-500 text-xs rounded-lg font-medium">
                     ⚠️ {errorMsg}
@@ -566,7 +644,6 @@ export default function ProfilePage() {
                   </div>
                 )}
 
-                {/* Actions Footer */}
                 <div className="flex gap-3 pt-3 border-t border-[#1e1e24]">
                   <button
                     type="button"
@@ -592,8 +669,6 @@ export default function ProfilePage() {
         {isCoachProfileModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto">
             <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden transform transition-all duration-300">
-              
-              {/* Modal Header */}
               <div className="h-16 px-6 border-b border-[#1e1e24] flex items-center justify-between bg-[#121216]">
                 <h3 className="text-sm font-black text-white uppercase tracking-widest">
                   EDIT <span className="text-yellow-500">COACH PROFILE</span>
@@ -608,10 +683,8 @@ export default function ProfilePage() {
                 </button>
               </div>
 
-              {/* Modal Body / Form */}
               <form onSubmit={handleCoachProfileSubmit} className="p-6 space-y-5 max-h-[calc(100vh-10rem)] overflow-y-auto">
                 <div className="space-y-4">
-                  {/* Bio */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Bio</label>
                     <textarea
@@ -623,9 +696,10 @@ export default function ProfilePage() {
                     />
                   </div>
 
-                  {/* Specialization */}
                   <div>
-                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Specialization (comma-separated)</label>
+                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+                      Specialization (comma-separated)
+                    </label>
                     <input
                       type="text"
                       value={specialization}
@@ -635,7 +709,6 @@ export default function ProfilePage() {
                     />
                   </div>
 
-                  {/* Experience */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Experience (years)</label>
                     <input
@@ -648,7 +721,6 @@ export default function ProfilePage() {
                     />
                   </div>
 
-                  {/* Hire Cost */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Hire Cost (coins)</label>
                     <input
@@ -661,7 +733,6 @@ export default function ProfilePage() {
                     />
                   </div>
 
-                  {/* Availability */}
                   <div className="flex items-center gap-3">
                     <input
                       type="checkbox"
@@ -676,7 +747,6 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                {/* Error/Success Feedback */}
                 {errorMsg && (
                   <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-500 text-xs rounded-lg font-medium">
                     ⚠️ {errorMsg}
@@ -688,7 +758,6 @@ export default function ProfilePage() {
                   </div>
                 )}
 
-                {/* Actions Footer */}
                 <div className="flex gap-3 pt-3 border-t border-[#1e1e24]">
                   <button
                     type="button"
@@ -710,6 +779,7 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </PageShell>
   );
 }
+
