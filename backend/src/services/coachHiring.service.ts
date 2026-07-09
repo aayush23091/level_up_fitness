@@ -37,11 +37,11 @@ export class CoachHiringService {
             username: coach.username || "",
             email: coach.email || "",
             profilePhoto: coach.profilePhoto || null,
-            bio: coach.bio,
-            specialization: coach.specialization,
-            experience: coach.experience,
-            hireCost: coach.hireCost,
-            available: coach.availability
+            bio: coach.coachProfile?.bio,
+            specialization: coach.coachProfile?.specialization,
+            experience: coach.coachProfile?.experience,
+            hireCost: coach.coachProfile?.hireCost,
+            availability: coach.coachProfile?.availability
         };
     }
 
@@ -51,7 +51,7 @@ export class CoachHiringService {
         if (!coach) {
             throw new HttpException(404, "Coach not found");
         }
-        if (!coach.availability) {
+        if (!coach.coachProfile?.availability) {
             throw new HttpException(400, "Coach is not available for hiring");
         }
 
@@ -67,7 +67,7 @@ export class CoachHiringService {
         }
 
         // Check if athlete has enough coins
-        if ((athlete.coins || 0) < (coach.hireCost || 0)) {
+        if ((athlete.coins || 0) < (coach.coachProfile?.hireCost || 0)) {
             throw new HttpException(400, "Insufficient coins");
         }
 
@@ -78,7 +78,7 @@ export class CoachHiringService {
         }
 
         // Deduct coins from athlete
-        const updatedCoins = (athlete.coins || 0) - (coach.hireCost || 0);
+        const updatedCoins = (athlete.coins || 0) - (coach.coachProfile?.hireCost || 0);
         const updatedUser = await coachHiringRepository.updateUserCoins(athleteId, updatedCoins);
         if (!updatedUser) {
             throw new HttpException(500, "Failed to update user coins");

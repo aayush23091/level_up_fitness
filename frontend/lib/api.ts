@@ -42,6 +42,14 @@ interface RegisterPayload {
   role?: "user" | "coach";
 }
 
+export interface CoachProfile {
+  bio?: string;
+  specialization?: string[];
+  experience?: number;
+  hireCost?: number;
+  availability?: boolean;
+}
+
 export interface User {
   _id?: string;
   id?: string;
@@ -58,11 +66,7 @@ export interface User {
   status?: string;
   hiredAt?: string;
   createdAt?: string;
-  bio?: string;
-  specialization?: string[];
-  experience?: number;
-  hireCost?: number;
-  availability?: boolean;
+  coachProfile?: CoachProfile;
 }
 
 interface WhoAmIResponse {
@@ -324,11 +328,8 @@ export interface Coach {
   gender: string;
   role: string;
   profilePhoto?: string;
-  bio?: string;
-  specialization?: string[];
+  coachProfile?: CoachProfile;
   rating?: number;
-  experience?: number;
-  hireCost?: number;
   isHired?: boolean;
 }
 

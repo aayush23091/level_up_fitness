@@ -1,5 +1,13 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+export interface ICoachProfile {
+    bio?: string;
+    specialization?: string[];
+    experience?: number;
+    hireCost?: number;
+    availability?: boolean;
+}
+
 export interface IUser extends Document {
     _id: mongoose.Types.ObjectId;
     name: string;
@@ -14,11 +22,7 @@ export interface IUser extends Document {
     level?: number;
     xp?: number;
     coins?: number;
-    bio?: string;
-    specialization?: string[];
-    experience?: number;
-    hireCost?: number;
-    availability?: boolean;
+    coachProfile?: ICoachProfile;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -36,11 +40,13 @@ const UserMongoSchema: Schema = new Schema<IUser>(
   level: { type: Number, default: 0 },
   xp: { type: Number, default: 0 },
   coins: { type: Number, default: 0 },
-  bio: { type: String, required: false },
-  specialization: { type: [String], required: false },
-  experience: { type: Number, required: false },
-  hireCost: { type: Number, required: false },
-  availability: { type: Boolean, default: true }
+  coachProfile: {
+    bio: { type: String, required: false },
+    specialization: { type: [String], required: false },
+    experience: { type: Number, required: false },
+    hireCost: { type: Number, required: false },
+    availability: { type: Boolean, default: true }
+  }
 },
     {
         timestamps: true // createdAt and updatedAt will be automatically added and managed by mongoose

@@ -10,6 +10,7 @@ import { getProfileImageUrl } from "@/lib/getProfileImageUrl";
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCoachProfileModalOpen, setIsCoachProfileModalOpen] = useState(false);
 
   // Edit Profile Form State
   const [name, setName] = useState("");
@@ -42,17 +43,19 @@ export default function ProfilePage() {
       setGender(user.gender || "");
       setPhoto(null);
       setPhotoPreview(null);
-
-      // Initialize coach-specific fields
-      if (user.role === "coach") {
-        setBio(user.bio || "");
-        setSpecialization(user.specialization?.join(", ") || "");
-        setExperience(user.experience?.toString() || "");
-        setHireCost(user.hireCost?.toString() || "");
-        setAvailability(user.availability !== undefined ? user.availability : true);
-      }
     }
   }, [user, isEditModalOpen]);
+
+  // Initialize coach profile fields when coach profile modal opens
+  useEffect(() => {
+    if (user && user.role === "coach") {
+      setBio(user.coachProfile?.bio || "");
+      setSpecialization(user.coachProfile?.specialization?.join(", ") || "");
+      setExperience(user.coachProfile?.experience?.toString() || "");
+      setHireCost(user.coachProfile?.hireCost?.toString() || "");
+      setAvailability(user.coachProfile?.availability !== undefined ? user.coachProfile.availability : true);
+    }
+  }, [user, isCoachProfileModalOpen]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -79,15 +82,6 @@ export default function ProfilePage() {
         formData.append("photo", photo);
       }
 
-      // Add coach-specific fields if user is a coach
-      if (user?.role === "coach") {
-        formData.append("bio", bio);
-        formData.append("specialization", specialization);
-        formData.append("experience", experience);
-        formData.append("hireCost", hireCost);
-        formData.append("availability", availability.toString());
-      }
-
       const res = await authAPI.updateProfile(formData);
       if (res.success) {
         setSuccessMsg("Profile updated successfully!");
@@ -99,6 +93,36 @@ export default function ProfilePage() {
       }
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to update profile");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCoachProfileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    try {
+      const formData = new FormData();
+      formData.append("bio", bio);
+      formData.append("specialization", specialization);
+      formData.append("experience", experience);
+      formData.append("hireCost", hireCost);
+      formData.append("availability", availability.toString());
+
+      const res = await authAPI.updateProfile(formData);
+      if (res.success) {
+        setSuccessMsg("Coach profile updated successfully!");
+        await refreshUser();
+        setTimeout(() => {
+          setIsCoachProfileModalOpen(false);
+          setSuccessMsg("");
+        }, 1500);
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to update coach profile");
     } finally {
       setIsSubmitting(false);
     }
@@ -227,6 +251,66 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
+
+            {/* Coach Marketplace Profile Card - Only for coaches */}
+            {user?.role === "coach" && (
+              <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-6 space-y-4">
+                <div className="flex items-center justify-between border-b border-[#1e1e24] pb-3">
+                  <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                    COACH MARKETPLACE PROFILE
+                  </h3>
+                  <button
+                    onClick={() => setIsCoachProfileModalOpen(true)}
+                    className="text-xs text-yellow-500 hover:text-yellow-400 font-semibold uppercase tracking-wider transition-colors"
+                  >
+                    Edit Coach Profile
+                  </button>
+                </div>
+
+                {/* Bio */}
+                {user.coachProfile?.bio && (
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Bio</p>
+                    <p className="text-sm text-gray-300 leading-relaxed">{user.coachProfile.bio}</p>
+                  </div>
+                )}
+
+                {/* Specialization */}
+                {user.coachProfile?.specialization && user.coachProfile.specialization.length > 0 && (
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-2">Specialization</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {user.coachProfile.specialization.map((spec, idx) => (
+                        <span
+                          key={idx}
+                          className="text-[10px] text-yellow-500 font-semibold uppercase tracking-wider bg-yellow-500/10 px-2 py-0.5 rounded"
+                        >
+                          {spec}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Coach Stats */}
+                <div className="grid grid-cols-2 gap-3 pt-2 border-t border-[#1e1e24]">
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Experience</p>
+                    <p className="text-sm font-bold text-white mt-0.5">{user.coachProfile?.experience || 0} Years</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Hire Cost</p>
+                    <p className="text-sm font-bold text-yellow-500 mt-0.5">{user.coachProfile?.hireCost || 0} Coins</p>
+                  </div>
+                  <div className="col-span-2">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Availability</p>
+                    <p className={`text-sm font-bold mt-0.5 ${user.coachProfile?.availability ? 'text-green-500' : 'text-red-500'}`}>
+                      {user.coachProfile?.availability ? 'Available for hire' : 'Not available'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Column: Statistics & Achievements */}
@@ -429,77 +513,6 @@ export default function ProfilePage() {
                       <option value="other">Other</option>
                     </select>
                   </div>
-
-                  {/* Coach-specific fields */}
-                  {user?.role === "coach" && (
-                    <div className="pt-4 border-t border-[#1e1e24] space-y-4">
-                      <p className="text-xs font-bold text-yellow-500 uppercase tracking-wider">Coach Profile Details</p>
-
-                      {/* Bio */}
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Bio</label>
-                        <textarea
-                          value={bio}
-                          onChange={(e) => setBio(e.target.value)}
-                          placeholder="Tell athletes about yourself..."
-                          rows={3}
-                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600 resize-none"
-                        />
-                      </div>
-
-                      {/* Specialization */}
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Specialization (comma-separated)</label>
-                        <input
-                          type="text"
-                          value={specialization}
-                          onChange={(e) => setSpecialization(e.target.value)}
-                          placeholder="e.g. Muscle Building, Strength Training"
-                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
-                        />
-                      </div>
-
-                      {/* Experience */}
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Experience (years)</label>
-                        <input
-                          type="number"
-                          value={experience}
-                          onChange={(e) => setExperience(e.target.value)}
-                          placeholder="5"
-                          min="0"
-                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
-                        />
-                      </div>
-
-                      {/* Hire Cost */}
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Hire Cost (coins)</label>
-                        <input
-                          type="number"
-                          value={hireCost}
-                          onChange={(e) => setHireCost(e.target.value)}
-                          placeholder="500"
-                          min="0"
-                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
-                        />
-                      </div>
-
-                      {/* Availability */}
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
-                          id="availability"
-                          checked={availability}
-                          onChange={(e) => setAvailability(e.target.checked)}
-                          className="w-4 h-4 rounded border-[#1e1e24] bg-[#121216] text-yellow-500 focus:ring-yellow-500 focus:ring-offset-0"
-                        />
-                        <label htmlFor="availability" className="text-xs text-gray-400 font-medium">
-                          Available for hire
-                        </label>
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 {/* Error/Success Feedback */}
@@ -519,6 +532,128 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     onClick={() => setIsEditModalOpen(false)}
+                    className="flex-1 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white border border-[#1e1e24] hover:border-gray-700 text-xs font-bold rounded-lg uppercase tracking-wider transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex-1 py-2.5 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-colors shadow-lg shadow-yellow-500/10"
+                  >
+                    {isSubmitting ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* COACH PROFILE EDIT MODAL */}
+        {isCoachProfileModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto">
+            <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden transform transition-all duration-300">
+              
+              {/* Modal Header */}
+              <div className="h-16 px-6 border-b border-[#1e1e24] flex items-center justify-between bg-[#121216]">
+                <h3 className="text-sm font-black text-white uppercase tracking-widest">
+                  EDIT <span className="text-yellow-500">COACH PROFILE</span>
+                </h3>
+                <button
+                  onClick={() => setIsCoachProfileModalOpen(false)}
+                  className="p-1 rounded text-gray-400 hover:text-white transition-colors focus:outline-none"
+                >
+                  <svg className="w-5.5 h-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Modal Body / Form */}
+              <form onSubmit={handleCoachProfileSubmit} className="p-6 space-y-5 max-h-[calc(100vh-10rem)] overflow-y-auto">
+                <div className="space-y-4">
+                  {/* Bio */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Bio</label>
+                    <textarea
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                      placeholder="Tell athletes about yourself..."
+                      rows={3}
+                      className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600 resize-none"
+                    />
+                  </div>
+
+                  {/* Specialization */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Specialization (comma-separated)</label>
+                    <input
+                      type="text"
+                      value={specialization}
+                      onChange={(e) => setSpecialization(e.target.value)}
+                      placeholder="e.g. Muscle Building, Strength Training"
+                      className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                    />
+                  </div>
+
+                  {/* Experience */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Experience (years)</label>
+                    <input
+                      type="number"
+                      value={experience}
+                      onChange={(e) => setExperience(e.target.value)}
+                      placeholder="5"
+                      min="0"
+                      className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                    />
+                  </div>
+
+                  {/* Hire Cost */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Hire Cost (coins)</label>
+                    <input
+                      type="number"
+                      value={hireCost}
+                      onChange={(e) => setHireCost(e.target.value)}
+                      placeholder="500"
+                      min="0"
+                      className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                    />
+                  </div>
+
+                  {/* Availability */}
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      id="coach-availability"
+                      checked={availability}
+                      onChange={(e) => setAvailability(e.target.checked)}
+                      className="w-4 h-4 rounded border-[#1e1e24] bg-[#121216] text-yellow-500 focus:ring-yellow-500 focus:ring-offset-0"
+                    />
+                    <label htmlFor="coach-availability" className="text-xs text-gray-400 font-medium">
+                      Available for hire
+                    </label>
+                  </div>
+                </div>
+
+                {/* Error/Success Feedback */}
+                {errorMsg && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-500 text-xs rounded-lg font-medium">
+                    ⚠️ {errorMsg}
+                  </div>
+                )}
+                {successMsg && (
+                  <div className="p-3 bg-green-500/10 border border-green-500/30 text-green-500 text-xs rounded-lg font-medium">
+                    ✅ {successMsg}
+                  </div>
+                )}
+
+                {/* Actions Footer */}
+                <div className="flex gap-3 pt-3 border-t border-[#1e1e24]">
+                  <button
+                    type="button"
+                    onClick={() => setIsCoachProfileModalOpen(false)}
                     className="flex-1 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white border border-[#1e1e24] hover:border-gray-700 text-xs font-bold rounded-lg uppercase tracking-wider transition-colors"
                   >
                     Cancel

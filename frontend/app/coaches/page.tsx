@@ -236,16 +236,16 @@ function CoachesMarketplacePageContent() {
                   </div>
 
                   {/* Bio */}
-                  {coach.bio && (
+                  {coach.coachProfile?.bio && (
                     <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed mb-4">
-                      {coach.bio}
+                      {coach.coachProfile.bio}
                     </p>
                   )}
 
                   {/* Specializations */}
-                  {coach.specialization && coach.specialization.length > 0 && (
+                  {coach.coachProfile?.specialization && coach.coachProfile.specialization.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mb-4">
-                      {coach.specialization.slice(0, 3).map((spec, idx) => (
+                      {coach.coachProfile.specialization.slice(0, 3).map((spec, idx) => (
                         <span
                           key={idx}
                           className="text-[10px] text-yellow-500 font-semibold uppercase tracking-wider bg-yellow-500/10 px-2 py-0.5 rounded"
@@ -253,9 +253,9 @@ function CoachesMarketplacePageContent() {
                           {spec}
                         </span>
                       ))}
-                      {coach.specialization.length > 3 && (
+                      {coach.coachProfile.specialization.length > 3 && (
                         <span className="text-[10px] text-gray-500 font-semibold uppercase tracking-wider bg-zinc-800 px-2 py-0.5 rounded">
-                          +{coach.specialization.length - 3}
+                          +{coach.coachProfile.specialization.length - 3}
                         </span>
                       )}
                     </div>
@@ -264,10 +264,10 @@ function CoachesMarketplacePageContent() {
                   {/* Coach Specs Grid */}
                   <div className="grid grid-cols-2 gap-2.5 mt-auto pt-4 border-t border-[#1e1e24] text-[11px] text-gray-400 font-semibold font-mono">
                     <div className="flex items-center gap-1.5">
-                      <span>💼</span> {coach.experience || 0} Years
+                      <span>💼</span> {coach.coachProfile?.experience || 0} Years
                     </div>
                     <div className="flex items-center gap-1.5 text-yellow-500">
-                      <span>🪙</span> {coach.hireCost || 0} Coins
+                      <span>🪙</span> {coach.coachProfile?.hireCost || 0} Coins
                     </div>
                   </div>
 

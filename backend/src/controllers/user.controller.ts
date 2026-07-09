@@ -91,7 +91,6 @@ export class UserController {
                 ? toUploadsUrl(file.path)
                 : undefined;
 
-
             const { name, username, phoneNumber, gender, password, bio, specialization, experience, hireCost, availability } = req.body ?? {};
 
             const updateData: Partial<IUser> & { password?: string; profilePhoto?: string } = {
@@ -105,11 +104,16 @@ export class UserController {
 
             // Add coach-specific fields if user is a coach
             if (user.role === "coach") {
-                if (bio !== undefined) updateData.bio = bio;
-                if (specialization !== undefined) updateData.specialization = Array.isArray(specialization) ? specialization : specialization ? [specialization] : [];
-                if (experience !== undefined) updateData.experience = Number(experience);
-                if (hireCost !== undefined) updateData.hireCost = Number(hireCost);
-                if (availability !== undefined) updateData.availability = availability;
+                const coachProfile: any = {};
+                if (bio !== undefined) coachProfile.bio = bio;
+                if (specialization !== undefined) coachProfile.specialization = Array.isArray(specialization) ? specialization : specialization ? [specialization] : [];
+                if (experience !== undefined) coachProfile.experience = Number(experience);
+                if (hireCost !== undefined) coachProfile.hireCost = Number(hireCost);
+                if (availability !== undefined) coachProfile.availability = availability;
+                
+                if (Object.keys(coachProfile).length > 0) {
+                    updateData.coachProfile = coachProfile;
+                }
             }
 
             const updatedUser = await userService.updateUser(user._id.toString(), updateData);
