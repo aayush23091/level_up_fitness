@@ -10,5 +10,6 @@ authRouter.post("/register", userController.createUser);
 authRouter.post("/login", userController.loginUser);
 authRouter.get("/whoami", authorizedMiddleware, userController.whoAmI);
 authRouter.put("/update", authorizedMiddleware, avatarUploadMiddleware, userController.updateProfile);
+authRouter.patch("/change-password", authorizedMiddleware, userController.changePassword);
 
 export default authRouter;

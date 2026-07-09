@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
 import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
-import { CreateUserDTO, LoginUserDTO } from "../dtos/user.dto";
+import { CreateUserDTO, LoginUserDTO, ChangePasswordDTO } from "../dtos/user.dto";
 import { IUser } from "../models/user.model";
 
 const userService = new UserService();
@@ -119,6 +119,34 @@ export class UserController {
             const updatedUser = await userService.updateUser(user._id.toString(), updateData);
 
             return ApiResponseHelper.success(res, updatedUser, "Profile updated", 200);
+        } catch (err: any) {
+            return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
+        }
+    };
+
+    // PATCH /auth/change-password
+    changePassword = async (req: Request, res: Response) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            const parsed = ChangePasswordDTO.safeParse(req.body ?? {});
+            if (!parsed.success) {
+                const message = parsed.error.errors[0]?.message || "Invalid payload";
+                throw new HttpException(400, message);
+            }
+
+            const { currentPassword, newPassword } = parsed.data;
+
+            await userService.changePassword(
+                user._id.toString(),
+                currentPassword,
+                newPassword
+            );
+
+            return ApiResponseHelper.success(res, {}, "Password updated successfully", 200);
         } catch (err: any) {
             return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
         }
