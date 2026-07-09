@@ -18,4 +18,9 @@ adminRouter.post("/users", adminController.createUser);
 adminRouter.put("/users/:id", adminController.updateUser);
 adminRouter.delete("/users/:id", adminController.deleteUser);
 
+// Coach management
+adminRouter.get("/coaches", adminController.getCoaches);
+adminRouter.get("/coaches/:id", adminController.getCoachById);
+adminRouter.delete("/coaches/:id", adminController.deleteCoach);
+
 export default adminRouter;

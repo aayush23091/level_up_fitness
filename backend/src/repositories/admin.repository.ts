@@ -1,5 +1,6 @@
 import { UserModel, IUser } from "../models/user.model";
 import { WorkoutPlanModel, IWorkoutPlan } from "../models/workoutPlan.model";
+import { CoachClientModel } from "../models/coachClient.model";
 
 interface DashboardStats {
   totalUsers: number;
@@ -87,5 +88,74 @@ export class AdminUserRepository {
       recentUsers,
       recentCoaches
     };
+  }
+
+  async getCoaches(
+    page: number,
+    limit: number,
+    search?: string
+  ): Promise<{ coaches: any[]; total: number }> {
+    const query: any = { role: "coach" };
+
+    if (search) {
+      const regex = new RegExp(search, "i");
+      query.$or = [{ name: regex }, { email: regex }];
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [coaches, total] = await Promise.all([
+      UserModel.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }).exec(),
+      UserModel.countDocuments(query).exec()
+    ]);
+
+    // For each coach, get the count of clients and workout plans
+    const coachesWithCounts = await Promise.all(
+      coaches.map(async (coach) => {
+        const coachObj = coach.toObject();
+        const [clientCount, planCount] = await Promise.all([
+          CoachClientModel.countDocuments({ coachId: coach._id, status: "active" }).exec(),
+          WorkoutPlanModel.countDocuments({ coachId: coach._id }).exec()
+        ]);
+        return {
+          ...coachObj,
+          clientCount,
+          planCount
+        };
+      })
+    );
+
+    return { coaches: coachesWithCounts, total };
+  }
+
+  async getCoachById(id: string): Promise<any | null> {
+    const coach = await UserModel.findOne({ _id: id, role: "coach" }).exec();
+    if (!coach) return null;
+
+    const coachObj = coach.toObject();
+    const [clientCount, planCount] = await Promise.all([
+      CoachClientModel.countDocuments({ coachId: coach._id, status: "active" }).exec(),
+      WorkoutPlanModel.countDocuments({ coachId: coach._id }).exec()
+    ]);
+
+    return {
+      ...coachObj,
+      clientCount,
+      planCount
+    };
+  }
+
+  async deleteCoach(id: string): Promise<boolean> {
+    const coach = await UserModel.findOne({ _id: id, role: "coach" }).exec();
+    if (!coach) return false;
+    
+    // Delete associated coach clients and workout plans
+    await Promise.all([
+      CoachClientModel.deleteMany({ coachId: id }).exec(),
+      WorkoutPlanModel.deleteMany({ coachId: id }).exec()
+    ]);
+
+    const result = await UserModel.findByIdAndDelete(id).exec();
+    return !!result;
   }
 }

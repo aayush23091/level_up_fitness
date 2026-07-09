@@ -92,4 +92,23 @@ export class AdminUserService {
   async getDashboardStats() {
     return adminRepository.getDashboardStats();
   }
+
+  async getCoaches(page: number, limit: number, search?: string) {
+    return adminRepository.getCoaches(page, limit, search);
+  }
+
+  async getCoachById(id: string) {
+    const coach = await adminRepository.getCoachById(id);
+    if (!coach) {
+      throw new HttpException(404, "Coach not found");
+    }
+    return coach;
+  }
+
+  async deleteCoach(id: string): Promise<void> {
+    const success = await adminRepository.deleteCoach(id);
+    if (!success) {
+      throw new HttpException(404, "Coach not found");
+    }
+  }
 }

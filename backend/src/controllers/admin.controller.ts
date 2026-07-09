@@ -61,9 +61,9 @@ export class AdminController {
       const parsed = AdminCreateUserDTO.safeParse(req.body);
       if (!parsed.success) {
         const errorMsg = parsed.error.issues
-          .map((e) => `${e.path.join(".")}: ${e.message}`)
+          .map((e) => e.path.join(".") + ": " + e.message)
           .join(", ");
-        throw new HttpException(400, `Validation failed: ${errorMsg}`);
+        throw new HttpException(400, "Validation failed: " + errorMsg);
       }
 
       const newUser = await adminUserService.createUser(parsed.data);
@@ -88,9 +88,9 @@ export class AdminController {
       const parsed = AdminUpdateUserDTO.safeParse(req.body);
       if (!parsed.success) {
         const errorMsg = parsed.error.issues
-          .map((e) => `${e.path.join(".")}: ${e.message}`)
+          .map((e) => e.path.join(".") + ": " + e.message)
           .join(", ");
-        throw new HttpException(400, `Validation failed: ${errorMsg}`);
+        throw new HttpException(400, "Validation failed: " + errorMsg);
       }
 
       const updatedUser = await adminUserService.updateUser(id, parsed.data);
@@ -139,6 +139,69 @@ export class AdminController {
       };
 
       return ApiResponseHelper.success(res, sanitizedStats, "Dashboard stats fetched successfully", 200);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
+
+  // GET /api/v1/admin/coaches
+  getCoaches = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const search = (req.query.search as string) || undefined;
+
+      const { coaches, total } = await adminUserService.getCoaches(page, limit, search);
+      const totalPages = Math.ceil(total / limit);
+
+      const meta = {
+        page,
+        limit,
+        total,
+        totalPages,
+      };
+
+      // Sanitize coaches (remove password)
+      const sanitizedCoaches = coaches.map((coach) => {
+        const { password, ...rest } = coach;
+        return rest;
+      });
+
+      return ApiResponseHelper.success(res, sanitizedCoaches, "Coaches fetched successfully", 200, meta as any);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
+
+  // GET /api/v1/admin/coaches/:id
+  getCoachById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id as string;
+      if (!id) {
+        throw new HttpException(400, "Coach ID is required");
+      }
+
+      const coach = await adminUserService.getCoachById(id);
+
+      const { password, ...sanitizedCoach } = coach;
+
+      return ApiResponseHelper.success(res, sanitizedCoach, "Coach fetched successfully", 200);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
+
+  // DELETE /api/v1/admin/coaches/:id
+  deleteCoach = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id as string;
+      if (!id) {
+        throw new HttpException(400, "Coach ID is required");
+      }
+
+      await adminUserService.deleteCoach(id);
+
+      return ApiResponseHelper.success(res, null, "Coach deleted successfully", 200);
     } catch (err: any) {
       return next(err);
     }

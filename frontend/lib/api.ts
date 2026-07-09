@@ -370,6 +370,65 @@ export const adminAPI = {
       );
     }
   },
+
+  getCoaches: async (
+    page: number = 1,
+    limit: number = 10,
+    search?: string
+  ): Promise<PaginatedCoachesResponse> => {
+    try {
+      const params: Record<string, any> = { page, limit };
+      if (search) {
+        params.search = search;
+      }
+
+      const response = await apiClient.get<PaginatedCoachesResponse>(
+        "/api/v1/admin/coaches",
+        { params }
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch coaches"
+      );
+    }
+  },
+
+  getCoach: async (id: string): Promise<SingleCoachResponse> => {
+    try {
+      const response = await apiClient.get<SingleCoachResponse>(
+        `/api/v1/admin/coaches/${id}`
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch coach"
+      );
+    }
+  },
+
+  deleteCoach: async (
+    id: string
+  ): Promise<{ status: number; success: boolean; message: string }> => {
+    try {
+      const response = await apiClient.delete<{
+        status: number;
+        success: boolean;
+        message: string;
+      }>(`/api/v1/admin/coaches/${id}`);
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to delete coach"
+      );
+    }
+  },
 };
 
 export interface Coach {

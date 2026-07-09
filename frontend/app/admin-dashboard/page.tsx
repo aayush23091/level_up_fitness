@@ -3,6 +3,7 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
+import AdminCoachesTable from "@/components/admin/AdminCoachesTable";
 import { adminAPI, User } from "@/lib/api";
 
 function DashboardContent() {
@@ -214,19 +215,7 @@ function DashboardContent() {
       {/* Tab Specific Content Stubs */}
       {tab === "users" && <AdminUsersTable />}
 
-      {tab === "coaches" && (
-        <div className="bg-[#0e0e12]/40 border border-zinc-800/80 rounded-2xl p-8 text-center space-y-3">
-          <div className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-600">
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider">Pending Coach Applications</h3>
-          <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-            Coach profiles, cert validations, and approval actions are disabled for now.
-          </p>
-        </div>
-      )}
+      {tab === "coaches" && <AdminCoachesTable />}
 
       {tab === "settings" && (
         <div className="bg-[#0e0e12]/40 border border-zinc-800/80 rounded-2xl p-8 text-center space-y-3">
