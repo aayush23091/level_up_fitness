@@ -20,6 +20,7 @@ export interface IWorkoutPlan extends Document {
   estimatedDuration: number;
   status: "Draft" | "Published";
   exercises: IWorkoutPlanExercise[];
+  coverImage?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -56,6 +57,7 @@ const WorkoutPlanSchema: Schema = new Schema<IWorkoutPlan>(
       default: "Draft",
     },
     exercises: [WorkoutPlanExerciseSchema],
+    coverImage: { type: String },
   },
   {
     timestamps: true,

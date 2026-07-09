@@ -4,6 +4,7 @@ import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
 import { CreateWorkoutPlanDTO, UpdateWorkoutPlanDTO } from "../dtos/workoutPlan.dto";
 import mongoose from "mongoose";
+import { workoutCoverUploadMiddleware } from "../middlewares/upload.middleware";
 
 const workoutPlanService = new WorkoutPlanService();
 
@@ -70,7 +71,30 @@ export class WorkoutPlanController {
         throw new HttpException(401, "Unauthorized");
       }
 
-      const validatedData = CreateWorkoutPlanDTO.parse(req.body);
+      // Parse exercises from JSON string if it's a string (from FormData)
+      const body = { ...req.body };
+      if (body.exercises && typeof body.exercises === "string") {
+        body.exercises = JSON.parse(body.exercises);
+      }
+      // Convert numeric fields from strings to numbers
+      if (typeof body.estimatedDuration === "string") {
+        body.estimatedDuration = parseInt(body.estimatedDuration);
+      }
+      if (body.exercises && Array.isArray(body.exercises)) {
+        body.exercises = body.exercises.map((ex: any) => ({
+          ...ex,
+          sets: typeof ex.sets === "string" ? parseInt(ex.sets) : ex.sets,
+          restSeconds: typeof ex.restSeconds === "string" ? parseInt(ex.restSeconds) : ex.restSeconds,
+          order: typeof ex.order === "string" ? parseInt(ex.order) : ex.order,
+        }));
+      }
+
+      let validatedData;
+      try {
+        validatedData = CreateWorkoutPlanDTO.parse(body);
+      } catch (parseErr: any) {
+        throw new HttpException(400, parseErr.issues[0].message);
+      }
       
       // Convert exerciseId strings to ObjectId if provided, otherwise use inline exercise data
       const exercises = validatedData.exercises?.map(ex => {
@@ -88,18 +112,25 @@ export class WorkoutPlanController {
         };
       });
 
+      // Handle cover image if uploaded
+      let coverImagePath: string | undefined;
+      if (req.file) {
+        coverImagePath = `/uploads/workout-covers/${req.file.filename}`;
+      }
+
       const workoutPlan = await workoutPlanService.createWorkoutPlan({
         ...validatedData,
         coachId: coachId as any,
         exercises,
+        coverImage: coverImagePath,
       });
       
       return ApiResponseHelper.success(res, workoutPlan, "Workout plan created successfully", 201);
     } catch (err: any) {
-      if (err.name === "ZodError") {
-        return next(new HttpException(400, err.errors[0].message));
+      if (err instanceof HttpException) {
+        return next(err);
       }
-      return next(err);
+      return next(new HttpException(500, err.message || "Internal server error"));
     }
   };
 
@@ -116,7 +147,30 @@ export class WorkoutPlanController {
         throw new HttpException(400, "Workout plan ID is required");
       }
 
-      const validatedData = UpdateWorkoutPlanDTO.parse(req.body);
+      // Parse exercises from JSON string if it's a string (from FormData)
+      const body = { ...req.body };
+      if (body.exercises && typeof body.exercises === "string") {
+        body.exercises = JSON.parse(body.exercises);
+      }
+      // Convert numeric fields from strings to numbers
+      if (typeof body.estimatedDuration === "string") {
+        body.estimatedDuration = parseInt(body.estimatedDuration);
+      }
+      if (body.exercises && Array.isArray(body.exercises)) {
+        body.exercises = body.exercises.map((ex: any) => ({
+          ...ex,
+          sets: typeof ex.sets === "string" ? parseInt(ex.sets) : ex.sets,
+          restSeconds: typeof ex.restSeconds === "string" ? parseInt(ex.restSeconds) : ex.restSeconds,
+          order: typeof ex.order === "string" ? parseInt(ex.order) : ex.order,
+        }));
+      }
+
+      let validatedData;
+      try {
+        validatedData = UpdateWorkoutPlanDTO.parse(body);
+      } catch (parseErr: any) {
+        throw new HttpException(400, parseErr.issues[0].message);
+      }
       
       // Convert exerciseId strings to ObjectId if provided, otherwise use inline exercise data
       let exercises;
@@ -137,16 +191,23 @@ export class WorkoutPlanController {
         });
       }
 
+      // Handle cover image if uploaded
+      let coverImagePath: string | undefined;
+      if (req.file) {
+        coverImagePath = `/uploads/workout-covers/${req.file.filename}`;
+      }
+
       const workoutPlan = await workoutPlanService.updateWorkoutPlan(id, coachId as string, {
         ...validatedData,
         exercises,
+        coverImage: coverImagePath,
       });
       return ApiResponseHelper.success(res, workoutPlan, "Workout plan updated successfully", 200);
     } catch (err: any) {
-      if (err.name === "ZodError") {
-        return next(new HttpException(400, err.errors[0].message));
+      if (err instanceof HttpException) {
+        return next(err);
       }
-      return next(err);
+      return next(new HttpException(500, err.message || "Internal server error"));
     }
   };
 

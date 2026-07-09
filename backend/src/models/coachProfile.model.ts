@@ -10,6 +10,7 @@ export interface ICoachProfile extends Document {
     totalClients: number;
     hireCost: number;
     available: boolean;
+    profileImage?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -23,7 +24,8 @@ const CoachProfileMongoSchema: Schema = new Schema<ICoachProfile>(
         rating: { type: Number, default: 0 },
         totalClients: { type: Number, default: 0 },
         hireCost: { type: Number, required: true },
-        available: { type: Boolean, default: true }
+        available: { type: Boolean, default: true },
+        profileImage: { type: String }
     },
     {
         timestamps: true

@@ -4,6 +4,7 @@ import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
 import { CreateUserDTO, LoginUserDTO, ChangePasswordDTO } from "../dtos/user.dto";
 import { IUser } from "../models/user.model";
+import { coachProfileUploadMiddleware } from "../middlewares/upload.middleware";
 
 const userService = new UserService();
 
@@ -77,7 +78,7 @@ export class UserController {
     };
 
     // PUT /auth/update
-    // (avatarUploadMiddleware runs before this)
+    // (profileUploadMiddleware runs before this)
     updateProfile = async (req: Request, res: Response) => {
         try {
             const user = req.user as IUser | undefined;
@@ -85,9 +86,13 @@ export class UserController {
                 throw new HttpException(401, "Unauthorized");
             }
 
-            // multer stores file on req.file (field name: "photo")
-            const file = (req as any).file as { path?: string } | undefined;
-            const profilePhoto = file?.path ? toUploadsUrl(file.path) : undefined;
+            // multer stores files on req.files when using fields()
+            const files = (req as any).files as { [key: string]: Express.Multer.File[] } | undefined;
+            const photoFile = files?.["photo"]?.[0];
+            const profileImageFile = files?.["profileImage"]?.[0];
+            
+            const profilePhoto = photoFile?.path ? toUploadsUrl(photoFile.path) : undefined;
+            const coachProfileImage = profileImageFile?.path ? toUploadsUrl(profileImageFile.path) : undefined;
 
 
             const { name, username, phoneNumber, gender, password, bio, specialization, experience, hireCost, availability } = req.body ?? {};
@@ -109,6 +114,7 @@ export class UserController {
                 if (experience !== undefined) coachProfile.experience = Number(experience);
                 if (hireCost !== undefined) coachProfile.hireCost = Number(hireCost);
                 if (availability !== undefined) coachProfile.availability = availability;
+                if (coachProfileImage !== undefined) coachProfile.profileImage = coachProfileImage;
                 
                 if (Object.keys(coachProfile).length > 0) {
                     updateData.coachProfile = coachProfile;

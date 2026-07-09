@@ -44,8 +44,11 @@ app.use(
 )
 // global error handler (at the last)
 app.use(
-    (err: Error, req: Request, res: Response, next: NextFunction) => {
-        console.error("Error:", err);
+    (err: any, req: Request, res: Response, next: NextFunction) => {
+        console.error("=== Global Error Handler ===");
+        console.error("Error object:", err);
+        console.error("Error message:", err.message);
+        console.error("Error stack:", err.stack);
         if (err instanceof HttpException) {
             return ApiResponseHelper.error(
                 res, err.message, err.status

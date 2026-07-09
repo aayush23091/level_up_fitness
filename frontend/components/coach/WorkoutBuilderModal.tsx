@@ -26,6 +26,8 @@ const INITIAL_FORM_DATA = {
   estimatedDuration: 30,
   status: "Draft",
   exercises: [] as WorkoutPlanExercise[],
+  // Can be either an existing URL/base64 string (editing) OR the selected File (new upload)
+  coverImage: "" as string | File | undefined,
 };
 
 const INITIAL_EXERCISE_FORM: ExerciseFormData = {
@@ -56,6 +58,7 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
         estimatedDuration: editWorkoutPlan.estimatedDuration,
         status: editWorkoutPlan.status,
         exercises: editWorkoutPlan.exercises || [],
+        coverImage: editWorkoutPlan.coverImage || "",
       });
     } else {
       setFormData(INITIAL_FORM_DATA);
@@ -129,30 +132,67 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
     setFormData({ ...formData, exercises: newExercises });
   };
 
+  const handleCoverImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Keep File for upload and create preview URL separately
+    const previewUrl = URL.createObjectURL(file);
+    // store preview URL on the File object for rendering
+    (file as any).__previewUrl = previewUrl;
+    setFormData({ ...formData, coverImage: file });
+  };
+
+  const handleRemoveCoverImage = () => {
+    setFormData({ ...formData, coverImage: "" });
+  };
+
   const handleSave = async (status: "Draft" | "Published") => {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
     try {
-      const dataToSubmit = {
-        ...formData,
-        status,
-        difficulty: formData.difficulty as "Beginner" | "Intermediate" | "Advanced",
-        exercises: formData.exercises.map(ex => ({
-          exerciseName: ex.exerciseName,
-          category: ex.category,
-          sets: ex.sets,
-          reps: ex.reps,
-          restSeconds: ex.restSeconds,
-          notes: ex.notes,
-          order: ex.order,
-        })),
-      };
+      const formDataToSend = new FormData();
+      
+      // Add basic fields
+      formDataToSend.append("title", formData.title);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("difficulty", formData.difficulty);
+      formDataToSend.append("estimatedDuration", formData.estimatedDuration.toString());
+      formDataToSend.append("status", status);
+      
+      // Add exercises as JSON
+      formDataToSend.append("exercises", JSON.stringify(formData.exercises.map(ex => ({
+        exerciseName: ex.exerciseName,
+        category: ex.category,
+        sets: ex.sets,
+        reps: ex.reps,
+        restSeconds: ex.restSeconds,
+        notes: ex.notes,
+        order: ex.order,
+      }))));
+
+      // Add cover image
+      // - If it's an existing string (URL/base64), backend may already handle it (previous behavior)
+      // - If it's a File, append directly
+      if (formData.coverImage) {
+        if (typeof formData.coverImage === "string") {
+          // Existing base64 data URL
+          if (formData.coverImage.startsWith("data:")) {
+            const response = await fetch(formData.coverImage);
+            const blob = await response.blob();
+            formDataToSend.append("coverImage", blob);
+          }
+        } else {
+          // Newly selected file
+          formDataToSend.append("coverImage", formData.coverImage);
+        }
+      }
 
       if (editWorkoutPlan) {
-        await workoutPlanAPI.updateWorkoutPlan(editWorkoutPlan._id || editWorkoutPlan.id || "", dataToSubmit);
+        await workoutPlanAPI.updateWorkoutPlan(editWorkoutPlan._id || editWorkoutPlan.id || "", formDataToSend as any);
       } else {
-        await workoutPlanAPI.createWorkoutPlan(dataToSubmit);
+        await workoutPlanAPI.createWorkoutPlan(formDataToSend as any);
       }
 
       onSuccess();
@@ -188,6 +228,53 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {/* Cover Image */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-bold text-yellow-400 uppercase tracking-wider">Workout Cover Image</h3>
+            
+            {formData.coverImage ? (
+              <div className="relative group">
+                <img
+                  src={
+                    typeof formData.coverImage === "string"
+                      ? formData.coverImage
+                      : (formData.coverImage as any).__previewUrl || URL.createObjectURL(formData.coverImage as File)
+                  }
+                  alt="Workout cover"
+                  className="w-full h-48 object-cover rounded-xl border border-zinc-800"
+                />
+                <button
+                  onClick={handleRemoveCoverImage}
+                  className="absolute top-2 right-2 p-2 bg-red-500/80 hover:bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <div className="border-2 border-dashed border-zinc-800 rounded-xl p-8 text-center hover:border-yellow-500/40 transition-colors">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCoverImageUpload}
+                  className="hidden"
+                  id="coverImageInput"
+                />
+                <label
+                  htmlFor="coverImageInput"
+                  className="cursor-pointer flex flex-col items-center gap-3"
+                >
+                  <svg className="w-8 h-8 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span className="text-sm text-zinc-400">Click to upload cover image</span>
+                  <span className="text-xs text-zinc-600">PNG, JPG up to 5MB</span>
+                </label>
+              </div>
+            )}
+          </div>
+
           {/* Basic Info */}
           <div className="space-y-4">
             <h3 className="text-sm font-bold text-yellow-400 uppercase tracking-wider">Basic Information</h3>

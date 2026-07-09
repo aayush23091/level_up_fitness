@@ -4,6 +4,7 @@ import { CoachEarningController } from "../controllers/coachEarning.controller";
 import { WorkoutPlanController } from "../controllers/workoutPlan.controller";
 import { AssignedWorkoutPlanController } from "../controllers/assignedWorkoutPlan.controller";
 import { authorizedMiddleware, coachMiddleware } from "../middlewares/authorized.middleware";
+import { workoutCoverUploadMiddleware } from "../middlewares/upload.middleware";
 
 const coachRouter = Router();
 const coachController = new CoachController();
@@ -28,8 +29,8 @@ coachRouter.get("/earnings", coachEarningController.getEarnings);
 // Workout Plan routes
 coachRouter.get("/workout-plans", workoutPlanController.getWorkoutPlans);
 coachRouter.get("/workout-plans/:id", workoutPlanController.getWorkoutPlanById);
-coachRouter.post("/workout-plans", workoutPlanController.createWorkoutPlan);
-coachRouter.put("/workout-plans/:id", workoutPlanController.updateWorkoutPlan);
+coachRouter.post("/workout-plans", workoutCoverUploadMiddleware, workoutPlanController.createWorkoutPlan);
+coachRouter.put("/workout-plans/:id", workoutCoverUploadMiddleware, workoutPlanController.updateWorkoutPlan);
 coachRouter.delete("/workout-plans/:id", workoutPlanController.deleteWorkoutPlan);
 coachRouter.patch("/workout-plans/:id/publish", workoutPlanController.publishWorkoutPlan);
 

@@ -50,6 +50,7 @@ export interface CoachProfile {
   availability?: boolean;
   category?: string;
   rating?: number;
+  profileImage?: string;
 }
 
 export interface User {
@@ -352,6 +353,13 @@ export interface Coach {
   role: string;
   profilePhoto?: string;
   coachProfile?: CoachProfile;
+  // Used by public coach profile page
+  bio?: string;
+  specialization?: string[];
+  experience?: number;
+  hireCost?: number;
+  availability?: boolean;
+  category?: string;
   rating?: number;
   isHired?: boolean;
 }
@@ -864,6 +872,7 @@ export interface WorkoutPlan {
   estimatedDuration: number;
   status: "Draft" | "Published";
   exercises: WorkoutPlanExercise[];
+  coverImage?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -926,12 +935,15 @@ export const workoutPlanAPI = {
   },
 
   createWorkoutPlan: async (
-    data: Partial<WorkoutPlan>
+    data: Partial<WorkoutPlan> | FormData
   ): Promise<SingleWorkoutPlanResponse> => {
     try {
       const response = await apiClient.post<SingleWorkoutPlanResponse>(
         "/api/v1/coach/workout-plans",
-        data
+        data,
+        {
+          headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined
+        }
       );
       return response.data;
     } catch (error) {
@@ -944,12 +956,15 @@ export const workoutPlanAPI = {
 
   updateWorkoutPlan: async (
     id: string,
-    data: Partial<WorkoutPlan>
+    data: Partial<WorkoutPlan> | FormData
   ): Promise<SingleWorkoutPlanResponse> => {
     try {
       const response = await apiClient.put<SingleWorkoutPlanResponse>(
         `/api/v1/coach/workout-plans/${id}`,
-        data
+        data,
+        {
+          headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined
+        }
       );
       return response.data;
     } catch (error) {
