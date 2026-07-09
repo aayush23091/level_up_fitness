@@ -1,4 +1,15 @@
 import { UserModel, IUser } from "../models/user.model";
+import { WorkoutPlanModel, IWorkoutPlan } from "../models/workoutPlan.model";
+
+interface DashboardStats {
+  totalUsers: number;
+  totalCoaches: number;
+  totalAdmins: number;
+  totalWorkoutPlans: number;
+  totalPublishedPlans: number;
+  recentUsers: IUser[];
+  recentCoaches: IUser[];
+}
 
 export class AdminUserRepository {
   async getUsers(
@@ -46,5 +57,35 @@ export class AdminUserRepository {
 
   async getUserByUsername(username: string): Promise<IUser | null> {
     return UserModel.findOne({ username }).exec();
+  }
+
+  async getDashboardStats(): Promise<DashboardStats> {
+    const [
+      totalUsers,
+      totalCoaches,
+      totalAdmins,
+      totalWorkoutPlans,
+      totalPublishedPlans,
+      recentUsers,
+      recentCoaches
+    ] = await Promise.all([
+      UserModel.countDocuments({ role: "user" }).exec(),
+      UserModel.countDocuments({ role: "coach" }).exec(),
+      UserModel.countDocuments({ role: "admin" }).exec(),
+      WorkoutPlanModel.countDocuments().exec(),
+      WorkoutPlanModel.countDocuments({ status: "Published" }).exec(),
+      UserModel.find({ role: "user" }).sort({ createdAt: -1 }).limit(5).exec(),
+      UserModel.find({ role: "coach" }).sort({ createdAt: -1 }).limit(5).exec()
+    ]);
+
+    return {
+      totalUsers,
+      totalCoaches,
+      totalAdmins,
+      totalWorkoutPlans,
+      totalPublishedPlans,
+      recentUsers,
+      recentCoaches
+    };
   }
 }

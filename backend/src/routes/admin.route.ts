@@ -5,13 +5,17 @@ import { authorizedMiddleware, adminMiddleware } from "../middlewares/authorized
 const adminRouter = Router();
 const adminController = new AdminController();
 
-// Protect all routes within user management with auth and admin role checks
+// Protect all admin routes with auth and admin role checks
 adminRouter.use(authorizedMiddleware, adminMiddleware);
 
-adminRouter.get("/", adminController.getUsers);
-adminRouter.get("/:id", adminController.getUserById);
-adminRouter.post("/", adminController.createUser);
-adminRouter.put("/:id", adminController.updateUser);
-adminRouter.delete("/:id", adminController.deleteUser);
+// Dashboard stats
+adminRouter.get("/dashboard/stats", adminController.getDashboardStats);
+
+// User management
+adminRouter.get("/users", adminController.getUsers);
+adminRouter.get("/users/:id", adminController.getUserById);
+adminRouter.post("/users", adminController.createUser);
+adminRouter.put("/users/:id", adminController.updateUser);
+adminRouter.delete("/users/:id", adminController.deleteUser);
 
 export default adminRouter;

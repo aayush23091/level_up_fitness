@@ -244,7 +244,37 @@ export interface AdminCreateUserPayload {
 
 export type AdminUpdateUserPayload = Partial<AdminCreateUserPayload>;
 
+export interface AdminDashboardStatsResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: {
+    totalUsers: number;
+    totalCoaches: number;
+    totalAdmins: number;
+    totalWorkoutPlans: number;
+    totalPublishedPlans: number;
+    recentUsers: User[];
+    recentCoaches: User[];
+  };
+}
+
 export const adminAPI = {
+  getDashboardStats: async (): Promise<AdminDashboardStatsResponse> => {
+    try {
+      const response = await apiClient.get<AdminDashboardStatsResponse>(
+        "/api/v1/admin/dashboard/stats"
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch dashboard stats"
+      );
+    }
+  },
+
   getUsers: async (
     page: number = 1,
     limit: number = 10,

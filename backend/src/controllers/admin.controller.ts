@@ -119,4 +119,28 @@ export class AdminController {
       return next(err);
     }
   };
+
+  // GET /api/v1/admin/dashboard/stats
+  getDashboardStats = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const stats = await adminUserService.getDashboardStats();
+
+      // Sanitize users
+      const sanitizeUsers = (users: any[]) => users.map(user => {
+        const u = user.toObject ? user.toObject() : user;
+        const { password, ...rest } = u;
+        return rest;
+      });
+
+      const sanitizedStats = {
+        ...stats,
+        recentUsers: sanitizeUsers(stats.recentUsers),
+        recentCoaches: sanitizeUsers(stats.recentCoaches)
+      };
+
+      return ApiResponseHelper.success(res, sanitizedStats, "Dashboard stats fetched successfully", 200);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
 }

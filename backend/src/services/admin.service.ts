@@ -88,4 +88,8 @@ export class AdminUserService {
       throw new HttpException(500, "Failed to delete user");
     }
   }
+
+  async getDashboardStats() {
+    return adminRepository.getDashboardStats();
+  }
 }

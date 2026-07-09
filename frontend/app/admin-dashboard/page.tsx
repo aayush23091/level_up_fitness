@@ -1,12 +1,32 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
+import { adminAPI, User } from "@/lib/api";
 
 function DashboardContent() {
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab") || "dashboard";
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch dashboard stats when tab is dashboard
+  useEffect(() => {
+    if (tab === "dashboard") {
+      const fetchStats = async () => {
+        try {
+          const response = await adminAPI.getDashboardStats();
+          setStats(response.data);
+        } catch (error) {
+          console.error("Failed to fetch dashboard stats:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchStats();
+    }
+  }, [tab]);
 
   // Tab Header Details
   const getTabDetails = () => {
@@ -36,6 +56,16 @@ function DashboardContent() {
   };
 
   const details = getTabDetails();
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -78,49 +108,103 @@ function DashboardContent() {
         </div>
       </div>
 
-      {/* Static Mock Placeholder Grids */}
+      {/* Dashboard Stats Cards */}
       {tab === "dashboard" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-          {/* Recent Audits Shell */}
-          <div className="bg-[#0e0e12]/60 border border-zinc-800/80 rounded-2xl p-6 space-y-4">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-zinc-800 pb-3 flex items-center gap-2">
-              <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
-              Recent System Events
-            </h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs py-2 border-b border-zinc-900">
-                <span className="text-zinc-400">Admin session authenticated</span>
-                <span className="text-zinc-600 font-mono">Just Now</span>
-              </div>
-              <div className="flex items-center justify-between text-xs py-2 border-b border-zinc-900">
-                <span className="text-zinc-400">New trainer registration submitted</span>
-                <span className="text-zinc-600 font-mono">2 mins ago</span>
-              </div>
-              <div className="flex items-center justify-between text-xs py-2">
-                <span className="text-zinc-400">Database migration complete</span>
-                <span className="text-zinc-600 font-mono">1 hour ago</span>
-              </div>
-            </div>
+        <div className="space-y-6 pt-2">
+          {/* Stats Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {loading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="bg-[#0e0e12]/60 border border-zinc-800/80 rounded-2xl p-6 animate-pulse">
+                  <div className="h-4 bg-zinc-800 rounded w-1/2 mb-3"></div>
+                  <div className="h-8 bg-zinc-800 rounded w-1/3"></div>
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="bg-[#0e0e12]/60 border border-zinc-800/80 rounded-2xl p-6 hover:border-yellow-500/30 transition-all">
+                  <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Total Users</h3>
+                  <p className="text-3xl font-black text-yellow-400">{stats?.totalUsers || 0}</p>
+                </div>
+                <div className="bg-[#0e0e12]/60 border border-zinc-800/80 rounded-2xl p-6 hover:border-yellow-500/30 transition-all">
+                  <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Total Coaches</h3>
+                  <p className="text-3xl font-black text-yellow-400">{stats?.totalCoaches || 0}</p>
+                </div>
+                <div className="bg-[#0e0e12]/60 border border-zinc-800/80 rounded-2xl p-6 hover:border-yellow-500/30 transition-all">
+                  <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Total Workout Plans</h3>
+                  <p className="text-3xl font-black text-yellow-400">{stats?.totalWorkoutPlans || 0}</p>
+                </div>
+                <div className="bg-[#0e0e12]/60 border border-zinc-800/80 rounded-2xl p-6 hover:border-yellow-500/30 transition-all">
+                  <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Published Plans</h3>
+                  <p className="text-3xl font-black text-yellow-400">{stats?.totalPublishedPlans || 0}</p>
+                </div>
+              </>
+            )}
           </div>
 
-          {/* Quick Stats Shell */}
-          <div className="bg-[#0e0e12]/60 border border-zinc-800/80 rounded-2xl p-6 space-y-4">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-zinc-800 pb-3 flex items-center gap-2">
-              <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
-              Administrative Tasks
-            </h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs py-2 border-b border-zinc-900">
-                <span className="text-zinc-400">Pending trainer reviews</span>
-                <span className="px-2 py-0.5 rounded-full bg-yellow-400/10 text-yellow-400 border border-yellow-400/20 text-[10px] font-bold">2 Pending</span>
+          {/* Recent Users and Coaches */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Recent Users */}
+            <div className="bg-[#0e0e12]/60 border border-zinc-800/80 rounded-2xl p-6 space-y-4">
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-zinc-800 pb-3 flex items-center gap-2">
+                <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+                Recent Users
+              </h3>
+              <div className="space-y-3">
+                {loading ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="flex items-center justify-between py-2 animate-pulse">
+                      <div className="h-4 bg-zinc-800 rounded w-1/3"></div>
+                      <div className="h-3 bg-zinc-800 rounded w-1/4"></div>
+                    </div>
+                  ))
+                ) : stats?.recentUsers?.length > 0 ? (
+                  stats.recentUsers.map((user: User) => (
+                    <div key={user._id} className="flex items-center justify-between py-2 border-b border-zinc-900 last:border-0">
+                      <div>
+                        <p className="text-sm font-medium text-white">{user.name}</p>
+                        <p className="text-xs text-zinc-500">{user.email}</p>
+                      </div>
+                      <p className="text-xs text-zinc-600 font-mono">
+                        {user.createdAt ? formatDate(user.createdAt) : "N/A"}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs text-zinc-500">No recent users</p>
+                )}
               </div>
-              <div className="flex items-center justify-between text-xs py-2 border-b border-zinc-900">
-                <span className="text-zinc-400">System warnings</span>
-                <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 border border-green-500/20 text-[10px] font-bold">0 Alerts</span>
-              </div>
-              <div className="flex items-center justify-between text-xs py-2">
-                <span className="text-zinc-400">API health status</span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold">99.9% Online</span>
+            </div>
+
+            {/* Recent Coaches */}
+            <div className="bg-[#0e0e12]/60 border border-zinc-800/80 rounded-2xl p-6 space-y-4">
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-zinc-800 pb-3 flex items-center gap-2">
+                <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+                Recent Coaches
+              </h3>
+              <div className="space-y-3">
+                {loading ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="flex items-center justify-between py-2 animate-pulse">
+                      <div className="h-4 bg-zinc-800 rounded w-1/3"></div>
+                      <div className="h-3 bg-zinc-800 rounded w-1/4"></div>
+                    </div>
+                  ))
+                ) : stats?.recentCoaches?.length > 0 ? (
+                  stats.recentCoaches.map((coach: User) => (
+                    <div key={coach._id} className="flex items-center justify-between py-2 border-b border-zinc-900 last:border-0">
+                      <div>
+                        <p className="text-sm font-medium text-white">{coach.name}</p>
+                        <p className="text-xs text-zinc-500">{coach.email}</p>
+                      </div>
+                      <p className="text-xs text-zinc-600 font-mono">
+                        {coach.createdAt ? formatDate(coach.createdAt) : "N/A"}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs text-zinc-500">No recent coaches</p>
+                )}
               </div>
             </div>
           </div>
