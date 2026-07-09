@@ -207,11 +207,6 @@ export default function WorkoutLibrary() {
                     <span className="text-[10px] text-yellow-500 font-black uppercase tracking-widest font-mono bg-yellow-500/10 px-2 py-0.5 rounded">
                       {workout.category}
                     </span>
-                    {workout.isPremium && (
-                      <span className="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 text-[9px] font-black uppercase px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(234,179,8,0.05)]">
-                        👑 Premium
-                      </span>
-                    )}
                   </div>
 
                   <h3 className="text-base font-bold text-white mt-3 group-hover:text-yellow-400 transition-colors">

@@ -10,7 +10,6 @@ export interface IWorkout extends Document {
   duration: number;
   xpReward: number;
   coinReward: number;
-  isPremium: boolean;
   createdBy: mongoose.Types.ObjectId;
   assignedUsers: mongoose.Types.ObjectId[];
   status: string;
@@ -28,7 +27,6 @@ const WorkoutSchema: Schema = new Schema<IWorkout>(
     duration: { type: Number, required: true },
     xpReward: { type: Number, default: 0 },
     coinReward: { type: Number, default: 0 },
-    isPremium: { type: Boolean, default: false },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
     assignedUsers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     status: { type: String, default: "active" },

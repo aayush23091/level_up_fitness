@@ -9,7 +9,6 @@ export const CreateWorkoutDTO = z.object({
   xpReward: z.number().min(0).default(0),
   coinReward: z.number().min(0).default(0),
   thumbnail: z.string().min(1, "Thumbnail URL or path is required"),
-  isPremium: z.boolean().default(false),
   status: z.string().default("active").optional(),
 });
 

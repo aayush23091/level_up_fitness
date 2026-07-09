@@ -1040,7 +1040,6 @@ export interface Workout {
   duration: number;
   xpReward: number;
   coinReward: number;
-  isPremium: boolean;
   createdBy?: string;
   assignedUsers?: string[];
   status?: string;

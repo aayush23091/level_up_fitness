@@ -263,11 +263,7 @@ export default function WorkoutDetailsPage() {
                     alt={workout.title}
                     className="w-full h-full object-cover"
                   />
-                  {workout.isPremium && (
-                    <span className="absolute top-4 right-4 bg-yellow-400 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
-                      👑 Premium
-                    </span>
-                  )}
+
                 </div>
               )}
 

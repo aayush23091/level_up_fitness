@@ -29,7 +29,6 @@ export default function AdminWorkoutsTable() {
     duration: 30,
     xpReward: 0,
     coinReward: 0,
-    isPremium: false,
     status: "active"
   });
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -74,7 +73,6 @@ export default function AdminWorkoutsTable() {
       duration: 30,
       xpReward: 0,
       coinReward: 0,
-      isPremium: false,
       status: "active"
     });
   };
@@ -90,7 +88,6 @@ export default function AdminWorkoutsTable() {
       duration: workout.duration,
       xpReward: workout.xpReward,
       coinReward: workout.coinReward,
-      isPremium: workout.isPremium,
       status: workout.status || "active"
     });
     setEditingWorkoutId(workout._id || workout.id || null);
@@ -294,7 +291,6 @@ export default function AdminWorkoutsTable() {
                 <th className="px-6 py-4">Duration</th>
                 <th className="px-6 py-4">XP Reward</th>
                 <th className="px-6 py-4">Coin Reward</th>
-                <th className="px-6 py-4">Premium</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
@@ -325,9 +321,6 @@ export default function AdminWorkoutsTable() {
                     <td className="px-6 py-4">
                       <div className="h-4 bg-zinc-800/60 rounded w-12"></div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-12"></div>
-                    </td>
                     <td className="px-6 py-4 text-right">
                       <div className="h-8 bg-zinc-800/60 rounded w-28 ml-auto"></div>
                     </td>
@@ -336,7 +329,7 @@ export default function AdminWorkoutsTable() {
               ) : workouts.length === 0 ? (
                 // Empty State Rows
                 <tr>
-                  <td colSpan={9} className="px-6 py-12 text-center">
+                  <td colSpan={8} className="px-6 py-12 text-center">
                     <div className="space-y-3">
                       <span className="text-3xl">💪</span>
                       <h4 className="text-sm font-bold text-white uppercase tracking-wider">No workouts found</h4>
@@ -371,17 +364,6 @@ export default function AdminWorkoutsTable() {
                       </td>
                       <td className="px-6 py-4">
                         <span className="text-zinc-300 text-xs">{workout.coinReward}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        {workout.isPremium ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-yellow-400/10 text-yellow-400 border border-yellow-500/20">
-                            Yes
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-zinc-800 text-zinc-400 border border-zinc-700/50">
-                            No
-                          </span>
-                        )}
                       </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -605,19 +587,6 @@ export default function AdminWorkoutsTable() {
                     onChange={(e) => setFormData({ ...formData, coinReward: parseInt(e.target.value) || 0 })}
                     className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-700"
                   />
-                </div>
-
-                {/* Premium */}
-                <div className="col-span-2">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.isPremium}
-                      onChange={(e) => setFormData({ ...formData, isPremium: e.target.checked })}
-                      className="w-4 h-4 bg-zinc-800 border-zinc-700 rounded text-yellow-400 focus:ring-yellow-500"
-                    />
-                    <span className="text-xs text-zinc-400 uppercase tracking-wider font-bold">Is Premium Workout</span>
-                  </label>
                 </div>
 
                 {/* Status */}
