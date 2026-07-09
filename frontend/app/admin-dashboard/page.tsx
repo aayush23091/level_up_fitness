@@ -4,13 +4,23 @@ import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
 import AdminCoachesTable from "@/components/admin/AdminCoachesTable";
-import { adminAPI, User } from "@/lib/api";
+import { adminAPI, User, authAPI } from "@/lib/api";
+import { useAuth } from "@/app/context/AuthContext";
 
 function DashboardContent() {
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab") || "dashboard";
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { user, logout } = useAuth();
+  
+  // Change password state
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   // Fetch dashboard stats when tab is dashboard
   useEffect(() => {
@@ -66,6 +76,34 @@ function DashboardContent() {
       hour: "2-digit",
       minute: "2-digit"
     });
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    if (newPassword !== confirmPassword) {
+      setIsSubmitting(false);
+      setErrorMsg("New password and confirmation do not match");
+      return;
+    }
+
+    try {
+      const response = await authAPI.changePassword({
+        currentPassword,
+        newPassword,
+      });
+      setSuccessMsg("Password updated successfully");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      setErrorMsg(err.message || "Failed to update password");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -218,16 +256,115 @@ function DashboardContent() {
       {tab === "coaches" && <AdminCoachesTable />}
 
       {tab === "settings" && (
-        <div className="bg-[#0e0e12]/40 border border-zinc-800/80 rounded-2xl p-8 text-center space-y-3">
-          <div className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-600">
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
+        <div className="space-y-6">
+          {/* Profile Section */}
+          <div className="bg-[#0e0e12] border border-zinc-800/80 rounded-2xl p-6 lg:p-8 shadow-2xl relative overflow-hidden">
+            <div className="absolute -top-12 -right-12 w-40 h-40 bg-yellow-500/5 rounded-full blur-2xl pointer-events-none" />
+            <div className="relative">
+              <h2 className="text-lg font-bold text-white uppercase tracking-wider">Admin Profile</h2>
+              <div className="mt-6 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Name</p>
+                    <p className="text-white text-sm font-medium mt-1">{user?.name || "N/A"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Email</p>
+                    <p className="text-white text-sm font-medium mt-1">{user?.email || "N/A"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Role</p>
+                    <p className="text-yellow-400 text-sm font-bold mt-1 uppercase">{user?.role || "N/A"}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider">System Parameters</h3>
-          <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-            Configurable variables, database settings, and global parameters are disabled for now.
-          </p>
+
+          {/* Change Password Section */}
+          <div className="bg-[#0e0e12] border border-zinc-800/80 rounded-2xl p-6 lg:p-8 shadow-2xl relative overflow-hidden">
+            <div className="absolute -top-12 -right-12 w-40 h-40 bg-yellow-500/5 rounded-full blur-2xl pointer-events-none" />
+            <div className="relative">
+              <h2 className="text-lg font-bold text-white uppercase tracking-wider">Change Password</h2>
+              <p className="text-zinc-500 text-xs mt-1">Update your password to keep your account secure.</p>
+              <form onSubmit={handleChangePassword} className="mt-6 space-y-5 max-w-xl">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Enter current password"
+                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter new password"
+                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-600"
+                  />
+                </div>
+
+                {/* Feedback */}
+                {errorMsg && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-lg font-medium">
+                    {errorMsg}
+                  </div>
+                )}
+                {successMsg && (
+                  <div className="p-3 bg-green-500/10 border border-green-500/30 text-green-400 text-xs rounded-lg font-medium">
+                    {successMsg}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full sm:w-auto px-8 py-2.5 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-colors shadow-lg shadow-yellow-500/10"
+                >
+                  {isSubmitting ? "Updating..." : "Update Password"}
+                </button>
+              </form>
+            </div>
+          </div>
+
+          {/* Logout Section */}
+          <div className="bg-[#0e0e12] border border-zinc-800/80 rounded-2xl p-6 lg:p-8 shadow-2xl relative overflow-hidden">
+            <div className="absolute -top-12 -right-12 w-40 h-40 bg-red-500/5 rounded-full blur-2xl pointer-events-none" />
+            <div className="relative">
+              <h2 className="text-lg font-bold text-white uppercase tracking-wider">Logout</h2>
+              <p className="text-zinc-500 text-xs mt-1">Sign out of your admin account.</p>
+              <button
+                onClick={logout}
+                className="mt-6 px-8 py-2.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-lg uppercase tracking-wider transition-colors shadow-lg shadow-red-500/10"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
