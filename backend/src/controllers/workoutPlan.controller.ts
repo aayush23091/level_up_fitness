@@ -149,4 +149,24 @@ export class WorkoutPlanController {
       return next(err);
     }
   };
+
+  // PATCH /api/v1/coach/workout-plans/:id/publish
+  publishWorkoutPlan = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const coachId = req.user?._id;
+      if (!coachId) {
+        throw new HttpException(401, "Unauthorized");
+      }
+
+      const id = req.params.id as string;
+      if (!id) {
+        throw new HttpException(400, "Workout plan ID is required");
+      }
+
+      const workoutPlan = await workoutPlanService.publishWorkoutPlan(id, coachId as string);
+      return ApiResponseHelper.success(res, workoutPlan, "Workout plan published successfully", 200);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
 }

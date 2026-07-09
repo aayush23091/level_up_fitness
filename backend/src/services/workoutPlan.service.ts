@@ -59,4 +59,21 @@ export class WorkoutPlanService {
       throw new HttpException(500, "Failed to delete workout plan");
     }
   }
+
+  async publishWorkoutPlan(id: string, coachId: string): Promise<IWorkoutPlan> {
+    const workoutPlan = await workoutPlanRepository.getWorkoutPlanById(id, coachId);
+    if (!workoutPlan) {
+      throw new HttpException(404, "Workout plan not found");
+    }
+
+    if (workoutPlan.status === "Published") {
+      throw new HttpException(400, "Workout plan is already published");
+    }
+
+    const updated = await workoutPlanRepository.updateWorkoutPlan(id, coachId, { status: "Published" });
+    if (!updated) {
+      throw new HttpException(500, "Failed to publish workout plan");
+    }
+    return updated;
+  }
 }

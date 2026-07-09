@@ -74,6 +74,15 @@ export default function CoachWorkoutPlans() {
     }
   };
 
+  const handlePublish = async (workoutPlan: WorkoutPlan) => {
+    try {
+      await workoutPlanAPI.publishWorkoutPlan(workoutPlan._id || workoutPlan.id || "");
+      fetchWorkoutPlans();
+    } catch (err: any) {
+      setError(err.message || "Failed to publish workout plan");
+    }
+  };
+
   const openDeleteModal = (workoutPlan: WorkoutPlan) => {
     setSelectedWorkoutPlan(workoutPlan);
     setIsDeleteModalOpen(true);
@@ -200,6 +209,17 @@ export default function CoachWorkoutPlans() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
+                        {workoutPlan.status === "Draft" && (
+                          <button
+                            onClick={() => handlePublish(workoutPlan)}
+                            className="p-2 text-zinc-400 hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-colors"
+                            title="Publish"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </button>
+                        )}
                         <button
                           onClick={() => openBuilderModal(workoutPlan)}
                           className="p-2 text-zinc-400 hover:text-yellow-400 hover:bg-yellow-500/10 rounded-lg transition-colors"

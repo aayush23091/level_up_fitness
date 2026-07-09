@@ -18,5 +18,6 @@ coachRouter.get("/workout-plans/:id", workoutPlanController.getWorkoutPlanById);
 coachRouter.post("/workout-plans", workoutPlanController.createWorkoutPlan);
 coachRouter.put("/workout-plans/:id", workoutPlanController.updateWorkoutPlan);
 coachRouter.delete("/workout-plans/:id", workoutPlanController.deleteWorkoutPlan);
+coachRouter.patch("/workout-plans/:id/publish", workoutPlanController.publishWorkoutPlan);
 
 export default coachRouter;

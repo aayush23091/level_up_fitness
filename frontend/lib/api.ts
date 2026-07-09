@@ -793,6 +793,20 @@ export const workoutPlanAPI = {
       );
     }
   },
+
+  publishWorkoutPlan: async (id: string): Promise<SingleWorkoutPlanResponse> => {
+    try {
+      const response = await apiClient.patch<SingleWorkoutPlanResponse>(
+        `/api/v1/coach/workout-plans/${id}/publish`
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to publish workout plan"
+      );
+    }
+  },
 };
 
 export default apiClient;
