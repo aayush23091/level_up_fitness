@@ -4,6 +4,7 @@ import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
 import { AdminCreateUserDTO, AdminUpdateUserDTO } from "../dtos/admin.dto";
 import { CreateWorkoutDTO, UpdateWorkoutDTO } from "../dtos/workout.dto";
+import { CreateAchievementDTO, UpdateAchievementDTO } from "../dtos/achievement.dto";
 
 const adminUserService = new AdminUserService();
 
@@ -296,6 +297,88 @@ export class AdminController {
 
       await adminUserService.deleteWorkout(id);
       return ApiResponseHelper.success(res, null, "Workout deleted successfully", 200);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
+
+  getAchievements = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const search = (req.query.search as string) || undefined;
+      const status = (req.query.status as string) || undefined;
+
+      const { achievements, total } = await adminUserService.getAchievements(page, limit, search, status);
+      const totalPages = Math.ceil(total / limit);
+
+      const meta = {
+        page,
+        limit,
+        total,
+        totalPages,
+      };
+
+      return ApiResponseHelper.success(res, achievements, "Achievements fetched successfully", 200, meta as any);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
+
+  getAchievementById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id as string;
+      if (!id) {
+        throw new HttpException(400, "Achievement ID is required");
+      }
+
+      const achievement = await adminUserService.getAchievementById(id);
+      return ApiResponseHelper.success(res, achievement, "Achievement fetched successfully", 200);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
+
+  createAchievement = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const parsed = CreateAchievementDTO.parse(req.body);
+      const achievement = await adminUserService.createAchievement(parsed);
+      return ApiResponseHelper.success(res, achievement, "Achievement created successfully", 201);
+    } catch (err: any) {
+      if (err.name === "ZodError") {
+        return next(new HttpException(400, err.errors[0].message));
+      }
+      return next(err);
+    }
+  };
+
+  updateAchievement = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id as string;
+      if (!id) {
+        throw new HttpException(400, "Achievement ID is required");
+      }
+
+      const parsed = UpdateAchievementDTO.parse(req.body);
+      const achievement = await adminUserService.updateAchievement(id, parsed);
+      return ApiResponseHelper.success(res, achievement, "Achievement updated successfully", 200);
+    } catch (err: any) {
+      if (err.name === "ZodError") {
+        return next(new HttpException(400, err.errors[0].message));
+      }
+      return next(err);
+    }
+  };
+
+  deleteAchievement = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id as string;
+      if (!id) {
+        throw new HttpException(400, "Achievement ID is required");
+      }
+
+      await adminUserService.deleteAchievement(id);
+      return ApiResponseHelper.success(res, null, "Achievement deleted successfully", 200);
     } catch (err: any) {
       return next(err);
     }

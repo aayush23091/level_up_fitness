@@ -259,6 +259,41 @@ export interface AdminDashboardStatsResponse {
   };
 }
 
+export interface Achievement {
+  _id?: string;
+  id?: string;
+  title: string;
+  description: string;
+  conditionType: "workout_completed" | "xp_earned" | "level_reached" | "streak_days";
+  conditionValue: number;
+  xpReward: number;
+  coinReward: number;
+  badgeImage?: string;
+  status: "active" | "inactive";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PaginatedAchievementsResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: Achievement[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface SingleAchievementResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: Achievement;
+}
+
 export const adminAPI = {
   getDashboardStats: async (): Promise<AdminDashboardStatsResponse> => {
     try {
@@ -271,6 +306,102 @@ export const adminAPI = {
       const axiosError = error as AxiosError<any>;
       throw new Error(
         axiosError.response?.data?.message || "Failed to fetch dashboard stats"
+      );
+    }
+  },
+
+  getAchievements: async (
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+    status?: string
+  ): Promise<PaginatedAchievementsResponse> => {
+    try {
+      const params: Record<string, any> = { page, limit };
+      if (search) params.search = search;
+      if (status && status !== "all") params.status = status;
+
+      const response = await apiClient.get<PaginatedAchievementsResponse>(
+        "/api/v1/admin/achievements",
+        { params }
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch achievements"
+      );
+    }
+  },
+
+  getAchievement: async (id: string): Promise<SingleAchievementResponse> => {
+    try {
+      const response = await apiClient.get<SingleAchievementResponse>(
+        `/api/v1/admin/achievements/${id}`
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch achievement"
+      );
+    }
+  },
+
+  createAchievement: async (
+    data: Partial<Achievement>
+  ): Promise<SingleAchievementResponse> => {
+    try {
+      const response = await apiClient.post<SingleAchievementResponse>(
+        "/api/v1/admin/achievements",
+        data
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to create achievement"
+      );
+    }
+  },
+
+  updateAchievement: async (
+    id: string,
+    data: Partial<Achievement>
+  ): Promise<SingleAchievementResponse> => {
+    try {
+      const response = await apiClient.put<SingleAchievementResponse>(
+        `/api/v1/admin/achievements/${id}`,
+        data
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to update achievement"
+      );
+    }
+  },
+
+  deleteAchievement: async (
+    id: string
+  ): Promise<{ status: number; success: boolean; message: string }> => {
+    try {
+      const response = await apiClient.delete<{
+        status: number;
+        success: boolean;
+        message: string;
+      }>(`/api/v1/admin/achievements/${id}`);
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to delete achievement"
       );
     }
   },

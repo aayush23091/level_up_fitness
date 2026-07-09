@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
 import AdminCoachesTable from "@/components/admin/AdminCoachesTable";
 import AdminWorkoutsTable from "@/components/admin/AdminWorkoutsTable";
+import AdminAchievementsTable from "@/components/admin/AdminAchievementsTable";
 import { adminAPI, User, authAPI } from "@/lib/api";
 import { useAuth } from "@/app/context/AuthContext";
 
@@ -57,6 +58,11 @@ function DashboardContent() {
         return {
           title: "Workout Management",
           subtitle: "Create, edit, and manage fitness workouts for the platform.",
+        };
+      case "achievements":
+        return {
+          title: "Achievement Management",
+          subtitle: "Create, edit, and manage achievements for the gamification system.",
         };
       case "settings":
         return {
@@ -262,6 +268,8 @@ function DashboardContent() {
       {tab === "coaches" && <AdminCoachesTable />}
 
       {tab === "workouts" && <AdminWorkoutsTable />}
+
+      {tab === "achievements" && <AdminAchievementsTable />}
 
       {tab === "settings" && (
         <div className="space-y-6">

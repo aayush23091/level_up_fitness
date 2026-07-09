@@ -30,4 +30,11 @@ adminRouter.post("/workouts", adminController.createWorkout);
 adminRouter.put("/workouts/:id", adminController.updateWorkout);
 adminRouter.delete("/workouts/:id", adminController.deleteWorkout);
 
+// Achievement management
+adminRouter.get("/achievements", adminController.getAchievements);
+adminRouter.get("/achievements/:id", adminController.getAchievementById);
+adminRouter.post("/achievements", adminController.createAchievement);
+adminRouter.put("/achievements/:id", adminController.updateAchievement);
+adminRouter.delete("/achievements/:id", adminController.deleteAchievement);
+
 export default adminRouter;

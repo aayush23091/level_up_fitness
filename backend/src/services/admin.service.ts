@@ -2,6 +2,7 @@ import { AdminUserRepository } from "../repositories/admin.repository";
 import { AdminCreateUserDTO, AdminUpdateUserDTO } from "../dtos/admin.dto";
 import { IUser } from "../models/user.model";
 import { IWorkout } from "../models/workout.model";
+import { IAchievement } from "../models/achievement.model";
 import { HttpException } from "../exceptions/http-exception";
 import bcrypt from "bcryptjs";
 
@@ -145,6 +146,42 @@ export class AdminUserService {
     const success = await adminRepository.deleteWorkout(id);
     if (!success) {
       throw new HttpException(404, "Workout not found");
+    }
+  }
+
+  async getAchievements(
+    page: number,
+    limit: number,
+    search?: string,
+    status?: string
+  ): Promise<{ achievements: IAchievement[]; total: number }> {
+    return adminRepository.getAchievements(page, limit, search, status);
+  }
+
+  async getAchievementById(id: string): Promise<IAchievement> {
+    const achievement = await adminRepository.getAchievementById(id);
+    if (!achievement) {
+      throw new HttpException(404, "Achievement not found");
+    }
+    return achievement;
+  }
+
+  async createAchievement(achievementData: Partial<IAchievement>): Promise<IAchievement> {
+    return adminRepository.createAchievement(achievementData);
+  }
+
+  async updateAchievement(id: string, achievementData: Partial<IAchievement>): Promise<IAchievement> {
+    const achievement = await adminRepository.updateAchievement(id, achievementData);
+    if (!achievement) {
+      throw new HttpException(404, "Achievement not found");
+    }
+    return achievement;
+  }
+
+  async deleteAchievement(id: string): Promise<void> {
+    const success = await adminRepository.deleteAchievement(id);
+    if (!success) {
+      throw new HttpException(404, "Achievement not found");
     }
   }
 }
