@@ -1,11 +1,13 @@
 import { CoachHiringRepository } from "../repositories/coachHiring.repository";
 import { CoachEarningRepository } from "../repositories/coachEarning.repository";
+import { TransactionRepository } from "../repositories/transaction.repository";
 import { ICoachClient } from "../models/coachClient.model";
 import { IUser } from "../models/user.model";
 import { HttpException } from "../exceptions/http-exception";
 
 const coachHiringRepository = new CoachHiringRepository();
 const coachEarningRepository = new CoachEarningRepository();
+const transactionRepository = new TransactionRepository();
 
 export class CoachHiringService {
     async getAllCoaches(page: number = 1, limit: number = 10, search?: string, specialization?: string): Promise<{ data: any[]; meta: any }> {
@@ -71,8 +73,11 @@ export class CoachHiringService {
             throw new HttpException(403, "Only users can hire coaches");
         }
 
+        // Get hire cost
+        const hireCost = coach.coachProfile?.hireCost || 0;
+
         // Check if athlete has enough coins
-        if ((athlete.coins || 0) < (coach.coachProfile?.hireCost || 0)) {
+        if ((athlete.coins || 0) < hireCost) {
             throw new HttpException(400, "Insufficient coins");
         }
 
@@ -83,23 +88,30 @@ export class CoachHiringService {
         }
 
         // Deduct coins from athlete
-        const updatedCoins = (athlete.coins || 0) - (coach.coachProfile?.hireCost || 0);
+        const updatedCoins = (athlete.coins || 0) - hireCost;
         const updatedUser = await coachHiringRepository.updateUserCoins(athleteId, updatedCoins);
         if (!updatedUser) {
             throw new HttpException(500, "Failed to update user coins");
         }
 
-        // Create coach-client relationship
-        await coachHiringRepository.createCoachClient(coachId, athleteId);
+        // Calculate commission and earnings
+        const ADMIN_PERCENTAGE = 40;
+        const adminCommission = (hireCost * ADMIN_PERCENTAGE) / 100;
+        const coachEarning = hireCost - adminCommission;
 
-        // Create earnings record
-        await coachEarningRepository.createCoachEarning(
-          coachId,
+        // Create transaction record first
+        const transaction = await transactionRepository.createTransaction(
           athleteId,
-          coach.coachProfile?.hireCost || 0,
+          coachId,
+          hireCost,
+          adminCommission,
+          coachEarning,
           "coach_hire",
           "completed"
         );
+
+        // Create coach-client relationship with transactionId
+        await coachHiringRepository.createCoachClient(coachId, athleteId, transaction._id.toString());
 
         return updatedUser.coins || 0;
     }

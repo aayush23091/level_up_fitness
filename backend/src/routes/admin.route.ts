@@ -37,4 +37,7 @@ adminRouter.post("/achievements", adminController.createAchievement);
 adminRouter.put("/achievements/:id", adminController.updateAchievement);
 adminRouter.delete("/achievements/:id", adminController.deleteAchievement);
 
+// Transaction management
+adminRouter.get("/transactions", adminController.getTransactions);
+
 export default adminRouter;

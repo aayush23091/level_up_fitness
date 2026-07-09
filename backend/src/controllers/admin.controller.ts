@@ -383,4 +383,14 @@ export class AdminController {
       return next(err);
     }
   };
+
+  // GET /api/v1/admin/transactions
+  getTransactions = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const transactions = await adminUserService.getAdminTransactions();
+      return ApiResponseHelper.success(res, transactions, "Transactions fetched successfully", 200);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
 }

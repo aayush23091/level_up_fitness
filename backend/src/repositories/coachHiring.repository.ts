@@ -43,10 +43,11 @@ export class CoachHiringRepository {
         return UserModel.findOne({ _id: userId, role: "coach" }).exec();
     }
 
-    async createCoachClient(coachId: string, athleteId: string): Promise<ICoachClient> {
+    async createCoachClient(coachId: string, athleteId: string, transactionId?: string): Promise<ICoachClient> {
         return CoachClientModel.create({
             coachId,
             athleteId,
+            transactionId,
             hiredAt: new Date(),
             status: "active"
         });

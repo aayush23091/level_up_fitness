@@ -6,6 +6,7 @@ import AdminUsersTable from "@/components/admin/AdminUsersTable";
 import AdminCoachesTable from "@/components/admin/AdminCoachesTable";
 import AdminWorkoutsTable from "@/components/admin/AdminWorkoutsTable";
 import AdminAchievementsTable from "@/components/admin/AdminAchievementsTable";
+import AdminTransactionsTable from "@/components/admin/AdminTransactionsTable";
 import { adminAPI, User, authAPI } from "@/lib/api";
 import { useAuth } from "@/app/context/AuthContext";
 
@@ -63,6 +64,11 @@ function DashboardContent() {
         return {
           title: "Achievement Management",
           subtitle: "Create, edit, and manage achievements for the gamification system.",
+        };
+      case "transactions":
+        return {
+          title: "Transaction Management",
+          subtitle: "View all coach hire transactions and revenue details.",
         };
       case "settings":
         return {
@@ -270,6 +276,8 @@ function DashboardContent() {
       {tab === "workouts" && <AdminWorkoutsTable />}
 
       {tab === "achievements" && <AdminAchievementsTable />}
+
+      {tab === "transactions" && <AdminTransactionsTable />}
 
       {tab === "settings" && (
         <div className="space-y-6">

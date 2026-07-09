@@ -1,4 +1,5 @@
 import { AdminUserRepository } from "../repositories/admin.repository";
+import { TransactionRepository } from "../repositories/transaction.repository";
 import { AdminCreateUserDTO, AdminUpdateUserDTO } from "../dtos/admin.dto";
 import { IUser } from "../models/user.model";
 import { IWorkout } from "../models/workout.model";
@@ -7,6 +8,7 @@ import { HttpException } from "../exceptions/http-exception";
 import bcrypt from "bcryptjs";
 
 const adminRepository = new AdminUserRepository();
+const transactionRepository = new TransactionRepository();
 
 export class AdminUserService {
   async getUsers(
@@ -183,5 +185,9 @@ export class AdminUserService {
     if (!success) {
       throw new HttpException(404, "Achievement not found");
     }
+  }
+
+  async getAdminTransactions() {
+    return transactionRepository.getAdminTransactions();
   }
 }

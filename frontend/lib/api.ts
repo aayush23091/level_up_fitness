@@ -654,6 +654,20 @@ export const adminAPI = {
       );
     }
   },
+
+  getTransactions: async (): Promise<AdminTransactionsResponse> => {
+    try {
+      const response = await apiClient.get<AdminTransactionsResponse>(
+        "/api/v1/admin/transactions"
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch transactions"
+      );
+    }
+  },
 };
 
 export interface Coach {
@@ -790,9 +804,34 @@ export interface CoachEarningsResponse {
       _id: string;
       athleteName: string;
       amount: number;
+      coachEarning: number;
       type: string;
       date: string;
     }[];
+  };
+}
+
+export interface AdminTransaction {
+  _id: string;
+  athleteName: string;
+  coachName: string;
+  amount: number;
+  adminCommission: number;
+  coachEarning: number;
+  type: string;
+  status: string;
+  date: string;
+}
+
+export interface AdminTransactionsResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: {
+    totalRevenue: number;
+    adminCommission: number;
+    transactionCount: number;
+    transactions: AdminTransaction[];
   };
 }
 

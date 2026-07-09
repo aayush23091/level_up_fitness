@@ -1,7 +1,7 @@
-import { CoachEarningRepository } from "../repositories/coachEarning.repository";
+import { TransactionRepository } from "../repositories/transaction.repository";
 import { HttpException } from "../exceptions/http-exception";
 
-const coachEarningRepository = new CoachEarningRepository();
+const transactionRepository = new TransactionRepository();
 
 export interface CoachEarningResponse {
   totalEarnings: number;
@@ -10,6 +10,7 @@ export interface CoachEarningResponse {
     _id: string;
     athleteName: string;
     amount: number;
+    coachEarning: number;
     type: string;
     date: string;
   }[];
@@ -21,6 +22,6 @@ export class CoachEarningService {
       throw new HttpException(401, "Unauthorized: Coach ID not found");
     }
 
-    return coachEarningRepository.getCoachEarnings(coachId);
+    return transactionRepository.getCoachTransactions(coachId);
   }
 }
