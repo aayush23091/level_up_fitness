@@ -20,6 +20,13 @@ export default function ProfilePage() {
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
+  // Coach-specific fields
+  const [bio, setBio] = useState("");
+  const [specialization, setSpecialization] = useState("");
+  const [experience, setExperience] = useState("");
+  const [hireCost, setHireCost] = useState("");
+  const [availability, setAvailability] = useState(true);
+
   // Modal feedback state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -35,6 +42,15 @@ export default function ProfilePage() {
       setGender(user.gender || "");
       setPhoto(null);
       setPhotoPreview(null);
+
+      // Initialize coach-specific fields
+      if (user.role === "coach") {
+        setBio(user.bio || "");
+        setSpecialization(user.specialization?.join(", ") || "");
+        setExperience(user.experience?.toString() || "");
+        setHireCost(user.hireCost?.toString() || "");
+        setAvailability(user.availability !== undefined ? user.availability : true);
+      }
     }
   }, [user, isEditModalOpen]);
 
@@ -61,6 +77,15 @@ export default function ProfilePage() {
       formData.append("gender", gender);
       if (photo) {
         formData.append("photo", photo);
+      }
+
+      // Add coach-specific fields if user is a coach
+      if (user?.role === "coach") {
+        formData.append("bio", bio);
+        formData.append("specialization", specialization);
+        formData.append("experience", experience);
+        formData.append("hireCost", hireCost);
+        formData.append("availability", availability.toString());
       }
 
       const res = await authAPI.updateProfile(formData);
@@ -404,6 +429,77 @@ export default function ProfilePage() {
                       <option value="other">Other</option>
                     </select>
                   </div>
+
+                  {/* Coach-specific fields */}
+                  {user?.role === "coach" && (
+                    <div className="pt-4 border-t border-[#1e1e24] space-y-4">
+                      <p className="text-xs font-bold text-yellow-500 uppercase tracking-wider">Coach Profile Details</p>
+
+                      {/* Bio */}
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Bio</label>
+                        <textarea
+                          value={bio}
+                          onChange={(e) => setBio(e.target.value)}
+                          placeholder="Tell athletes about yourself..."
+                          rows={3}
+                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600 resize-none"
+                        />
+                      </div>
+
+                      {/* Specialization */}
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Specialization (comma-separated)</label>
+                        <input
+                          type="text"
+                          value={specialization}
+                          onChange={(e) => setSpecialization(e.target.value)}
+                          placeholder="e.g. Muscle Building, Strength Training"
+                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                        />
+                      </div>
+
+                      {/* Experience */}
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Experience (years)</label>
+                        <input
+                          type="number"
+                          value={experience}
+                          onChange={(e) => setExperience(e.target.value)}
+                          placeholder="5"
+                          min="0"
+                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                        />
+                      </div>
+
+                      {/* Hire Cost */}
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Hire Cost (coins)</label>
+                        <input
+                          type="number"
+                          value={hireCost}
+                          onChange={(e) => setHireCost(e.target.value)}
+                          placeholder="500"
+                          min="0"
+                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                        />
+                      </div>
+
+                      {/* Availability */}
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          id="availability"
+                          checked={availability}
+                          onChange={(e) => setAvailability(e.target.checked)}
+                          className="w-4 h-4 rounded border-[#1e1e24] bg-[#121216] text-yellow-500 focus:ring-yellow-500 focus:ring-offset-0"
+                        />
+                        <label htmlFor="availability" className="text-xs text-gray-400 font-medium">
+                          Available for hire
+                        </label>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Error/Success Feedback */}

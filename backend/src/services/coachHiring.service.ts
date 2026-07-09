@@ -1,5 +1,4 @@
 import { CoachHiringRepository } from "../repositories/coachHiring.repository";
-import { ICoachProfile } from "../models/coachProfile.model";
 import { ICoachClient } from "../models/coachClient.model";
 import { IUser } from "../models/user.model";
 import { HttpException } from "../exceptions/http-exception";
@@ -7,9 +6,20 @@ import { HttpException } from "../exceptions/http-exception";
 const coachHiringRepository = new CoachHiringRepository();
 
 export class CoachHiringService {
-    async getAllCoaches(): Promise<any[]> {
-        const coaches = await coachHiringRepository.getAllCoaches();
-        return coaches.map(coach => this.transformCoachProfile(coach));
+    async getAllCoaches(page: number = 1, limit: number = 10, search?: string, specialization?: string): Promise<{ data: any[]; meta: any }> {
+        const { coaches, total } = await coachHiringRepository.getAllCoaches(page, limit, search, specialization);
+        const transformedCoaches = coaches.map(coach => this.transformCoachUser(coach));
+        const totalPages = Math.ceil(total / limit);
+
+        return {
+            data: transformedCoaches,
+            meta: {
+                page,
+                limit,
+                total,
+                totalPages
+            }
+        };
     }
 
     async getCoachById(id: string): Promise<any> {
@@ -17,23 +27,21 @@ export class CoachHiringService {
         if (!coach) {
             throw new HttpException(404, "Coach not found");
         }
-        return this.transformCoachProfile(coach);
+        return this.transformCoachUser(coach);
     }
 
-    private transformCoachProfile(coach: any): any {
-        const user = coach.userId || {};
+    private transformCoachUser(coach: IUser): any {
         return {
             _id: coach._id,
-            name: user.name || "Coach",
-            username: user.username || "",
-            profilePhoto: user.profilePhoto || null,
+            name: coach.name || "Coach",
+            username: coach.username || "",
+            email: coach.email || "",
+            profilePhoto: coach.profilePhoto || null,
             bio: coach.bio,
             specialization: coach.specialization,
             experience: coach.experience,
-            rating: coach.rating,
             hireCost: coach.hireCost,
-            available: coach.available,
-            totalClients: coach.totalClients
+            available: coach.availability
         };
     }
 
@@ -43,7 +51,7 @@ export class CoachHiringService {
         if (!coach) {
             throw new HttpException(404, "Coach not found");
         }
-        if (!coach.available) {
+        if (!coach.availability) {
             throw new HttpException(400, "Coach is not available for hiring");
         }
 
@@ -59,7 +67,7 @@ export class CoachHiringService {
         }
 
         // Check if athlete has enough coins
-        if ((athlete.coins || 0) < coach.hireCost) {
+        if ((athlete.coins || 0) < (coach.hireCost || 0)) {
             throw new HttpException(400, "Insufficient coins");
         }
 
@@ -70,7 +78,7 @@ export class CoachHiringService {
         }
 
         // Deduct coins from athlete
-        const updatedCoins = (athlete.coins || 0) - coach.hireCost;
+        const updatedCoins = (athlete.coins || 0) - (coach.hireCost || 0);
         const updatedUser = await coachHiringRepository.updateUserCoins(athleteId, updatedCoins);
         if (!updatedUser) {
             throw new HttpException(500, "Failed to update user coins");
@@ -78,9 +86,6 @@ export class CoachHiringService {
 
         // Create coach-client relationship
         await coachHiringRepository.createCoachClient(coachId, athleteId);
-
-        // Increment coach's total clients
-        await coachHiringRepository.incrementCoachTotalClients(coachId);
 
         return updatedUser.coins || 0;
     }

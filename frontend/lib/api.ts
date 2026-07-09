@@ -58,6 +58,11 @@ export interface User {
   status?: string;
   hiredAt?: string;
   createdAt?: string;
+  bio?: string;
+  specialization?: string[];
+  experience?: number;
+  hireCost?: number;
+  availability?: boolean;
 }
 
 interface WhoAmIResponse {

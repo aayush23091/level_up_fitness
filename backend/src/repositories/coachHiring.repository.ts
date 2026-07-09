@@ -3,23 +3,44 @@ import { CoachClientModel, ICoachClient } from "../models/coachClient.model";
 import { UserModel, IUser } from "../models/user.model";
 
 export class CoachHiringRepository {
-    async getAllCoaches(): Promise<ICoachProfile[]> {
-        return CoachProfileModel.find({ available: true })
-            .populate("userId", "name username email profilePhoto")
-            .sort({ rating: -1 })
+    async getAllCoaches(page: number = 1, limit: number = 10, search?: string, specialization?: string): Promise<{ coaches: IUser[]; total: number }> {
+        const skip = (page - 1) * limit;
+
+        // Build base query
+        const query: any = { role: "coach", availability: true };
+
+        // Add search filter if provided
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: "i" } },
+                { username: { $regex: search, $options: "i" } }
+            ];
+        }
+
+        // Add specialization filter if provided
+        if (specialization && specialization !== "all") {
+            query.specialization = { $in: [specialization] };
+        }
+
+        // Get total count
+        const total = await UserModel.countDocuments(query).exec();
+
+        // Get paginated results
+        const coaches = await UserModel.find(query)
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 })
             .exec();
+
+        return { coaches, total };
     }
 
-    async getCoachById(id: string): Promise<ICoachProfile | null> {
-        return CoachProfileModel.findById(id)
-            .populate("userId", "name username email profilePhoto")
-            .exec();
+    async getCoachById(id: string): Promise<IUser | null> {
+        return UserModel.findOne({ _id: id, role: "coach" }).exec();
     }
 
-    async getCoachByUserId(userId: string): Promise<ICoachProfile | null> {
-        return CoachProfileModel.findOne({ userId })
-            .populate("userId", "name username email profilePhoto")
-            .exec();
+    async getCoachByUserId(userId: string): Promise<IUser | null> {
+        return UserModel.findOne({ _id: userId, role: "coach" }).exec();
     }
 
     async createCoachClient(coachId: string, athleteId: string): Promise<ICoachClient> {
@@ -43,11 +64,8 @@ export class CoachHiringRepository {
         return UserModel.findByIdAndUpdate(userId, { coins }, { new: true }).exec();
     }
 
-    async incrementCoachTotalClients(coachId: string): Promise<ICoachProfile | null> {
-        return CoachProfileModel.findByIdAndUpdate(
-            coachId,
-            { $inc: { totalClients: 1 } },
-            { new: true }
-        ).exec();
+    async incrementCoachTotalClients(coachId: string): Promise<IUser | null> {
+        // No longer tracking total clients in separate model
+        return UserModel.findById(coachId).exec();
     }
 }

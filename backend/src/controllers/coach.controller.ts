@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { CoachService } from "../services/coach.service";
 import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
-import { CoachProfileModel } from "../models/coachProfile.model";
+import { UserModel } from "../models/user.model";
 
 const coachService = new CoachService();
 
@@ -15,13 +15,13 @@ export class CoachController {
         throw new HttpException(401, "Unauthorized: User ID not found");
       }
 
-      // Find CoachProfile using logged-in coach userId
-      const coachProfile = await CoachProfileModel.findOne({ userId });
-      if (!coachProfile) {
-        throw new HttpException(404, "Coach profile not found");
+      // Verify user is a coach
+      const coach = await UserModel.findById(userId);
+      if (!coach || coach.role !== "coach") {
+        throw new HttpException(403, "Access denied: Only coaches can view athletes");
       }
 
-      const coachId = coachProfile._id.toString();
+      const coachId = coach._id.toString();
 
       // Get pagination and search parameters
       const page = parseInt(req.query.page as string) || 1;

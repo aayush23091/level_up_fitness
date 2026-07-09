@@ -9,8 +9,13 @@ export class CoachHiringController {
     // GET /api/v1/coaches
     getAllCoaches = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const coaches = await coachHiringService.getAllCoaches();
-            return ApiResponseHelper.success(res, coaches, "Coaches fetched successfully", 200);
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const search = req.query.search as string;
+            const specialization = req.query.specialization as string;
+
+            const result = await coachHiringService.getAllCoaches(page, limit, search, specialization);
+            return ApiResponseHelper.success(res, result.data, "Coaches fetched successfully", 200, result.meta);
         } catch (err: any) {
             return next(err);
         }
