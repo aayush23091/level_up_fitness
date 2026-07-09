@@ -39,11 +39,14 @@ export class CoachHiringService {
             username: coach.username || "",
             email: coach.email || "",
             profilePhoto: coach.profilePhoto || null,
-            bio: coach.coachProfile?.bio,
-            specialization: coach.coachProfile?.specialization,
-            experience: coach.coachProfile?.experience,
-            hireCost: coach.coachProfile?.hireCost,
-            availability: coach.coachProfile?.availability
+            coachProfile: {
+                bio: coach.coachProfile?.bio,
+                specialization: coach.coachProfile?.specialization,
+                experience: coach.coachProfile?.experience,
+                hireCost: coach.coachProfile?.hireCost,
+                availability: coach.coachProfile?.availability,
+                profileImage: coach.coachProfile?.profileImage
+            }
         };
     }
 

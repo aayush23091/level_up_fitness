@@ -198,7 +198,8 @@ function CoachesMarketplacePageContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {coaches.map((coach) => {
               const coachIdStr = coach._id || coach.id || "";
-              const avatarUrl = getAvatarUrl(coach.profilePhoto);
+              const coachProfileImage = getAvatarUrl(coach.coachProfile?.profileImage);
+              const avatarUrl = coachProfileImage || getAvatarUrl(coach.profilePhoto);
               return (
                 <div
                   key={coachIdStr}

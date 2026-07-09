@@ -29,6 +29,8 @@ export default function ProfilePage() {
   const [experience, setExperience] = useState("");
   const [hireCost, setHireCost] = useState("");
   const [availability, setAvailability] = useState(true);
+  const [coachProfileImage, setCoachProfileImage] = useState<File | null>(null);
+  const [coachProfileImagePreview, setCoachProfileImagePreview] = useState<string | null>(null);
 
   // Modal feedback state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,6 +62,8 @@ export default function ProfilePage() {
           ? user.coachProfile.availability
           : true
       );
+      setCoachProfileImage(null);
+      setCoachProfileImagePreview(null);
     }
   }, [user, isCoachProfileModalOpen]);
 
@@ -68,6 +72,14 @@ export default function ProfilePage() {
       const file = e.target.files[0];
       setPhoto(file);
       setPhotoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleCoachProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setCoachProfileImage(file);
+      setCoachProfileImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -117,6 +129,9 @@ export default function ProfilePage() {
       formData.append("experience", experience);
       formData.append("hireCost", hireCost);
       formData.append("availability", availability.toString());
+      if (coachProfileImage) {
+        formData.append("profileImage", coachProfileImage);
+      }
 
       const res = await authAPI.updateProfile(formData);
       if (res.success) {
@@ -135,6 +150,7 @@ export default function ProfilePage() {
   };
 
   const avatarUrl = getProfileImageUrl(user?.profilePhoto);
+  const coachProfileImageUrl = getProfileImageUrl(user?.coachProfile?.profileImage);
   const router = useRouter();
   const isCoach = user?.role === "coach";
 
@@ -684,6 +700,31 @@ export default function ProfilePage() {
               </div>
 
               <form onSubmit={handleCoachProfileSubmit} className="p-6 space-y-5 max-h-[calc(100vh-10rem)] overflow-y-auto">
+                <div className="flex flex-col sm:flex-row items-center gap-4 border-b border-[#1e1e24] pb-4">
+                  {coachProfileImagePreview ? (
+                    <img
+                      src={coachProfileImagePreview}
+                      alt="Coach Profile Image Preview"
+                      className="w-16 h-16 rounded-full object-cover border border-yellow-500/40"
+                    />
+                  ) : coachProfileImageUrl ? (
+                    <img src={coachProfileImageUrl} alt="Current Coach Profile Image" className="w-16 h-16 rounded-full object-cover border border-yellow-500/20" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-600/40 text-yellow-500 flex items-center justify-center text-lg font-bold font-mono">
+                      {getInitials()}
+                    </div>
+                  )}
+                  <div className="text-center sm:text-left flex-1 space-y-1">
+                    <label
+                      htmlFor="coach-profile-image-upload"
+                      className="inline-block px-4 py-1.5 bg-[#1e1e24] hover:bg-[#2e2e38] text-white text-xs font-semibold rounded cursor-pointer transition-colors border border-[#333]"
+                    >
+                      Change Profile Image
+                    </label>
+                    <input id="coach-profile-image-upload" type="file" accept="image/*" onChange={handleCoachProfileImageChange} className="hidden" />
+                    <p className="text-[10px] text-gray-500">PNG, JPG, or WEBP. Max 5MB.</p>
+                  </div>
+                </div>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Bio</label>

@@ -149,17 +149,21 @@ function CoachProfilePageContent() {
             {/* Profile Header */}
             <div className="bg-[#0e0e12] border border-[#1e1e24] p-8 rounded-2xl">
               <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-                {getAvatarUrl(coach.profilePhoto) ? (
-                  <img
-                    src={getAvatarUrl(coach.profilePhoto)!}
-                    alt={coach.name}
-                    className="w-24 h-24 rounded-full object-cover border-2 border-yellow-500/30"
-                  />
-                ) : (
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-600/40 border-2 border-yellow-500/30 text-yellow-500 flex items-center justify-center text-2xl font-bold font-mono">
-                    {getInitials(coach.name)}
-                  </div>
-                )}
+                {(() => {
+                  const coachProfileImage = getAvatarUrl(coach.coachProfile?.profileImage);
+                  const avatarUrl = coachProfileImage || getAvatarUrl(coach.profilePhoto);
+                  return avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={coach.name}
+                      className="w-24 h-24 rounded-full object-cover border-2 border-yellow-500/30"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-500/20 to-yellow-600/40 border-2 border-yellow-500/30 text-yellow-500 flex items-center justify-center text-2xl font-bold font-mono">
+                      {getInitials(coach.name)}
+                    </div>
+                  );
+                })()}
                 <div className="flex-1">
                   <div className="flex items-center gap-3 flex-wrap">
                     <h2 className="text-2xl lg:text-3xl font-black text-white">{coach.name}</h2>
