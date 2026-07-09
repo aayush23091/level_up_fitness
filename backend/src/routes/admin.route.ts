@@ -23,4 +23,11 @@ adminRouter.get("/coaches", adminController.getCoaches);
 adminRouter.get("/coaches/:id", adminController.getCoachById);
 adminRouter.delete("/coaches/:id", adminController.deleteCoach);
 
+// Workout management
+adminRouter.get("/workouts", adminController.getWorkouts);
+adminRouter.get("/workouts/:id", adminController.getWorkoutById);
+adminRouter.post("/workouts", adminController.createWorkout);
+adminRouter.put("/workouts/:id", adminController.updateWorkout);
+adminRouter.delete("/workouts/:id", adminController.deleteWorkout);
+
 export default adminRouter;

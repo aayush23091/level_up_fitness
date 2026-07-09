@@ -1,6 +1,7 @@
 import { AdminUserRepository } from "../repositories/admin.repository";
 import { AdminCreateUserDTO, AdminUpdateUserDTO } from "../dtos/admin.dto";
 import { IUser } from "../models/user.model";
+import { IWorkout } from "../models/workout.model";
 import { HttpException } from "../exceptions/http-exception";
 import bcrypt from "bcryptjs";
 
@@ -109,6 +110,41 @@ export class AdminUserService {
     const success = await adminRepository.deleteCoach(id);
     if (!success) {
       throw new HttpException(404, "Coach not found");
+    }
+  }
+
+  async getWorkouts(
+    page: number,
+    limit: number,
+    search?: string
+  ): Promise<{ workouts: IWorkout[]; total: number }> {
+    return adminRepository.getWorkouts(page, limit, search);
+  }
+
+  async getWorkoutById(id: string): Promise<IWorkout> {
+    const workout = await adminRepository.getWorkoutById(id);
+    if (!workout) {
+      throw new HttpException(404, "Workout not found");
+    }
+    return workout;
+  }
+
+  async createWorkout(workoutData: Partial<IWorkout>): Promise<IWorkout> {
+    return adminRepository.createWorkout(workoutData);
+  }
+
+  async updateWorkout(id: string, workoutData: Partial<IWorkout>): Promise<IWorkout> {
+    const workout = await adminRepository.updateWorkout(id, workoutData);
+    if (!workout) {
+      throw new HttpException(404, "Workout not found");
+    }
+    return workout;
+  }
+
+  async deleteWorkout(id: string): Promise<void> {
+    const success = await adminRepository.deleteWorkout(id);
+    if (!success) {
+      throw new HttpException(404, "Workout not found");
     }
   }
 }

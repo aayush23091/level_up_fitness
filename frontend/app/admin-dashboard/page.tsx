@@ -4,6 +4,7 @@ import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import AdminUsersTable from "@/components/admin/AdminUsersTable";
 import AdminCoachesTable from "@/components/admin/AdminCoachesTable";
+import AdminWorkoutsTable from "@/components/admin/AdminWorkoutsTable";
 import { adminAPI, User, authAPI } from "@/lib/api";
 import { useAuth } from "@/app/context/AuthContext";
 
@@ -51,6 +52,11 @@ function DashboardContent() {
         return {
           title: "Coach Approvals",
           subtitle: "Verify incoming trainer credentials and approve public profiles.",
+        };
+      case "workouts":
+        return {
+          title: "Workout Management",
+          subtitle: "Create, edit, and manage fitness workouts for the platform.",
         };
       case "settings":
         return {
@@ -254,6 +260,8 @@ function DashboardContent() {
       {tab === "users" && <AdminUsersTable />}
 
       {tab === "coaches" && <AdminCoachesTable />}
+
+      {tab === "workouts" && <AdminWorkoutsTable />}
 
       {tab === "settings" && (
         <div className="space-y-6">

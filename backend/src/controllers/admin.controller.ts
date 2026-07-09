@@ -3,6 +3,7 @@ import { AdminUserService } from "../services/admin.service";
 import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
 import { AdminCreateUserDTO, AdminUpdateUserDTO } from "../dtos/admin.dto";
+import { CreateWorkoutDTO, UpdateWorkoutDTO } from "../dtos/workout.dto";
 
 const adminUserService = new AdminUserService();
 
@@ -202,6 +203,99 @@ export class AdminController {
       await adminUserService.deleteCoach(id);
 
       return ApiResponseHelper.success(res, null, "Coach deleted successfully", 200);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
+
+  // GET /api/v1/admin/workouts
+  getWorkouts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const search = (req.query.search as string) || undefined;
+
+      const { workouts, total } = await adminUserService.getWorkouts(page, limit, search);
+      const totalPages = Math.ceil(total / limit);
+
+      const meta = {
+        page,
+        limit,
+        total,
+        totalPages,
+      };
+
+      return ApiResponseHelper.success(res, workouts, "Workouts fetched successfully", 200, meta as any);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
+
+  // GET /api/v1/admin/workouts/:id
+  getWorkoutById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id as string;
+      if (!id) {
+        throw new HttpException(400, "Workout ID is required");
+      }
+
+      const workout = await adminUserService.getWorkoutById(id);
+      return ApiResponseHelper.success(res, workout, "Workout fetched successfully", 200);
+    } catch (err: any) {
+      return next(err);
+    }
+  };
+
+  // POST /api/v1/admin/workouts
+  createWorkout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const parsed = CreateWorkoutDTO.parse(req.body);
+      const userId = (req.user as any)._id.toString();
+      
+      const workoutData = {
+        ...parsed,
+        createdBy: userId
+      };
+      
+      const workout = await adminUserService.createWorkout(workoutData);
+      return ApiResponseHelper.success(res, workout, "Workout created successfully", 201);
+    } catch (err: any) {
+      if (err.name === "ZodError") {
+        return next(new HttpException(400, err.errors[0].message));
+      }
+      return next(err);
+    }
+  };
+
+  // PUT /api/v1/admin/workouts/:id
+  updateWorkout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id as string;
+      if (!id) {
+        throw new HttpException(400, "Workout ID is required");
+      }
+
+      const parsed = UpdateWorkoutDTO.parse(req.body);
+      const workout = await adminUserService.updateWorkout(id, parsed);
+      return ApiResponseHelper.success(res, workout, "Workout updated successfully", 200);
+    } catch (err: any) {
+      if (err.name === "ZodError") {
+        return next(new HttpException(400, err.errors[0].message));
+      }
+      return next(err);
+    }
+  };
+
+  // DELETE /api/v1/admin/workouts/:id
+  deleteWorkout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = req.params.id as string;
+      if (!id) {
+        throw new HttpException(400, "Workout ID is required");
+      }
+
+      await adminUserService.deleteWorkout(id);
+      return ApiResponseHelper.success(res, null, "Workout deleted successfully", 200);
     } catch (err: any) {
       return next(err);
     }

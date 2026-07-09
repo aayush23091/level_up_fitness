@@ -429,6 +429,100 @@ export const adminAPI = {
       );
     }
   },
+
+  getWorkouts: async (
+    page: number = 1,
+    limit: number = 10,
+    search?: string
+  ): Promise<PaginatedWorkoutsResponse> => {
+    try {
+      const params: Record<string, any> = { page, limit };
+      if (search) params.search = search;
+
+      const response = await apiClient.get<PaginatedWorkoutsResponse>(
+        "/api/v1/admin/workouts",
+        { params }
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch workouts"
+      );
+    }
+  },
+
+  getWorkout: async (id: string): Promise<SingleWorkoutResponse> => {
+    try {
+      const response = await apiClient.get<SingleWorkoutResponse>(
+        `/api/v1/admin/workouts/${id}`
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch workout"
+      );
+    }
+  },
+
+  createWorkout: async (
+    data: Partial<Workout>
+  ): Promise<SingleWorkoutResponse> => {
+    try {
+      const response = await apiClient.post<SingleWorkoutResponse>(
+        "/api/v1/admin/workouts",
+        data
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to create workout"
+      );
+    }
+  },
+
+  updateWorkout: async (
+    id: string,
+    data: Partial<Workout>
+  ): Promise<SingleWorkoutResponse> => {
+    try {
+      const response = await apiClient.put<SingleWorkoutResponse>(
+        `/api/v1/admin/workouts/${id}`,
+        data
+      );
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to update workout"
+      );
+    }
+  },
+
+  deleteWorkout: async (
+    id: string
+  ): Promise<{ status: number; success: boolean; message: string }> => {
+    try {
+      const response = await apiClient.delete<{
+        status: number;
+        success: boolean;
+        message: string;
+      }>(`/api/v1/admin/workouts/${id}`);
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to delete workout"
+      );
+    }
+  },
 };
 
 export interface Coach {
