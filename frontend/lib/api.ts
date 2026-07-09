@@ -659,12 +659,13 @@ export const workoutAPI = {
 };
 
 export interface WorkoutPlanExercise {
-  exerciseId: string;
-  exerciseName?: string;
-  exerciseCategory?: string;
-  exerciseBodyPart?: string;
-  exerciseEquipment?: string;
-  exerciseDifficulty?: string;
+  exerciseId?: string; // Optional for backward compatibility
+  exerciseName?: string; // For inline exercises
+  category?: string; // For inline exercises
+  exerciseCategory?: string; // For backward compatibility
+  exerciseBodyPart?: string; // For backward compatibility
+  exerciseEquipment?: string; // For backward compatibility
+  exerciseDifficulty?: string; // For backward compatibility
   sets: number;
   reps: string;
   restSeconds: number;

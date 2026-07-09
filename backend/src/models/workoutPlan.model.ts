@@ -1,7 +1,9 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface IWorkoutPlanExercise {
-  exerciseId: Types.ObjectId;
+  exerciseId?: Types.ObjectId; // Optional for backward compatibility
+  exerciseName?: string; // For inline exercises
+  category?: string; // For inline exercises
   sets: number;
   reps: string;
   restSeconds: number;
@@ -24,7 +26,9 @@ export interface IWorkoutPlan extends Document {
 
 const WorkoutPlanExerciseSchema: Schema = new Schema<IWorkoutPlanExercise>(
   {
-    exerciseId: { type: Schema.Types.ObjectId, ref: "Exercise", required: true },
+    exerciseId: { type: Schema.Types.ObjectId, ref: "Exercise", required: false }, // Optional for backward compatibility
+    exerciseName: { type: String, required: false }, // For inline exercises
+    category: { type: String, required: false }, // For inline exercises
     sets: { type: Number, required: true, min: 1 },
     reps: { type: String, required: true },
     restSeconds: { type: Number, required: true, min: 0 },

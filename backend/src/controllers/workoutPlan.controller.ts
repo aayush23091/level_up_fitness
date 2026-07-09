@@ -72,11 +72,21 @@ export class WorkoutPlanController {
 
       const validatedData = CreateWorkoutPlanDTO.parse(req.body);
       
-      // Convert exerciseId strings to ObjectId
-      const exercises = validatedData.exercises?.map(ex => ({
-        ...ex,
-        exerciseId: new mongoose.Types.ObjectId(ex.exerciseId),
-      }));
+      // Convert exerciseId strings to ObjectId if provided, otherwise use inline exercise data
+      const exercises = validatedData.exercises?.map(ex => {
+        if (ex.exerciseId) {
+          // Backward compatibility: convert exerciseId to ObjectId
+          return {
+            ...ex,
+            exerciseId: new mongoose.Types.ObjectId(ex.exerciseId),
+          };
+        }
+        // New inline exercise approach: use exerciseName and category directly
+        return {
+          ...ex,
+          exerciseId: undefined,
+        };
+      });
 
       const workoutPlan = await workoutPlanService.createWorkoutPlan({
         ...validatedData,
@@ -108,13 +118,23 @@ export class WorkoutPlanController {
 
       const validatedData = UpdateWorkoutPlanDTO.parse(req.body);
       
-      // Convert exerciseId strings to ObjectId if exercises are provided
+      // Convert exerciseId strings to ObjectId if provided, otherwise use inline exercise data
       let exercises;
       if (validatedData.exercises) {
-        exercises = validatedData.exercises.map(ex => ({
-          ...ex,
-          exerciseId: new mongoose.Types.ObjectId(ex.exerciseId),
-        }));
+        exercises = validatedData.exercises.map(ex => {
+          if (ex.exerciseId) {
+            // Backward compatibility: convert exerciseId to ObjectId
+            return {
+              ...ex,
+              exerciseId: new mongoose.Types.ObjectId(ex.exerciseId),
+            };
+          }
+          // New inline exercise approach: use exerciseName and category directly
+          return {
+            ...ex,
+            exerciseId: undefined,
+          };
+        });
       }
 
       const workoutPlan = await workoutPlanService.updateWorkoutPlan(id, coachId as string, {

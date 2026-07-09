@@ -25,6 +25,16 @@ export class WorkoutPlanRepository {
       WorkoutPlanModel.countDocuments(query).exec(),
     ]);
 
+    // Post-process to handle inline exercises (when exerciseId is not present)
+    workoutPlans.forEach(plan => {
+      plan.exercises.forEach(exercise => {
+        if (!exercise.exerciseId && exercise.exerciseName) {
+          // Inline exercise: data is already in the exercise object
+          // No transformation needed
+        }
+      });
+    });
+
     return { workoutPlans, total };
   }
 
@@ -39,11 +49,23 @@ export class WorkoutPlanRepository {
   }
 
   async updateWorkoutPlan(id: string, coachId: string, workoutPlanData: Partial<IWorkoutPlan>): Promise<IWorkoutPlan | null> {
-    return WorkoutPlanModel.findOneAndUpdate(
+    const updated = await WorkoutPlanModel.findOneAndUpdate(
       { _id: id, coachId },
       workoutPlanData,
       { new: true }
     ).populate("exercises.exerciseId", "name category bodyPart equipment difficulty").exec();
+
+    // Post-process to handle inline exercises (when exerciseId is not present)
+    if (updated) {
+      updated.exercises.forEach(exercise => {
+        if (!exercise.exerciseId && exercise.exerciseName) {
+          // Inline exercise: data is already in the exercise object
+          // No transformation needed
+        }
+      });
+    }
+
+    return updated;
   }
 
   async deleteWorkoutPlan(id: string, coachId: string): Promise<boolean> {

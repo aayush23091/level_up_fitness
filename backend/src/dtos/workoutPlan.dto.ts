@@ -1,13 +1,18 @@
 import { z } from "zod";
 
 export const WorkoutPlanExerciseSchema = z.object({
-  exerciseId: z.string().min(1, "Exercise ID is required"),
+  exerciseId: z.string().optional(), // Optional for backward compatibility
+  exerciseName: z.string().min(1, "Exercise name is required").optional(), // For inline exercises
+  category: z.string().min(1, "Category is required").optional(), // For inline exercises
   sets: z.number().min(1, "Sets must be at least 1"),
   reps: z.string().min(1, "Reps is required"),
   restSeconds: z.number().min(0, "Rest seconds cannot be negative"),
   notes: z.string().optional(),
   order: z.number().min(0, "Order must be non-negative"),
-});
+}).refine(
+  (data) => data.exerciseId || (data.exerciseName && data.category),
+  { message: "Either exerciseId or exerciseName + category must be provided" }
+);
 
 export const CreateWorkoutPlanDTO = z.object({
   title: z.string().min(2, "Title must be at least 2 characters"),
