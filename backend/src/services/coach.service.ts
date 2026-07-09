@@ -21,4 +21,8 @@ export class CoachService {
     }
     return user;
   }
+
+  async getDashboardStats(coachId: string) {
+    return coachRepository.getDashboardStats(coachId);
+  }
 }

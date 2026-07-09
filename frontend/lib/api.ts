@@ -363,7 +363,35 @@ export interface HireCoachResponse {
   };
 }
 
+export interface DashboardStatsResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: {
+    totalAthletes: number;
+    totalWorkoutPlans: number;
+    publishedPlans: number;
+    assignedPlans: number;
+    totalCompletedWorkouts: number;
+    averageAthleteLevel: number;
+  };
+}
+
 export const coachAPI = {
+  getDashboardStats: async (): Promise<DashboardStatsResponse> => {
+    try {
+      const response = await apiClient.get<DashboardStatsResponse>(
+        "/api/v1/coach/dashboard/stats"
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch dashboard stats"
+      );
+    }
+  },
+
   getAthletes: async (
     page: number = 1,
     limit: number = 10,

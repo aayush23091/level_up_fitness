@@ -85,4 +85,33 @@ export class CoachController {
       return next(err);
     }
   };
+
+  // GET /api/v1/coach/dashboard/stats
+  getDashboardStats = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = (req.user as any)._id.toString();
+      if (!userId) {
+        throw new HttpException(401, "Unauthorized: User ID not found");
+      }
+
+      // Verify user is a coach
+      const coach = await UserModel.findById(userId);
+      if (!coach || coach.role !== "coach") {
+        throw new HttpException(403, "Access denied: Only coaches can view dashboard stats");
+      }
+
+      const coachId = coach._id.toString();
+
+      const stats = await coachService.getDashboardStats(coachId);
+
+      return ApiResponseHelper.success(
+        res,
+        stats,
+        "Dashboard stats fetched successfully",
+        200
+      );
+    } catch (err: any) {
+      return next(err);
+    }
+  };
 }

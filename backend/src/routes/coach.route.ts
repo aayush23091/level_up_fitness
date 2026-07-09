@@ -13,6 +13,7 @@ const assignedWorkoutPlanController = new AssignedWorkoutPlanController();
 coachRouter.use(authorizedMiddleware, coachMiddleware);
 
 coachRouter.get("/athletes", coachController.getAthletes);
+coachRouter.get("/dashboard/stats", coachController.getDashboardStats);
 
 // Workout Plan routes
 coachRouter.get("/workout-plans", workoutPlanController.getWorkoutPlans);

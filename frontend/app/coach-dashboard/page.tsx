@@ -1,111 +1,36 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import CoachAthletesTable from "@/components/coach/CoachAthletesTable";
 import CoachWorkoutPlans from "@/components/coach/CoachWorkoutPlans";
-
-const statCards = [
-  {
-    label: "Assigned Athletes",
-    value: "24",
-    change: "+3 this month",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Workout Plans",
-    value: "12",
-    change: "4 active programs",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-      </svg>
-    ),
-  },
-  {
-    label: "Weekly Sessions",
-    value: "38",
-    change: "6 scheduled today",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Workout Completion",
-    value: "87%",
-    change: "+5% vs last week",
-    icon: (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
-];
-
-const recentActivity = [
-  {
-    athlete: "Marcus Chen",
-    action: "Completed Upper Body Strength",
-    time: "12 min ago",
-  },
-  {
-    athlete: "Sarah Williams",
-    action: "Logged nutrition for Day 14",
-    time: "45 min ago",
-  },
-  {
-    athlete: "James Rodriguez",
-    action: "Missed scheduled HIIT session",
-    time: "1 hour ago",
-  },
-  {
-    athlete: "Emily Park",
-    action: "Hit new PR on deadlift — 140 kg",
-    time: "2 hours ago",
-  },
-  {
-    athlete: "David Okonkwo",
-    action: "Submitted weekly progress check-in",
-    time: "3 hours ago",
-  },
-];
-
-const upcomingSessions = [
-  {
-    athlete: "Marcus Chen",
-    session: "Hypertrophy — Push Day",
-    time: "Today, 2:00 PM",
-    type: "In-Person",
-  },
-  {
-    athlete: "Sarah Williams",
-    session: "Mobility & Recovery",
-    time: "Today, 4:30 PM",
-    type: "Virtual",
-  },
-  {
-    athlete: "Emily Park",
-    session: "Strength Assessment",
-    time: "Tomorrow, 9:00 AM",
-    type: "In-Person",
-  },
-  {
-    athlete: "James Rodriguez",
-    session: "Cardio Endurance Block",
-    time: "Tomorrow, 11:30 AM",
-    type: "Virtual",
-  },
-];
+import { coachAPI } from "@/lib/api";
 
 function CoachDashboardContent() {
   const searchParams = useSearchParams();
   const tab = searchParams.get("tab") || "dashboard";
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (tab === "dashboard") {
+      fetchDashboardStats();
+    }
+  }, [tab]);
+
+  const fetchDashboardStats = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await coachAPI.getDashboardStats();
+      setStats(response.data);
+    } catch (err: any) {
+      setError(err.message || "Failed to load dashboard stats");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (tab === "athletes") {
     return <CoachAthletesTable />;
@@ -149,6 +74,133 @@ function CoachDashboardContent() {
     );
   }
 
+  const statCards = [
+    {
+      label: "Total Athletes",
+      value: stats?.totalAthletes?.toString() || "0",
+      change: "Active athletes",
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      ),
+    },
+    {
+      label: "Workout Plans",
+      value: stats?.totalWorkoutPlans?.toString() || "0",
+      change: `${stats?.publishedPlans || 0} published`,
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+      ),
+    },
+    {
+      label: "Assigned Plans",
+      value: stats?.assignedPlans?.toString() || "0",
+      change: "Currently active",
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      ),
+    },
+    {
+      label: "Completed Workouts",
+      value: stats?.totalCompletedWorkouts?.toString() || "0",
+      change: "Total completed",
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+    },
+    {
+      label: "Avg Athlete Level",
+      value: stats?.averageAthleteLevel?.toString() || "0",
+      change: "Average level",
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4--4-6 6" />
+        </svg>
+      ),
+    },
+    {
+      label: "Published Plans",
+      value: stats?.publishedPlans?.toString() || "0",
+      change: "Available to assign",
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+      ),
+    },
+  ];
+
+  if (loading) {
+    return (
+      <div className="space-y-6 lg:space-y-8">
+        <section className="border-b border-zinc-800 pb-5">
+          <h1 className="text-2xl lg:text-3xl font-black text-white tracking-wide">
+            Welcome Back,{" "}
+            <span className="text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.15)]">
+              Coach
+            </span>
+          </h1>
+          <p className="text-zinc-500 text-sm mt-2">
+            Manage your athletes and workout plans.
+          </p>
+        </section>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div
+              key={i}
+              className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 lg:p-6 shadow-lg"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-3 flex-1">
+                  <div className="h-3 w-24 bg-zinc-800 rounded animate-pulse" />
+                  <div className="h-8 w-16 bg-zinc-800 rounded animate-pulse" />
+                  <div className="h-3 w-20 bg-zinc-800 rounded animate-pulse" />
+                </div>
+                <div className="w-11 h-11 rounded-xl bg-zinc-800 animate-pulse shrink-0" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6 lg:space-y-8">
+        <section className="border-b border-zinc-800 pb-5">
+          <h1 className="text-2xl lg:text-3xl font-black text-white tracking-wide">
+            Welcome Back,{" "}
+            <span className="text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.15)]">
+              Coach
+            </span>
+          </h1>
+          <p className="text-zinc-500 text-sm mt-2">
+            Manage your athletes and workout plans.
+          </p>
+        </section>
+
+        <div className="bg-red-900/20 border border-red-800 rounded-2xl p-6 text-center">
+          <p className="text-red-400 text-sm">{error}</p>
+          <button
+            onClick={fetchDashboardStats}
+            className="mt-4 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg text-sm hover:bg-red-500/30 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 lg:space-y-8">
       <section className="border-b border-zinc-800 pb-5">
@@ -163,7 +215,7 @@ function CoachDashboardContent() {
         </p>
       </section>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
         {statCards.map((card) => (
           <div
             key={card.label}
@@ -185,57 +237,6 @@ function CoachDashboardContent() {
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 lg:p-6 shadow-lg">
-          <h2 className="text-sm font-bold text-white uppercase tracking-wider border-b border-zinc-800 pb-3 flex items-center gap-2 mb-4">
-            <span className="w-2 h-2 bg-yellow-400 rounded-full" />
-            Recent Activity
-          </h2>
-          <div className="space-y-1">
-            {recentActivity.map((item) => (
-              <div
-                key={`${item.athlete}-${item.time}`}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 py-3 border-b border-zinc-800/80 last:border-0 hover:bg-zinc-800/30 -mx-2 px-2 rounded-lg transition-colors"
-              >
-                <div>
-                  <p className="text-sm font-semibold text-white">{item.athlete}</p>
-                  <p className="text-xs text-zinc-400 mt-0.5">{item.action}</p>
-                </div>
-                <span className="text-[11px] text-zinc-500 font-mono shrink-0">
-                  {item.time}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 lg:p-6 shadow-lg">
-          <h2 className="text-sm font-bold text-white uppercase tracking-wider border-b border-zinc-800 pb-3 flex items-center gap-2 mb-4">
-            <span className="w-2 h-2 bg-yellow-400 rounded-full" />
-            Upcoming Sessions
-          </h2>
-          <div className="space-y-1">
-            {upcomingSessions.map((session) => (
-              <div
-                key={`${session.athlete}-${session.time}`}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-3 border-b border-zinc-800/80 last:border-0 hover:bg-zinc-800/30 -mx-2 px-2 rounded-lg transition-colors"
-              >
-                <div>
-                  <p className="text-sm font-semibold text-white">{session.athlete}</p>
-                  <p className="text-xs text-zinc-400 mt-0.5">{session.session}</p>
-                </div>
-                <div className="flex flex-col sm:items-end gap-1 shrink-0">
-                  <span className="text-[11px] text-zinc-500 font-mono">{session.time}</span>
-                  <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-yellow-400/10 text-yellow-400 border border-yellow-400/20 w-fit">
-                    {session.type}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );
