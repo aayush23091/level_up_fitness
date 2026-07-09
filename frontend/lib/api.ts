@@ -436,6 +436,23 @@ export interface AnalyticsPlansResponse {
   data: AnalyticsPlan[];
 }
 
+export interface CoachEarningsResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: {
+    totalEarnings: number;
+    totalTransactions: number;
+    transactions: {
+      _id: string;
+      athleteName: string;
+      amount: number;
+      type: string;
+      date: string;
+    }[];
+  };
+}
+
 export const coachAPI = {
   getDashboardStats: async (): Promise<DashboardStatsResponse> => {
     try {
@@ -489,6 +506,20 @@ export const coachAPI = {
       const axiosError = error as AxiosError<any>;
       throw new Error(
         axiosError.response?.data?.message || "Failed to fetch analytics plans"
+      );
+    }
+  },
+
+  getEarnings: async (): Promise<CoachEarningsResponse> => {
+    try {
+      const response = await apiClient.get<CoachEarningsResponse>(
+        "/api/v1/coach/earnings"
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch earnings"
       );
     }
   },

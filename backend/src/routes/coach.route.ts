@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { CoachController } from "../controllers/coach.controller";
+import { CoachEarningController } from "../controllers/coachEarning.controller";
 import { WorkoutPlanController } from "../controllers/workoutPlan.controller";
 import { AssignedWorkoutPlanController } from "../controllers/assignedWorkoutPlan.controller";
 import { authorizedMiddleware, coachMiddleware } from "../middlewares/authorized.middleware";
 
 const coachRouter = Router();
 const coachController = new CoachController();
+const coachEarningController = new CoachEarningController();
 const workoutPlanController = new WorkoutPlanController();
 const assignedWorkoutPlanController = new AssignedWorkoutPlanController();
 
@@ -19,6 +21,9 @@ coachRouter.get("/dashboard/stats", coachController.getDashboardStats);
 coachRouter.get("/analytics/overview", coachController.getAnalyticsOverview);
 coachRouter.get("/analytics/athletes", coachController.getAnalyticsAthletes);
 coachRouter.get("/analytics/plans", coachController.getAnalyticsPlans);
+
+// Earnings routes
+coachRouter.get("/earnings", coachEarningController.getEarnings);
 
 // Workout Plan routes
 coachRouter.get("/workout-plans", workoutPlanController.getWorkoutPlans);

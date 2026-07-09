@@ -1,9 +1,11 @@
 import { CoachHiringRepository } from "../repositories/coachHiring.repository";
+import { CoachEarningRepository } from "../repositories/coachEarning.repository";
 import { ICoachClient } from "../models/coachClient.model";
 import { IUser } from "../models/user.model";
 import { HttpException } from "../exceptions/http-exception";
 
 const coachHiringRepository = new CoachHiringRepository();
+const coachEarningRepository = new CoachEarningRepository();
 
 export class CoachHiringService {
     async getAllCoaches(page: number = 1, limit: number = 10, search?: string, specialization?: string): Promise<{ data: any[]; meta: any }> {
@@ -86,6 +88,15 @@ export class CoachHiringService {
 
         // Create coach-client relationship
         await coachHiringRepository.createCoachClient(coachId, athleteId);
+
+        // Create earnings record
+        await coachEarningRepository.createCoachEarning(
+          coachId,
+          athleteId,
+          coach.coachProfile?.hireCost || 0,
+          "coach_hire",
+          "completed"
+        );
 
         return updatedUser.coins || 0;
     }

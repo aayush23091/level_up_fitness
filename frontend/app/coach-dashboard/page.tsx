@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import CoachAthletesTable from "@/components/coach/CoachAthletesTable";
 import CoachWorkoutPlans from "@/components/coach/CoachWorkoutPlans";
 import CoachAnalytics from "@/components/coach/CoachAnalytics";
+import CoachEarnings from "@/components/coach/CoachEarnings";
 import { coachAPI } from "@/lib/api";
 
 function CoachDashboardContent() {
@@ -43,6 +44,10 @@ function CoachDashboardContent() {
 
   if (tab === "analytics") {
     return <CoachAnalytics />;
+  }
+
+  if (tab === "earnings") {
+    return <CoachEarnings />;
   }
 
   if (tab === "settings") {
