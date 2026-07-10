@@ -41,4 +41,10 @@ userRouter.get(
     userController.getAchievements
 );
 
+userRouter.get(
+    "/streak",
+    authorizedMiddleware,
+    userController.getStreak
+);
+
 export default userRouter;

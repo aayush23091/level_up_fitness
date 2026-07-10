@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { withProtectedRoute } from "@/lib/protectedRoute";
 import WorkoutLibrary from "@/components/workouts/WorkoutLibrary";
-import { workoutPlanAPI } from "@/lib/api";
+import { workoutPlanAPI, userAPI, StreakData } from "@/lib/api";
 
 function DashboardPageContent() {
   const { user } = useAuth();
@@ -15,6 +15,9 @@ function DashboardPageContent() {
   const [assignedWorkoutPlans, setAssignedWorkoutPlans] = useState<any[]>([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
   const [plansError, setPlansError] = useState<string | null>(null);
+  const [streak, setStreak] = useState<StreakData | null>(null);
+  const [loadingStreak, setLoadingStreak] = useState(true);
+  const [streakError, setStreakError] = useState<string | null>(null);
 
   const getAvatarUrl = () => {
     if (user?.profilePhoto) {
@@ -63,7 +66,25 @@ function DashboardPageContent() {
       }
     };
 
+    const fetchStreak = async () => {
+      setLoadingStreak(true);
+      setStreakError(null);
+      try {
+        const response = await userAPI.getStreak();
+        if (response.success) {
+          setStreak(response.data);
+        } else {
+          setStreakError(response.message || "Failed to fetch streak");
+        }
+      } catch (err: any) {
+        setStreakError(err.message || "An error occurred while loading streak");
+      } finally {
+        setLoadingStreak(false);
+      }
+    };
+
     fetchAssignedWorkoutPlans();
+    fetchStreak();
   }, []);
 
   return (
@@ -164,24 +185,52 @@ function DashboardPageContent() {
           </div>
 
           <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl flex flex-col justify-between hover:border-yellow-500/20 transition-all">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Current Streak</p>
-                <p className="text-3xl font-black text-white mt-1">5 Days</p>
+            {loadingStreak ? (
+              <div className="flex flex-col items-center justify-center py-4 space-y-3">
+                <span className="w-6 h-6 border-3 border-yellow-500 border-t-transparent rounded-full animate-spin inline-block"></span>
+                <p className="text-gray-500 font-mono text-xs tracking-wider uppercase">Loading streak...</p>
               </div>
-              <span className="p-2 bg-orange-500/10 text-orange-500 rounded-lg text-xs font-bold">
-                ⚡
-              </span>
-            </div>
-            <div className="mt-6">
-              <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium">
-                <span>Personal Best</span>
-                <span>12 Days</span>
+            ) : streakError ? (
+              <div className="text-center py-4">
+                <p className="text-red-400 text-xs">{streakError}</p>
               </div>
-              <div className="w-full bg-[#1c1c24] h-2 rounded-full overflow-hidden">
-                <div className="bg-orange-500 h-full rounded-full" style={{ width: "42%" }}></div>
-              </div>
-            </div>
+            ) : streak ? (
+              <>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Current Streak</p>
+                    <p className="text-3xl font-black text-white mt-1">
+                      {streak.streakActive ? `${streak.currentStreak} Days` : "Streak Lost"}
+                    </p>
+                  </div>
+                  <span className={`p-2 rounded-lg text-xs font-bold ${streak.streakActive ? "bg-orange-500/10 text-orange-500" : "bg-red-500/10 text-red-500"}`}>
+                    {streak.streakActive ? "⚡" : "🔥"}
+                  </span>
+                </div>
+                <div className="mt-6 space-y-3">
+                  {!streak.streakActive && (
+                    <p className="text-xs text-red-400">Complete a workout today to restart!</p>
+                  )}
+                  <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium">
+                    <span>Personal Best</span>
+                    <span>{streak.longestStreak} Days</span>
+                  </div>
+                  <div className="w-full bg-[#1c1c24] h-2 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-orange-500 h-full rounded-full transition-all" 
+                      style={{ 
+                        width: `${streak.longestStreak > 0 ? Math.min((streak.currentStreak / streak.longestStreak) * 100, 100) : 0}%` 
+                      }}
+                    ></div>
+                  </div>
+                  {streak.lastWorkoutDate && (
+                    <p className="text-xs text-gray-500">
+                      Last Workout: {new Date(streak.lastWorkoutDate).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
+              </>
+            ) : null}
           </div>
         </div>
 

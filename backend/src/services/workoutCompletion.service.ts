@@ -15,6 +15,58 @@ const calculateLevel = (xp: number): number => {
   return Math.floor(xp / 100);
 };
 
+const getStrippedDate = (date: Date): Date => {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
+const calculateStreakUpdate = (
+  lastWorkoutDate: Date | undefined,
+  currentStreak: number,
+  longestStreak: number
+) => {
+  const today = getStrippedDate(new Date());
+
+  if (!lastWorkoutDate) {
+    // Case 1: First ever workout
+    return {
+      currentStreak: 1,
+      longestStreak: 1,
+      lastWorkoutDate: today,
+    };
+  }
+
+  const lastDate = getStrippedDate(lastWorkoutDate);
+  const diffTime = today.getTime() - lastDate.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) {
+    // Already completed a workout today, do nothing
+    return {
+      currentStreak,
+      longestStreak,
+      lastWorkoutDate,
+    };
+  } else if (diffDays === 1) {
+    // Case 2: Consecutive day
+    const newCurrentStreak = currentStreak + 1;
+    const newLongestStreak = Math.max(newCurrentStreak, longestStreak);
+    return {
+      currentStreak: newCurrentStreak,
+      longestStreak: newLongestStreak,
+      lastWorkoutDate: today,
+    };
+  } else {
+    // Case 3: Streak broken
+    return {
+      currentStreak: 1,
+      longestStreak,
+      lastWorkoutDate: today,
+    };
+  }
+};
+
 export class WorkoutCompletionService {
   async completeWorkout(
     userId: string,
@@ -54,10 +106,19 @@ export class WorkoutCompletionService {
       coinEarned: coinsEarned,
     });
 
+    const streakUpdate = calculateStreakUpdate(
+      user.lastWorkoutDate,
+      user.currentStreak || 0,
+      user.longestStreak || 0
+    );
+
     await userRepository.update(userId, {
       xp: newXp,
       coins: newCoins,
       level: newLevel,
+      currentStreak: streakUpdate.currentStreak,
+      longestStreak: streakUpdate.longestStreak,
+      lastWorkoutDate: streakUpdate.lastWorkoutDate,
     });
 
     // Check and unlock achievements

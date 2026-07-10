@@ -23,6 +23,9 @@ export interface IUser extends Document {
     level?: number;
     xp?: number;
     coins?: number;
+    currentStreak?: number;
+    longestStreak?: number;
+    lastWorkoutDate?: Date;
     coachProfile?: ICoachProfile;
     createdAt: Date;
     updatedAt: Date;
@@ -41,6 +44,9 @@ const UserMongoSchema: Schema = new Schema<IUser>(
   level: { type: Number, default: 0 },
   xp: { type: Number, default: 0 },
   coins: { type: Number, default: 0 },
+  currentStreak: { type: Number, default: 0 },
+  longestStreak: { type: Number, default: 0 },
+  lastWorkoutDate: { type: Date, required: false },
   coachProfile: {
     bio: { type: String, required: false },
     specialization: { type: [String], required: false },

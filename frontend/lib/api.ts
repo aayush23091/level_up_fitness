@@ -1427,6 +1427,13 @@ export interface CompleteWorkoutResponse {
   };
 }
 
+export interface StreakData {
+  currentStreak: number;
+  longestStreak: number;
+  lastWorkoutDate: string | undefined;
+  streakActive: boolean;
+}
+
 export const userAPI = {
   completeWorkout: async (workoutId: string, duration: number): Promise<CompleteWorkoutResponse> => {
     try {
@@ -1475,6 +1482,28 @@ export const userAPI = {
       const axiosError = error as AxiosError<any>;
       throw new Error(
         axiosError.response?.data?.message || "Failed to fetch achievements"
+      );
+    }
+  },
+
+  getStreak: async (): Promise<{
+    status: number;
+    success: boolean;
+    message: string;
+    data: StreakData;
+  }> => {
+    try {
+      const response = await apiClient.get<{
+        status: number;
+        success: boolean;
+        message: string;
+        data: StreakData;
+      }>("/api/v1/user/streak");
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch streak"
       );
     }
   },

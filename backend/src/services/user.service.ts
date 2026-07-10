@@ -8,6 +8,19 @@ import { SECRET_KEY } from "../configs/constant";
 
 const userRepository = new UserMongoRepository();
 
+const getStrippedDate = (date: Date): Date => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d;
+};
+
+interface StreakResponse {
+    currentStreak: number;
+    longestStreak: number;
+    lastWorkoutDate: Date | undefined;
+    streakActive: boolean;
+}
+
 export class UserService {
     async createUser(userData: CreateUserDTO): Promise<{ user: IUser; token: string }> {
         // validation
@@ -111,5 +124,35 @@ export class UserService {
         if (!updated) {
             throw new HttpException(500, "Failed to update password");
         }
+    }
+
+    async getStreak(userId: string): Promise<StreakResponse> {
+        const user = await userRepository.getUserById(userId);
+        if (!user) {
+            throw new HttpException(404, "User not found");
+        }
+
+        const today = getStrippedDate(new Date());
+        let currentStreak = user.currentStreak || 0;
+        let streakActive = false;
+
+        if (user.lastWorkoutDate) {
+            const lastDate = getStrippedDate(user.lastWorkoutDate);
+            const diffTime = today.getTime() - lastDate.getTime();
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 1) {
+                streakActive = true;
+            } else {
+                currentStreak = 0;
+            }
+        }
+
+        return {
+            currentStreak,
+            longestStreak: user.longestStreak || 0,
+            lastWorkoutDate: user.lastWorkoutDate,
+            streakActive,
+        };
     }
 }

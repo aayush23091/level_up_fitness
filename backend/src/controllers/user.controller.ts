@@ -199,5 +199,21 @@ export class UserController {
             return next(err);
         }
     };
+
+    // GET /user/streak
+    getStreak = async (req: Request, res: Response, next: Function) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            const streak = await userService.getStreak(user._id.toString());
+
+            return ApiResponseHelper.success(res, streak, "Streak fetched successfully", 200);
+        } catch (err: any) {
+            return next(err);
+        }
+    };
 }
 
