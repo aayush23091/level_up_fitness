@@ -231,5 +231,21 @@ export class UserController {
             return next(err);
         }
     };
+
+    // GET /user/analytics
+    getAnalytics = async (req: Request, res: Response, next: Function) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            const analytics = await userService.getAnalytics(user._id.toString());
+
+            return ApiResponseHelper.success(res, analytics, "Analytics data fetched successfully", 200);
+        } catch (err: any) {
+            return next(err);
+        }
+    };
 }
 

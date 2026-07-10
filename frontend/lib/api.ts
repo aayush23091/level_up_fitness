@@ -1529,6 +1529,28 @@ export const userAPI = {
       );
     }
   },
+
+  getAnalytics: async (): Promise<{
+    status: number;
+    success: boolean;
+    message: string;
+    data: any;
+  }> => {
+    try {
+      const response = await apiClient.get<{
+        status: number;
+        success: boolean;
+        message: string;
+        data: any;
+      }>("/api/v1/user/analytics");
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch analytics data"
+      );
+    }
+  },
 };
 
 export default apiClient;

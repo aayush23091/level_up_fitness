@@ -53,4 +53,10 @@ userRouter.get(
     userController.getDashboard
 );
 
+userRouter.get(
+    "/analytics",
+    authorizedMiddleware,
+    userController.getAnalytics
+);
+
 export default userRouter;

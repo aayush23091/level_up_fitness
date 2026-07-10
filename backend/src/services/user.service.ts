@@ -2,6 +2,7 @@ import { UserMongoRepository } from "../repositories/user.repository";
 import { WorkoutCompletionRepository } from "../repositories/workoutCompletion.repository";
 import { UserAchievementRepository } from "../repositories/userAchievement.repository";
 import { AchievementRepository } from "../repositories/achievement.repository";
+import { WorkoutRepository } from "../repositories/workout.repository";
 import { CreateUserDTO, LoginUserDTO } from "../dtos/user.dto";
 import { IUser } from "../models/user.model";
 import { HttpException } from "../exceptions/http-exception";
@@ -13,6 +14,7 @@ const userRepository = new UserMongoRepository();
 const workoutCompletionRepository = new WorkoutCompletionRepository();
 const userAchievementRepository = new UserAchievementRepository();
 const achievementRepository = new AchievementRepository();
+const workoutRepository = new WorkoutRepository();
 
 const getStrippedDate = (date: Date): Date => {
     const d = new Date(date);
@@ -25,6 +27,28 @@ interface StreakResponse {
     longestStreak: number;
     lastWorkoutDate: Date | undefined;
     streakActive: boolean;
+}
+
+interface AnalyticsResponse {
+    overview: {
+        totalWorkouts: number;
+        totalXP: number;
+        totalCoins: number;
+        currentStreak: number;
+        longestStreak: number;
+    };
+    workoutTrend: Array<{ date: string; count: number }>;
+    weeklyActivity: Array<{ day: string; count: number }>;
+    workoutCategories: Array<{ category: string; count: number }>;
+    xpProgress: Array<{ date: string; xp: number }>;
+    achievementProgress: {
+        unlocked: number;
+        total: number;
+    };
+    personalBest: {
+        longestStreak: number;
+        highestWeeklyWorkout: number;
+    };
 }
 
 export class UserService {
@@ -232,6 +256,115 @@ export class UserService {
                 latestAchievement,
             },
             recentActivity,
+        };
+    }
+
+    async getAnalytics(userId: string): Promise<AnalyticsResponse> {
+        const user = await userRepository.getUserById(userId);
+        if (!user) {
+            throw new HttpException(404, "User not found");
+        }
+
+        const workoutCompletions = await workoutCompletionRepository.getWorkoutCompletionsByUserId(userId);
+        const userAchievements = await userAchievementRepository.getUserAchievementsByUserId(userId);
+        const allAchievements = await achievementRepository.getAchievements(1, 100);
+        const streak = await this.getStreak(userId);
+
+        // Overview
+        const totalWorkouts = workoutCompletions.length;
+        const totalXP = workoutCompletions.reduce((sum, c) => sum + c.xpEarned, 0);
+        const totalCoins = workoutCompletions.reduce((sum, c) => sum + c.coinEarned, 0);
+
+        // Workout Trend (last 30 days)
+        const today = getStrippedDate(new Date());
+        const workoutTrendMap = new Map<string, number>();
+        for (let i = 29; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            const dateStr = date.toISOString().split('T')[0];
+            workoutTrendMap.set(dateStr, 0);
+        }
+        workoutCompletions.forEach(completion => {
+            const dateStr = getStrippedDate(completion.completedAt).toISOString().split('T')[0];
+            if (workoutTrendMap.has(dateStr)) {
+                workoutTrendMap.set(dateStr, (workoutTrendMap.get(dateStr) || 0) + 1);
+            }
+        });
+        const workoutTrend = Array.from(workoutTrendMap.entries()).map(([date, count]) => ({ date, count }));
+
+        // Weekly Activity (count by weekday)
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const weeklyActivityCounts = new Array(7).fill(0);
+        workoutCompletions.forEach(completion => {
+            const dayIndex = new Date(completion.completedAt).getDay();
+            weeklyActivityCounts[dayIndex]++;
+        });
+        const weeklyActivity = daysOfWeek.map((day, index) => ({ day, count: weeklyActivityCounts[index] }));
+
+        // Workout Categories
+        const categoryMap = new Map<string, number>();
+        workoutCompletions.forEach(completion => {
+            const workout = completion.workoutId as any;
+            if (workout?.category) {
+                categoryMap.set(workout.category, (categoryMap.get(workout.category) || 0) + 1);
+            }
+        });
+        const workoutCategories = Array.from(categoryMap.entries()).map(([category, count]) => ({ category, count }));
+
+        // XP Progress (last 30 days, cumulative)
+        const xpProgressMap = new Map<string, number>();
+        let cumulativeXP = 0;
+        const sortedCompletions = [...workoutCompletions].sort((a, b) => new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime());
+        sortedCompletions.forEach(completion => {
+            const dateStr = getStrippedDate(completion.completedAt).toISOString().split('T')[0];
+            cumulativeXP += completion.xpEarned;
+            xpProgressMap.set(dateStr, cumulativeXP);
+        });
+        // Fill in gaps
+        const xpProgress: Array<{ date: string; xp: number }> = [];
+        let lastXP = 0;
+        for (let i = 29; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i);
+            const dateStr = date.toISOString().split('T')[0];
+            lastXP = xpProgressMap.get(dateStr) || lastXP;
+            xpProgress.push({ date: dateStr, xp: lastXP });
+        }
+
+        // Highest Weekly Workout
+        let highestWeeklyWorkout = 0;
+        const weekMap = new Map<string, number>();
+        workoutCompletions.forEach(completion => {
+            const d = new Date(completion.completedAt);
+            const weekStart = new Date(d);
+            weekStart.setDate(d.getDate() - d.getDay());
+            const weekKey = weekStart.toISOString().split('T')[0];
+            weekMap.set(weekKey, (weekMap.get(weekKey) || 0) + 1);
+        });
+        weekMap.forEach(count => {
+            if (count > highestWeeklyWorkout) highestWeeklyWorkout = count;
+        });
+
+        return {
+            overview: {
+                totalWorkouts,
+                totalXP,
+                totalCoins,
+                currentStreak: streak.currentStreak,
+                longestStreak: streak.longestStreak,
+            },
+            workoutTrend,
+            weeklyActivity,
+            workoutCategories,
+            xpProgress,
+            achievementProgress: {
+                unlocked: userAchievements.length,
+                total: allAchievements.total,
+            },
+            personalBest: {
+                longestStreak: streak.longestStreak,
+                highestWeeklyWorkout,
+            },
         };
     }
 }
