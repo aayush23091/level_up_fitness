@@ -70,6 +70,14 @@ export interface User {
   hiredAt?: string;
   createdAt?: string;
   coachProfile?: CoachProfile;
+  height?: number;
+  weight?: number;
+  chest?: number;
+  waist?: number;
+  arms?: number;
+  shoulders?: number;
+  legs?: number;
+  calves?: number;
 }
 
 interface WhoAmIResponse {
@@ -1548,6 +1556,28 @@ export const userAPI = {
       const axiosError = error as AxiosError<any>;
       throw new Error(
         axiosError.response?.data?.message || "Failed to fetch analytics data"
+      );
+    }
+  },
+
+  chatWithAI: async (message: string): Promise<{
+    status: number;
+    success: boolean;
+    message: string;
+    data: { reply: string };
+  }> => {
+    try {
+      const response = await apiClient.post<{
+        status: number;
+        success: boolean;
+        message: string;
+        data: { reply: string };
+      }>("/api/v1/user/chatbot", { message });
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to get AI response"
       );
     }
   },

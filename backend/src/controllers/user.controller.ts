@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
 import { UserAchievementService } from "../services/userAchievement.service";
+import { GeminiService } from "../services/gemini.service";
 import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
 import { CreateUserDTO, LoginUserDTO, ChangePasswordDTO } from "../dtos/user.dto";
@@ -9,6 +10,7 @@ import { coachProfileUploadMiddleware } from "../middlewares/upload.middleware";
 
 const userService = new UserService();
 const userAchievementService = new UserAchievementService();
+const geminiService = new GeminiService();
 
 function toUploadsUrl(filePath: string): string {
     // Example Windows path:
@@ -97,7 +99,7 @@ export class UserController {
             const coachProfileImage = profileImageFile?.path ? toUploadsUrl(profileImageFile.path) : undefined;
 
 
-            const { name, username, phoneNumber, gender, password, bio, specialization, experience, hireCost, availability } = req.body ?? {};
+            const { name, username, phoneNumber, gender, password, bio, specialization, experience, hireCost, availability, height, weight, chest, waist, arms, shoulders, legs, calves } = req.body ?? {};
 
             const updateData: Partial<IUser> & { password?: string; profilePhoto?: string } = {
                 name,
@@ -107,6 +109,40 @@ export class UserController {
                 ...(password ? { password } : {}),
                 ...(profilePhoto ? { profilePhoto } : {}),
             };
+
+            // Add measurement fields
+            if (height !== undefined) {
+                const h = Number(height);
+                if (!isNaN(h) && h >= 0) updateData.height = h;
+            }
+            if (weight !== undefined) {
+                const w = Number(weight);
+                if (!isNaN(w) && w >= 0) updateData.weight = w;
+            }
+            if (chest !== undefined) {
+                const c = Number(chest);
+                if (!isNaN(c) && c >= 0) updateData.chest = c;
+            }
+            if (waist !== undefined) {
+                const w = Number(waist);
+                if (!isNaN(w) && w >= 0) updateData.waist = w;
+            }
+            if (arms !== undefined) {
+                const a = Number(arms);
+                if (!isNaN(a) && a >= 0) updateData.arms = a;
+            }
+            if (shoulders !== undefined) {
+                const s = Number(shoulders);
+                if (!isNaN(s) && s >= 0) updateData.shoulders = s;
+            }
+            if (legs !== undefined) {
+                const l = Number(legs);
+                if (!isNaN(l) && l >= 0) updateData.legs = l;
+            }
+            if (calves !== undefined) {
+                const c = Number(calves);
+                if (!isNaN(c) && c >= 0) updateData.calves = c;
+            }
 
             // Add coach-specific fields if user is a coach
             if (user.role === "coach") {
@@ -243,6 +279,27 @@ export class UserController {
             const analytics = await userService.getAnalytics(user._id.toString());
 
             return ApiResponseHelper.success(res, analytics, "Analytics data fetched successfully", 200);
+        } catch (err: any) {
+            return next(err);
+        }
+    };
+
+    // POST /user/chatbot
+    chatWithAI = async (req: Request, res: Response, next: Function) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            const { message } = req.body;
+            if (!message) {
+                throw new HttpException(400, "Message is required");
+            }
+
+            const reply = await geminiService.chatWithAI(user._id.toString(), message);
+
+            return ApiResponseHelper.success(res, { reply }, "AI response generated successfully", 200);
         } catch (err: any) {
             return next(err);
         }

@@ -59,4 +59,10 @@ userRouter.get(
     userController.getAnalytics
 );
 
+userRouter.post(
+    "/chatbot",
+    authorizedMiddleware,
+    userController.chatWithAI
+);
+
 export default userRouter;

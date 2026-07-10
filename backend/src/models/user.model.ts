@@ -27,6 +27,14 @@ export interface IUser extends Document {
     longestStreak?: number;
     lastWorkoutDate?: Date;
     coachProfile?: ICoachProfile;
+    height?: number;
+    weight?: number;
+    chest?: number;
+    waist?: number;
+    arms?: number;
+    shoulders?: number;
+    legs?: number;
+    calves?: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -54,7 +62,15 @@ const UserMongoSchema: Schema = new Schema<IUser>(
     hireCost: { type: Number, required: false },
     availability: { type: Boolean, default: true },
     profileImage: { type: String, required: false }
-  }
+  },
+  height: { type: Number, required: false },
+  weight: { type: Number, required: false },
+  chest: { type: Number, required: false },
+  waist: { type: Number, required: false },
+  arms: { type: Number, required: false },
+  shoulders: { type: Number, required: false },
+  legs: { type: Number, required: false },
+  calves: { type: Number, required: false }
 },
     {
         timestamps: true // createdAt and updatedAt will be automatically added and managed by mongoose
