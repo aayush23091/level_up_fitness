@@ -8,7 +8,7 @@ export const CreateWorkoutDTO = z.object({
   duration: z.number().min(1, "Duration must be at least 1 minute"),
   xpReward: z.number().min(0).default(0),
   coinReward: z.number().min(0).default(0),
-  thumbnail: z.string().min(1, "Thumbnail URL or path is required"),
+  thumbnail: z.string().min(1, "Thumbnail URL or path is required").optional(),
   status: z.string().default("active").optional(),
 });
 

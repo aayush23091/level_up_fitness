@@ -600,12 +600,15 @@ export const adminAPI = {
   },
 
   createWorkout: async (
-    data: Partial<Workout>
+    data: Partial<Workout> | FormData
   ): Promise<SingleWorkoutResponse> => {
     try {
       const response = await apiClient.post<SingleWorkoutResponse>(
         "/api/v1/admin/workouts",
-        data
+        data,
+        {
+          headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined
+        }
       );
 
       return response.data;
@@ -619,12 +622,15 @@ export const adminAPI = {
 
   updateWorkout: async (
     id: string,
-    data: Partial<Workout>
+    data: Partial<Workout> | FormData
   ): Promise<SingleWorkoutResponse> => {
     try {
       const response = await apiClient.put<SingleWorkoutResponse>(
         `/api/v1/admin/workouts/${id}`,
-        data
+        data,
+        {
+          headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined
+        }
       );
 
       return response.data;

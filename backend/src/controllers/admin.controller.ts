@@ -250,11 +250,35 @@ export class AdminController {
   // POST /api/v1/admin/workouts
   createWorkout = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const parsed = CreateWorkoutDTO.parse(req.body);
+      // Get form data (if FormData)
+      const body = { ...req.body };
+      
+      // Parse numbers
+      if (typeof body.duration === "string") {
+        body.duration = parseInt(body.duration);
+      }
+      if (typeof body.xpReward === "string") {
+        body.xpReward = parseInt(body.xpReward);
+      }
+      if (typeof body.coinReward === "string") {
+        body.coinReward = parseInt(body.coinReward);
+      }
+      
+      const parsed = CreateWorkoutDTO.parse(body);
       const userId = (req.user as any)._id.toString();
+      
+      // Handle thumbnail file if uploaded
+      let thumbnail: string | undefined;
+      if (req.file) {
+        thumbnail = `/uploads/workout-thumbnails/${req.file.filename}`;
+      } else if (parsed.thumbnail) {
+        // Use existing thumbnail URL if no file uploaded
+        thumbnail = parsed.thumbnail;
+      }
       
       const workoutData = {
         ...parsed,
+        thumbnail,
         createdBy: userId
       };
       
@@ -276,8 +300,37 @@ export class AdminController {
         throw new HttpException(400, "Workout ID is required");
       }
 
-      const parsed = UpdateWorkoutDTO.parse(req.body);
-      const workout = await adminUserService.updateWorkout(id, parsed);
+      // Get form data (if FormData)
+      const body = { ...req.body };
+      
+      // Parse numbers
+      if (typeof body.duration === "string") {
+        body.duration = parseInt(body.duration);
+      }
+      if (typeof body.xpReward === "string") {
+        body.xpReward = parseInt(body.xpReward);
+      }
+      if (typeof body.coinReward === "string") {
+        body.coinReward = parseInt(body.coinReward);
+      }
+      
+      const parsed = UpdateWorkoutDTO.parse(body);
+      
+      // Handle thumbnail file if uploaded
+      let thumbnail: string | undefined;
+      if (req.file) {
+        thumbnail = `/uploads/workout-thumbnails/${req.file.filename}`;
+      } else if (parsed.thumbnail) {
+        // Use existing thumbnail URL if no file uploaded
+        thumbnail = parsed.thumbnail;
+      }
+      
+      const workoutData = {
+        ...parsed,
+        thumbnail
+      };
+      
+      const workout = await adminUserService.updateWorkout(id, workoutData);
       return ApiResponseHelper.success(res, workout, "Workout updated successfully", 200);
     } catch (err: any) {
       if (err.name === "ZodError") {

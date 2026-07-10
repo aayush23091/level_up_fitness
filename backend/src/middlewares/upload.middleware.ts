@@ -6,6 +6,7 @@ import { IUser } from "../models/user.model";
 
 const AVATAR_DIR = path.join(__dirname, "../../uploads/avatars");
 const WORKOUT_COVER_DIR = path.join(__dirname, "../../uploads/workout-covers");
+const WORKOUT_THUMBNAIL_DIR = path.join(__dirname, "../../uploads/workout-thumbnails");
 const COACH_PROFILE_DIR = path.join(__dirname, "../../uploads/coach-profiles");
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -123,6 +124,59 @@ export const workoutCoverUploadMiddleware = (
     next: NextFunction
 ) => {
     workoutCoverUpload.single("coverImage")(req, res, (err: unknown) => {
+        if (err instanceof MulterError) {
+            if (err.code === "LIMIT_FILE_SIZE") {
+                return res.status(413).json({ message: "File too large" });
+            }
+            if (err.code === "LIMIT_UNEXPECTED_FILE") {
+                return res.status(400).json({ message: "Unexpected file field" });
+            }
+            // For other Multer errors (like missing file), just continue
+        }
+        if (err instanceof Error) {
+            if (err.message === "Invalid file type") {
+                return res.status(400).json({ message: "Invalid file type" });
+            }
+            // For other errors, just continue
+        }
+        // Even if no file, continue to next middleware
+        return next();
+    });
+};
+
+// Workout thumbnail image upload configuration
+const workoutThumbnailStorage = multer.diskStorage({
+    destination: (_req, _file, cb) => {
+        fs.mkdirSync(WORKOUT_THUMBNAIL_DIR, { recursive: true });
+        cb(null, WORKOUT_THUMBNAIL_DIR);
+    },
+    filename: (req, file, cb) => {
+        const userId = (req.user as IUser)._id.toString();
+        const ext = MIME_TO_EXT[file.mimetype] ?? path.extname(file.originalname);
+        cb(null, `workout-thumbnail-${userId}-${Date.now()}${ext}`);
+    },
+});
+
+const workoutThumbnailUpload = multer({
+    storage: workoutThumbnailStorage,
+    limits: { fileSize: MAX_FILE_SIZE },
+    fileFilter: (_req, file, cb) => {
+        const allowed = ["image/jpeg", "image/png", "image/webp"];
+        if (allowed.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error("Invalid file type"));
+        }
+    },
+});
+
+// Workout thumbnail image middleware
+export const workoutThumbnailUploadMiddleware = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    workoutThumbnailUpload.single("thumbnail")(req, res, (err: unknown) => {
         if (err instanceof MulterError) {
             if (err.code === "LIMIT_FILE_SIZE") {
                 return res.status(413).json({ message: "File too large" });

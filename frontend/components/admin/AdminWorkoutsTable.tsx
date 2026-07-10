@@ -20,10 +20,11 @@ export default function AdminWorkoutsTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  // formData.thumbnail can be a string (existing URL) or a File (new upload)
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    thumbnail: "",
+    thumbnail: "" as string | File | undefined,
     category: "",
     difficulty: "",
     duration: 30,
@@ -58,6 +59,19 @@ export default function AdminWorkoutsTable() {
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const handleThumbnailUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const previewUrl = URL.createObjectURL(file);
+    (file as any).__previewUrl = previewUrl;
+    setFormData({ ...formData, thumbnail: file });
+  };
+
+  const handleRemoveThumbnail = () => {
+    setFormData({ ...formData, thumbnail: "" });
   };
 
   const handleCancelClose = () => {
@@ -149,9 +163,31 @@ export default function AdminWorkoutsTable() {
     }
 
     try {
+      // Prepare FormData
+      const formDataToSend = new FormData();
+      formDataToSend.append("title", formData.title);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("category", formData.category);
+      formDataToSend.append("difficulty", formData.difficulty);
+      formDataToSend.append("duration", formData.duration.toString());
+      formDataToSend.append("xpReward", formData.xpReward.toString());
+      formDataToSend.append("coinReward", formData.coinReward.toString());
+      formDataToSend.append("status", formData.status);
+
+      // Handle thumbnail
+      if (formData.thumbnail) {
+        if (typeof formData.thumbnail === "string") {
+          // If it's a string (existing URL), add as thumbnail
+          formDataToSend.append("thumbnail", formData.thumbnail);
+        } else {
+          // If it's a File, append it
+          formDataToSend.append("thumbnail", formData.thumbnail);
+        }
+      }
+
       if (editingWorkoutId) {
         // Edit Mode
-        const response = await adminAPI.updateWorkout(editingWorkoutId, formData);
+        const response = await adminAPI.updateWorkout(editingWorkoutId, formDataToSend);
 
         if (response.success) {
           setToast({ message: "Workout updated successfully!", type: "success" });
@@ -162,7 +198,7 @@ export default function AdminWorkoutsTable() {
         }
       } else {
         // Create Mode
-        const response = await adminAPI.createWorkout(formData);
+        const response = await adminAPI.createWorkout(formDataToSend);
 
         if (response.success) {
           setToast({ message: "Workout created successfully!", type: "success" });
@@ -285,6 +321,7 @@ export default function AdminWorkoutsTable() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-zinc-900/50 border-b border-zinc-800 text-[10px] font-black uppercase tracking-wider text-zinc-400">
+                <th className="px-6 py-4">Thumbnail</th>
                 <th className="px-6 py-4">Title</th>
                 <th className="px-6 py-4">Category</th>
                 <th className="px-6 py-4">Difficulty</th>
@@ -300,6 +337,9 @@ export default function AdminWorkoutsTable() {
                 // Loading Skeleton Rows
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
+                    <td className="px-6 py-4">
+                      <div className="w-12 h-12 bg-zinc-800/60 rounded-lg"></div>
+                    </td>
                     <td className="px-6 py-4">
                       <div className="h-4 bg-zinc-800/60 rounded w-32"></div>
                     </td>
@@ -329,7 +369,7 @@ export default function AdminWorkoutsTable() {
               ) : workouts.length === 0 ? (
                 // Empty State Rows
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center">
+                  <td colSpan={9} className="px-6 py-12 text-center">
                     <div className="space-y-3">
                       <span className="text-3xl">💪</span>
                       <h4 className="text-sm font-bold text-white uppercase tracking-wider">No workouts found</h4>
@@ -345,6 +385,14 @@ export default function AdminWorkoutsTable() {
                   const workoutId = workout._id || workout.id || "";
                   return (
                     <tr key={workoutId} className="hover:bg-zinc-900/20 transition-colors group">
+                      <td className="px-6 py-4">
+                        <img
+                          src={workout.thumbnail}
+                          alt={workout.title}
+                          className="w-12 h-12 object-cover rounded-lg border border-zinc-800"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      </td>
                       <td className="px-6 py-4">
                         <p className="font-bold text-white group-hover:text-yellow-400 transition-colors">
                           {workout.title}
@@ -502,16 +550,50 @@ export default function AdminWorkoutsTable() {
                 {/* Thumbnail */}
                 <div className="col-span-2">
                   <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
-                    Thumbnail URL
+                    Workout Thumbnail
                   </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="https://example.com/thumbnail.jpg"
-                    value={formData.thumbnail}
-                    onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-700"
-                  />
+                  {formData.thumbnail ? (
+                    <div className="relative group">
+                      <img
+                        src={
+                          typeof formData.thumbnail === "string"
+                            ? formData.thumbnail
+                            : (formData.thumbnail as any).__previewUrl || URL.createObjectURL(formData.thumbnail as File)
+                        }
+                        alt="Workout thumbnail"
+                        className="w-full h-48 object-cover rounded-xl border border-zinc-800"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleRemoveThumbnail}
+                        className="absolute top-2 right-2 p-2 bg-red-500/80 hover:bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="border-2 border-dashed border-zinc-800 rounded-xl p-8 text-center hover:border-yellow-500/40 transition-colors">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleThumbnailUpload}
+                        className="hidden"
+                        id="thumbnailInput"
+                      />
+                      <label
+                        htmlFor="thumbnailInput"
+                        className="cursor-pointer flex flex-col items-center gap-3"
+                      >
+                        <svg className="w-8 h-8 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span className="text-sm text-zinc-400">Click to upload thumbnail</span>
+                        <span className="text-xs text-zinc-600">PNG, JPG up to 5MB</span>
+                      </label>
+                    </div>
+                  )}
                 </div>
 
                 {/* Category */}

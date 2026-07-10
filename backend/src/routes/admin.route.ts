@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { AdminController } from "../controllers/admin.controller";
 import { authorizedMiddleware, adminMiddleware } from "../middlewares/authorized.middleware";
+import { workoutThumbnailUploadMiddleware } from "../middlewares/upload.middleware";
 
 const adminRouter = Router();
 const adminController = new AdminController();
@@ -26,8 +27,8 @@ adminRouter.delete("/coaches/:id", adminController.deleteCoach);
 // Workout management
 adminRouter.get("/workouts", adminController.getWorkouts);
 adminRouter.get("/workouts/:id", adminController.getWorkoutById);
-adminRouter.post("/workouts", adminController.createWorkout);
-adminRouter.put("/workouts/:id", adminController.updateWorkout);
+adminRouter.post("/workouts", workoutThumbnailUploadMiddleware, adminController.createWorkout);
+adminRouter.put("/workouts/:id", workoutThumbnailUploadMiddleware, adminController.updateWorkout);
 adminRouter.delete("/workouts/:id", adminController.deleteWorkout);
 
 // Achievement management
