@@ -2,16 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
-import { workoutAPI, Workout } from "@/lib/api";
-import DashboardLayout from "../../../components/DashboardLayout";
+import { workoutAPI, Workout, userAPI, CompleteWorkoutResponse } from "@/lib/api";
+import { useAuth } from "@/app/context/AuthContext";
+import DashboardLayout from "@/app/components/DashboardLayout";
 
 interface MockExercise {
   name: string;
   sets: string;
 }
 
-// Dynamic exercise and calorie mockup based on workout title
 function getMockExercisesAndCalories(title: string): {
   exercises: MockExercise[];
   calories: number;
@@ -136,40 +135,74 @@ function getMockExercisesAndCalories(title: string): {
   };
 }
 
-export default function WorkoutDetailsPage() {
+function formatTime(seconds: number): string {
+  const mins = Math.floor(seconds / 60).toString().padStart(2, "0");
+  const secs = (seconds % 60).toString().padStart(2, "0");
+  return `${mins}:${secs}`;
+}
+
+export default function WorkoutSessionPage() {
   const params = useParams();
   const router = useRouter();
   const id = params?.id as string;
+  const { refreshUser } = useAuth();
 
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchWorkout = async () => {
-    if (!id) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await workoutAPI.getWorkout(id);
-      if (response.success && response.data) {
-        setWorkout(response.data);
-      } else {
-        setError(response.message || "Failed to load workout details.");
-      }
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred while fetching workout details.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [timer, setTimer] = useState(0);
+  const [completing, setCompleting] = useState(false);
+  const [completionResult, setCompletionResult] = useState<CompleteWorkoutResponse | null>(null);
 
   useEffect(() => {
+    const fetchWorkout = async () => {
+      if (!id) return;
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await workoutAPI.getWorkout(id);
+        if (response.success && response.data) {
+          setWorkout(response.data);
+        } else {
+          setError(response.message || "Failed to load workout details.");
+        }
+      } catch (err: any) {
+        setError(err.message || "An unexpected error occurred while fetching workout details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchWorkout();
   }, [id]);
 
-  const handleStartWorkout = () => {
-    router.push(`/dashboard/training/${id}/session`);
+  // Timer effect
+  useEffect(() => {
+    if (loading || error || !workout || completionResult) return;
+
+    const interval = setInterval(() => {
+      setTimer(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [loading, error, workout, completionResult]);
+
+  const handleCompleteWorkout = async () => {
+    if (!workout?._id) return;
+    setCompleting(true);
+    setError(null);
+    try {
+      const result = await userAPI.completeWorkout(workout._id, timer);
+      setCompletionResult(result);
+      await refreshUser();
+    } catch (err: any) {
+      setError(err.message || "Failed to complete workout.");
+    } finally {
+      setCompleting(false);
+    }
   };
+
+  const canComplete = timer >= 30;
 
   // Render Skeleton Loader
   if (loading) {
@@ -177,17 +210,7 @@ export default function WorkoutDetailsPage() {
       <DashboardLayout>
         <div className="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto animate-pulse">
           <div className="h-4 bg-zinc-800/60 rounded w-24"></div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="w-full h-80 bg-zinc-800/60 rounded-2xl"></div>
-              <div className="h-8 bg-zinc-800/60 rounded w-1/2"></div>
-              <div className="h-4 bg-zinc-800/60 rounded w-full"></div>
-            </div>
-            <div className="space-y-6">
-              <div className="h-40 bg-zinc-800/60 rounded-2xl"></div>
-              <div className="h-80 bg-zinc-800/60 rounded-2xl"></div>
-            </div>
-          </div>
+          <div className="h-96 bg-zinc-800/60 rounded-2xl"></div>
         </div>
       </DashboardLayout>
     );
@@ -214,46 +237,82 @@ export default function WorkoutDetailsPage() {
             >
               Back to Training
             </button>
-            {error && (
-              <button
-                onClick={fetchWorkout}
-                className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-all"
-              >
-                Retry
-              </button>
-            )}
           </div>
         </div>
       </DashboardLayout>
     );
   }
 
-  const { exercises, calories } = getMockExercisesAndCalories(workout.title);
+  const { exercises } = getMockExercisesAndCalories(workout.title);
 
-  return (
-    <DashboardLayout>
-      <div className="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
-        {/* Top Back Row & Breadcrumbs */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#1e1e24] pb-4">
+  // Completion success view
+  if (completionResult) {
+    return (
+      <DashboardLayout>
+        <div className="p-6 lg:p-8 max-w-3xl mx-auto space-y-8">
           <button
             onClick={() => router.push("/dashboard")}
             className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-yellow-400 transition-colors self-start cursor-pointer"
           >
             &larr; Back to Training
           </button>
-          
-          <nav className="flex items-center gap-2 text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
-            <Link href="/dashboard" className="hover:text-yellow-400 transition-colors">
-              Dashboard
-            </Link>
-            <span>&gt;</span>
-            <span className="text-zinc-400">Workout Details</span>
-          </nav>
-        </div>
 
-        {/* Details Grid */}
+          <div className="bg-green-500/10 border border-green-500/20 p-8 rounded-2xl space-y-6 text-center">
+            <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 mx-auto">
+              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-3xl font-black text-green-400 uppercase tracking-wide">
+              Workout Completed! 🎉
+            </h2>
+            <p className="text-sm text-zinc-400">
+              Great job! You earned rewards for completing this workout.
+            </p>
+
+            <div className="grid grid-cols-2 gap-6 mt-8">
+              <div className="bg-zinc-800/30 border border-zinc-700/30 p-6 rounded-xl text-center">
+                <span className="block text-xs text-zinc-500 uppercase tracking-widest mb-2">
+                  XP Earned
+                </span>
+                <span className="text-4xl font-black text-yellow-400">
+                  ✨ +{completionResult.data.xpEarned}
+                </span>
+              </div>
+              <div className="bg-zinc-800/30 border border-zinc-700/30 p-6 rounded-xl text-center">
+                <span className="block text-xs text-zinc-500 uppercase tracking-widest mb-2">
+                  Coins Earned
+                </span>
+                <span className="text-4xl font-black text-yellow-400">
+                  🪙 +{completionResult.data.coinsEarned}
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="mt-8 w-full py-3 bg-yellow-400 hover:bg-yellow-500 text-black text-xs font-bold rounded-xl uppercase tracking-widest transition-all hover:scale-[1.02] shadow-lg shadow-yellow-400/10 cursor-pointer"
+            >
+              Back to Training
+            </button>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  return (
+    <DashboardLayout>
+      <div className="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+        <button
+          onClick={() => router.push(`/dashboard/training/${id}`)}
+          className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-yellow-400 transition-colors self-start cursor-pointer"
+        >
+          &larr; Back to Workout Details
+        </button>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          {/* Left Side: Image and General Info Card */}
+          {/* Left Side: Workout Info */}
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl overflow-hidden shadow-xl">
               {workout.thumbnail && (
@@ -263,7 +322,6 @@ export default function WorkoutDetailsPage() {
                     alt={workout.title}
                     className="w-full h-full object-cover"
                   />
-
                 </div>
               )}
 
@@ -289,58 +347,39 @@ export default function WorkoutDetailsPage() {
             </div>
           </div>
 
-          {/* Right Side: Specifications and Exercises Card */}
+          {/* Right Side: Timer & Exercises */}
           <div className="space-y-6">
-            {/* Quick Specs Card */}
+            {/* Timer Card */}
             <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl shadow-xl space-y-5">
               <h2 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3">
-                Workout Specifications
+                Workout Timer
               </h2>
 
-              <div className="grid grid-cols-2 gap-4 text-xs font-semibold font-mono">
-                <div>
-                  <span className="block text-[10px] text-zinc-500 uppercase tracking-widest mb-1">
-                    Difficulty
-                  </span>
-                  <span className="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-yellow-400/10 text-yellow-400 border border-yellow-500/20">
-                    {workout.difficulty}
-                  </span>
+              <div className="text-center">
+                <div className="text-5xl font-black text-yellow-400 font-mono tracking-widest">
+                  {formatTime(timer)}
                 </div>
-
-                <div>
-                  <span className="block text-[10px] text-zinc-500 uppercase tracking-widest mb-1">
-                    Duration
-                  </span>
-                  <span className="text-white text-sm">⏱️ {workout.duration} Mins</span>
-                </div>
-
-                <div>
-                  <span className="block text-[10px] text-zinc-500 uppercase tracking-widest mb-1">
-                    XP Reward
-                  </span>
-                  <span className="text-white text-sm">✨ {workout.xpReward} XP</span>
-                </div>
-
-                <div>
-                  <span className="block text-[10px] text-zinc-500 uppercase tracking-widest mb-1">
-                    Coin Reward
-                  </span>
-                  <span className="text-white text-sm">🪙 {workout.coinReward} Coins</span>
-                </div>
-
-                <div className="col-span-2">
-                  <span className="block text-[10px] text-zinc-500 uppercase tracking-widest mb-1">
-                    Estimated Burn
-                  </span>
-                  <span className="text-red-400 text-sm font-black font-mono">🔥 {calories} Kcal</span>
-                </div>
+                <p className="text-xs text-zinc-500 mt-2 uppercase tracking-wider">
+                  Time Elapsed
+                </p>
               </div>
 
+              {!canComplete ? (
+                <p className="text-xs text-yellow-500/80 text-center">
+                  Complete workout available after 30 seconds
+                </p>
+              ) : null}
+
               <button
-                onClick={handleStartWorkout}
-                className="w-full py-3 bg-yellow-400 hover:bg-yellow-500 text-black text-xs font-bold rounded-xl uppercase tracking-widest transition-all hover:scale-[1.02] shadow-lg shadow-yellow-400/10 hover:shadow-yellow-400/20 cursor-pointer"
+                onClick={handleCompleteWorkout}
+                disabled={!canComplete || completing}
+                className={`w-full py-3 text-xs font-bold rounded-xl uppercase tracking-widest transition-all shadow-lg ${
+                  canComplete && !completing
+                    ? "bg-green-500 hover:bg-green-600 text-black hover:scale-[1.02] shadow-green-500/10 hover:shadow-green-500/20 cursor-pointer"
+                    : "bg-zinc-700 text-zinc-500 cursor-not-allowed"
+                }`}
               >
-                Start Workout
+                {completing ? "Completing..." : "Complete Workout"}
               </button>
             </div>
 

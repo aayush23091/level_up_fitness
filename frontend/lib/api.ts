@@ -1407,4 +1407,48 @@ export const workoutPlanAPI = {
   },
 };
 
+export interface CompleteWorkoutResponse {
+  status: number;
+  success: boolean;
+  message: string;
+  data: {
+    xpEarned: number;
+    coinsEarned: number;
+    newXp: number;
+    newLevel: number;
+    newCoins: number;
+  };
+}
+
+export const userAPI = {
+  completeWorkout: async (workoutId: string, duration: number): Promise<CompleteWorkoutResponse> => {
+    try {
+      const response = await apiClient.post<CompleteWorkoutResponse>(
+        `/api/v1/user/workouts/${workoutId}/complete`,
+        { duration }
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to complete workout"
+      );
+    }
+  },
+
+  getWorkoutCompletions: async (): Promise<any> => {
+    try {
+      const response = await apiClient.get<any>(
+        "/api/v1/user/workout-completions"
+      );
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch workout completions"
+      );
+    }
+  },
+};
+
 export default apiClient;
