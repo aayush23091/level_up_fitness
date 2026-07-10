@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useAuth } from "@/app/context/AuthContext";
+import { adminAPI } from "@/lib/api";
+import CoinBalance from "../CoinBalance";
 
 interface AdminNavbarProps {
   onMenuToggle: () => void;
@@ -12,6 +14,23 @@ export default function AdminNavbar({ onMenuToggle }: AdminNavbarProps) {
   const { user } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [coinBalance, setCoinBalance] = useState<number | null>(null);
+  const [coinLoading, setCoinLoading] = useState(true);
+
+  const fetchAdminCommission = async () => {
+    try {
+      const response = await adminAPI.getTransactions();
+      setCoinBalance(response.data.adminCommission);
+    } catch (err) {
+      setCoinBalance(0);
+    } finally {
+      setCoinLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAdminCommission();
+  }, []);
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -75,8 +94,10 @@ export default function AdminNavbar({ onMenuToggle }: AdminNavbarProps) {
         </div>
       </div>
 
-      {/* Right: Settings & Admin Profile Icon */}
+      {/* Right: Coin Balance, Settings & Admin Profile Icon */}
       <div className="flex items-center gap-4">
+        {/* Coin Balance */}
+        <CoinBalance amount={coinBalance} loading={coinLoading} />
         {/* Settings Button */}
         <Link
           href="/admin-dashboard?tab=settings"

@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useAuth } from "@/app/context/AuthContext";
 import { getProfileImageUrl } from "@/lib/getProfileImageUrl";
+import { coachAPI } from "@/lib/api";
+import CoinBalance from "../CoinBalance";
 
 interface CoachNavbarProps {
   onMenuToggle: () => void;
@@ -13,6 +15,23 @@ export default function CoachNavbar({ onMenuToggle }: CoachNavbarProps) {
   const { user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [coinBalance, setCoinBalance] = useState<number | null>(null);
+  const [coinLoading, setCoinLoading] = useState(true);
+
+  const fetchCoachEarnings = async () => {
+    try {
+      const response = await coachAPI.getEarnings();
+      setCoinBalance(response.data.totalEarnings);
+    } catch (err) {
+      setCoinBalance(0);
+    } finally {
+      setCoinLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCoachEarnings();
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -73,6 +92,8 @@ export default function CoachNavbar({ onMenuToggle }: CoachNavbarProps) {
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        {/* Coin Balance */}
+        <CoinBalance amount={coinBalance} loading={coinLoading} />
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
