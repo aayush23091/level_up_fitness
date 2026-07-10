@@ -274,6 +274,13 @@ export interface Achievement {
   updatedAt?: string;
 }
 
+export interface UserAchievementWithProgress {
+  achievement: Achievement;
+  unlocked: boolean;
+  unlockedAt?: string;
+  progress: number;
+}
+
 export interface PaginatedAchievementsResponse {
   status: number;
   success: boolean;
@@ -1446,6 +1453,28 @@ export const userAPI = {
       const axiosError = error as AxiosError<any>;
       throw new Error(
         axiosError.response?.data?.message || "Failed to fetch workout completions"
+      );
+    }
+  },
+
+  getAchievements: async (): Promise<{
+    status: number;
+    success: boolean;
+    message: string;
+    data: UserAchievementWithProgress[];
+  }> => {
+    try {
+      const response = await apiClient.get<{
+        status: number;
+        success: boolean;
+        message: string;
+        data: UserAchievementWithProgress[];
+      }>("/api/v1/user/achievements");
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to fetch achievements"
       );
     }
   },

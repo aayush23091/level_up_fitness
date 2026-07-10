@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
+import { UserAchievementService } from "../services/userAchievement.service";
 import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
 import { CreateUserDTO, LoginUserDTO, ChangePasswordDTO } from "../dtos/user.dto";
@@ -7,6 +8,7 @@ import { IUser } from "../models/user.model";
 import { coachProfileUploadMiddleware } from "../middlewares/upload.middleware";
 
 const userService = new UserService();
+const userAchievementService = new UserAchievementService();
 
 function toUploadsUrl(filePath: string): string {
     // Example Windows path:
@@ -179,6 +181,22 @@ export class UserController {
 
         } catch (err: any) {
             return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
+        }
+    };
+
+    // GET /user/achievements
+    getAchievements = async (req: Request, res: Response, next: Function) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            const achievements = await userAchievementService.getUserAchievements(user._id.toString());
+
+            return ApiResponseHelper.success(res, achievements, "Achievements fetched successfully", 200);
+        } catch (err: any) {
+            return next(err);
         }
     };
 }

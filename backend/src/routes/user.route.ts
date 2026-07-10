@@ -35,4 +35,10 @@ userRouter.get(
     workoutCompletionController.getUserCompletions
 );
 
+userRouter.get(
+    "/achievements",
+    authorizedMiddleware,
+    userController.getAchievements
+);
+
 export default userRouter;

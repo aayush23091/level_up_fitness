@@ -1,10 +1,59 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import { withProtectedRoute } from "@/lib/protectedRoute";
+import { userAPI, UserAchievementWithProgress } from "@/lib/api";
 
 function AchievementsPageContent() {
+  const [achievements, setAchievements] = useState<UserAchievementWithProgress[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAchievements = async () => {
+      try {
+        const res = await userAPI.getAchievements();
+        setAchievements(res.data);
+      } catch (err) {
+        console.error("Failed to fetch achievements:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAchievements();
+  }, []);
+
+  const getIconForCondition = (conditionType: string) => {
+    switch (conditionType) {
+      case "workout_completed":
+        return "🏋️";
+      case "xp_earned":
+        return "⭐";
+      case "level_reached":
+        return "🎖️";
+      case "streak_days":
+        return "🔥";
+      default:
+        return "🏆";
+    }
+  };
+
+  const formatCondition = (conditionType: string, conditionValue: number) => {
+    switch (conditionType) {
+      case "workout_completed":
+        return `Complete ${conditionValue} workouts`;
+      case "xp_earned":
+        return `Earn ${conditionValue} XP`;
+      case "level_reached":
+        return `Reach level ${conditionValue}`;
+      case "streak_days":
+        return `Streak for ${conditionValue} days`;
+      default:
+        return "";
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
@@ -14,31 +63,60 @@ function AchievementsPageContent() {
             Track your progress and unlock achievements.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { title: "First Step Complete", desc: "Completed the onboarding workout.", icon: "🥇", unlocked: true },
-            { title: "5-Day Hot Streak", desc: "Checked in 5 days consecutively.", icon: "🔥", unlocked: true },
-            { title: "HIIT Master", desc: "Complete 10 HIIT classes.", icon: "👑", unlocked: false },
-            { title: "Strength Champion", desc: "Lift 1000 lbs total.", icon: "💪", unlocked: false },
-            { title: "Cardio King", desc: "Run 50 miles total.", icon: "🏃", unlocked: false },
-            { title: "Early Bird", desc: "Workout before 8 AM 10 times.", icon: "🌅", unlocked: false },
-          ].map((achievement, idx) => (
-            <div
-              key={idx}
-              className={`bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl flex gap-4 ${
-                achievement.unlocked ? "hover:border-yellow-500/20" : "opacity-40"
-              } transition-all`}
-            >
-              <span className="w-12 h-12 shrink-0 bg-yellow-500/10 text-yellow-500 flex items-center justify-center rounded-xl text-2xl font-bold">
-                {achievement.icon}
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-white">{achievement.title}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{achievement.desc}</p>
+
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {achievements.map((item, idx) => (
+              <div
+                key={idx}
+                className={`bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl flex flex-col gap-4 ${
+                  item.unlocked ? "hover:border-yellow-500/20" : "opacity-70"
+                } transition-all`}
+              >
+                <div className="flex gap-4">
+                  <span className="w-12 h-12 shrink-0 bg-yellow-500/10 text-yellow-500 flex items-center justify-center rounded-xl text-2xl font-bold">
+                    {getIconForCondition(item.achievement.conditionType)}
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-white">{item.achievement.title}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{item.achievement.description}</p>
+                  </div>
+                </div>
+
+                {!item.unlocked && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs text-gray-400">
+                      <span>{formatCondition(item.achievement.conditionType, item.achievement.conditionValue)}</span>
+                      <span>{item.progress}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-[#1e1e24] rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-yellow-500 transition-all duration-300"
+                        style={{ width: `${item.progress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {item.unlocked && (
+                  <div className="flex flex-wrap gap-2 text-xs text-yellow-500">
+                    <span>+{item.achievement.xpReward} XP</span>
+                    <span>+{item.achievement.coinReward} Coins</span>
+                    {item.unlockedAt && (
+                      <span className="text-gray-500 ml-auto">
+                        Unlocked {new Date(item.unlockedAt).toLocaleDateString()}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

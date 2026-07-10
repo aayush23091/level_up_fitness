@@ -2,12 +2,14 @@
 import { WorkoutCompletionRepository } from "../repositories/workoutCompletion.repository";
 import { WorkoutRepository } from "../repositories/workout.repository";
 import { UserMongoRepository } from "../repositories/user.repository";
+import { UserAchievementService } from "./userAchievement.service";
 import { IWorkoutCompletion } from "../models/workoutCompletion.model";
 import { HttpException } from "../exceptions/http-exception";
 
 const workoutCompletionRepository = new WorkoutCompletionRepository();
 const workoutRepository = new WorkoutRepository();
 const userRepository = new UserMongoRepository();
+const userAchievementService = new UserAchievementService();
 
 const calculateLevel = (xp: number): number => {
   return Math.floor(xp / 100);
@@ -25,6 +27,7 @@ export class WorkoutCompletionService {
     newXp: number;
     newLevel: number;
     newCoins: number;
+    unlockedAchievements?: any[];
   }> {
     const workout = await workoutRepository.getWorkoutById(workoutId);
     if (!workout) {
@@ -39,8 +42,8 @@ export class WorkoutCompletionService {
     const xpEarned = workout.xpReward;
     const coinsEarned = workout.coinReward;
 
-    const newXp = (user.xp || 0) + xpEarned;
-    const newCoins = (user.coins || 0) + coinsEarned;
+    let newXp = (user.xp || 0) + xpEarned;
+    let newCoins = (user.coins || 0) + coinsEarned;
     const newLevel = calculateLevel(newXp);
 
     await workoutCompletionRepository.createWorkoutCompletion({
@@ -57,6 +60,23 @@ export class WorkoutCompletionService {
       level: newLevel,
     });
 
+    // Check and unlock achievements
+    const { unlockedAchievements } = await userAchievementService.checkAndUnlockAchievements(userId);
+
+    // Update xp and coins with achievement rewards
+    if (unlockedAchievements.length > 0) {
+      const extraXp = unlockedAchievements.reduce(
+        (sum, ua) => sum + ua.xpEarned,
+        0
+      );
+      const extraCoins = unlockedAchievements.reduce(
+        (sum, ua) => sum + ua.coinsEarned,
+        0
+      );
+      newXp += extraXp;
+      newCoins += extraCoins;
+    }
+
     return {
       message: "Workout completed successfully!",
       xpEarned,
@@ -64,6 +84,7 @@ export class WorkoutCompletionService {
       newXp,
       newLevel,
       newCoins,
+      unlockedAchievements,
     };
   }
 
