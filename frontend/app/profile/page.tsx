@@ -22,6 +22,15 @@ export default function ProfilePage() {
   const [gender, setGender] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  // Measurement form state
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [chest, setChest] = useState("");
+  const [waist, setWaist] = useState("");
+  const [arms, setArms] = useState("");
+  const [shoulders, setShoulders] = useState("");
+  const [legs, setLegs] = useState("");
+  const [calves, setCalves] = useState("");
 
   // Coach-specific fields
   const [bio, setBio] = useState("");
@@ -45,6 +54,15 @@ export default function ProfilePage() {
       setEmail(user.email || "");
       setPhoneNumber(user.phoneNumber || "");
       setGender(user.gender || "");
+      // Initialize measurements
+      setHeight(user.height?.toString() || "");
+      setWeight(user.weight?.toString() || "");
+      setChest(user.chest?.toString() || "");
+      setWaist(user.waist?.toString() || "");
+      setArms(user.arms?.toString() || "");
+      setShoulders(user.shoulders?.toString() || "");
+      setLegs(user.legs?.toString() || "");
+      setCalves(user.calves?.toString() || "");
       setPhoto(null);
       setPhotoPreview(null);
     }
@@ -96,6 +114,15 @@ export default function ProfilePage() {
       formData.append("email", email);
       formData.append("phoneNumber", phoneNumber);
       formData.append("gender", gender);
+      // Append measurement fields
+      if (height) formData.append("height", height);
+      if (weight) formData.append("weight", weight);
+      if (chest) formData.append("chest", chest);
+      if (waist) formData.append("waist", waist);
+      if (arms) formData.append("arms", arms);
+      if (shoulders) formData.append("shoulders", shoulders);
+      if (legs) formData.append("legs", legs);
+      if (calves) formData.append("calves", calves);
       if (photo) {
         formData.append("photo", photo);
       }
@@ -164,62 +191,6 @@ export default function ProfilePage() {
       .slice(0, 2);
   };
 
-  // Mock statistics for profile
-  const stats = [
-    {
-      label: "Total Workouts",
-      value: "48",
-      icon: "🏋️‍♂️",
-      color: "text-yellow-500 bg-yellow-500/10",
-    },
-    {
-      label: "Active Calories",
-      value: "18,400 kcal",
-      icon: "🔥",
-      color: "text-red-500 bg-red-500/10",
-    },
-    {
-      label: "Time Exercising",
-      value: "2,400 min",
-      icon: "⏱️",
-      color: "text-blue-500 bg-blue-500/10",
-    },
-  ];
-
-  // Achievements
-  const achievements = [
-    {
-      title: "Onboarding Master",
-      description: "Completed setup and first training",
-      icon: "🚀",
-      unlocked: true,
-    },
-    {
-      title: "Streak Champion",
-      description: "Maintained a 5-day active workout streak",
-      icon: "🔥",
-      unlocked: true,
-    },
-    {
-      title: "Heavy Lifter",
-      description: "Lifted a total of 1000kg in workouts",
-      icon: "💪",
-      unlocked: true,
-    },
-    {
-      title: "Early Bird",
-      description: "Completed a workout before 6:00 AM",
-      icon: "🌅",
-      unlocked: false,
-    },
-    {
-      title: "Consistency King",
-      description: "Exercised 4 weeks in a row",
-      icon: "👑",
-      unlocked: false,
-    },
-  ];
-
   const PageShell = isCoach ? CoachLayout : DashboardLayout;
 
   return (
@@ -239,9 +210,9 @@ export default function ProfilePage() {
         </section>
 
         {/*
-          Coach layout fix:
-          - Desktop/tablet: 2 columns
-          - Mobile: 1 column
+          Layout:
+          - Coach: 2 columns
+          - User: 2 columns (profile + measurements)
         */}
         {isCoach ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
@@ -388,7 +359,7 @@ export default function ProfilePage() {
             </div>
           </div>
         ) : (
-          <div className={`grid grid-cols-1 lg:grid-cols-3 gap-8 items-start`}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             {/* Left column: User details card */}
             <div className="space-y-6">
               <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-6 flex flex-col items-center text-center shadow-lg relative">
@@ -437,102 +408,47 @@ export default function ProfilePage() {
                   Edit Profile
                 </button>
               </div>
-
-              {!isCoach && (
-                <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-6 space-y-4">
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3">
-                    XP & LEVEL STATUS
-                  </h3>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-gray-500 font-medium">Current Status</p>
-                      <p className="text-2xl font-black text-white mt-0.5">Level 12</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-500 font-medium">Daily Streak</p>
-                      <p className="text-2xl font-black text-yellow-500 mt-0.5 flex items-center justify-end gap-1">
-                        ⚡ 5 Days
-                      </p>
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between text-xs text-gray-400 font-medium">
-                      <span>Level Progress</span>
-                      <span>2,450 / 3,000 XP</span>
-                    </div>
-                    <div className="w-full bg-[#1c1c24] h-2 rounded-full overflow-hidden">
-                      <div className="bg-yellow-500 h-full rounded-full" style={{ width: "81%" }}></div>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
-            <div className="lg:col-span-2 space-y-6">
-              {/* Stat Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                {stats.map((stat, index) => (
-                  <div
-                    key={index}
-                    className="bg-[#0e0e12] border border-[#1e1e24] p-5 rounded-2xl flex items-center gap-4 hover:border-yellow-500/10 transition-all"
-                  >
-                    <span className={`w-12 h-12 flex items-center justify-center rounded-xl text-xl ${stat.color}`}>
-                      {stat.icon}
-                    </span>
-                    <div>
-                      <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">{stat.label}</p>
-                      <p className="text-lg font-black text-white mt-0.5">{stat.value}</p>
-                    </div>
+            {/* Right column: My Measurements */}
+            <div className="space-y-6">
+              <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl p-6 space-y-4">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3">
+                  MY MEASUREMENTS
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Height (cm)</p>
+                    <p className="text-lg font-bold text-white">{user?.height || "Not added"}</p>
                   </div>
-                ))}
-              </div>
-
-              {/* Weekly Activity Placeholder */}
-              <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl space-y-4">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3">
-                  WEEKLY PERFORMANCE OVERVIEW
-                </h3>
-                <div className="h-44 flex items-end justify-between px-2 pt-4">
-                  {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, idx) => {
-                    const heights = [40, 75, 20, 95, 60, 10, 5];
-                    const height = heights[idx];
-                    return (
-                      <div key={idx} className="flex flex-col items-center gap-2 w-8">
-                        <div className="w-full bg-[#121216] h-32 rounded-md relative flex items-end overflow-hidden">
-                          <div
-                            className="w-full bg-gradient-to-t from-yellow-600 to-yellow-400 rounded-t-md"
-                            style={{ height: `${height}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-[10px] text-gray-500 font-medium">{day}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Achievements Section */}
-              <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl space-y-4">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3">
-                  UNLOCKED ACHIEVEMENTS
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {achievements.map((ach, index) => (
-                    <div
-                      key={index}
-                      className={`flex items-start gap-3 p-4 bg-[#121216] border rounded-xl transition-all ${
-                        ach.unlocked
-                          ? "border-[#1e1e24] hover:border-yellow-500/10"
-                          : "border-[#1e1e24]/40 opacity-40"
-                      }`}
-                    >
-                      <span className="text-2xl p-2 bg-[#1c1c24] rounded-lg shrink-0">{ach.icon}</span>
-                      <div>
-                        <p className="text-sm font-bold text-white">{ach.title}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{ach.description}</p>
-                      </div>
-                    </div>
-                  ))}
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Weight (kg)</p>
+                    <p className="text-lg font-bold text-white">{user?.weight || "Not added"}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Chest (cm)</p>
+                    <p className="text-lg font-bold text-white">{user?.chest || "Not added"}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Waist (cm)</p>
+                    <p className="text-lg font-bold text-white">{user?.waist || "Not added"}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Arms (cm)</p>
+                    <p className="text-lg font-bold text-white">{user?.arms || "Not added"}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Shoulders (cm)</p>
+                    <p className="text-lg font-bold text-white">{user?.shoulders || "Not added"}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Legs (cm)</p>
+                    <p className="text-lg font-bold text-white">{user?.legs || "Not added"}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Calves (cm)</p>
+                    <p className="text-lg font-bold text-white">{user?.calves || "Not added"}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -646,6 +562,92 @@ export default function ProfilePage() {
                       <option value="female">Female</option>
                       <option value="other">Other</option>
                     </select>
+                  </div>
+
+                  <div className="border-t border-[#1e1e24] pt-4">
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Body Measurements (cm)</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Height</label>
+                        <input
+                          type="number"
+                          value={height}
+                          onChange={(e) => setHeight(e.target.value)}
+                          placeholder="173"
+                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Weight</label>
+                        <input
+                          type="number"
+                          value={weight}
+                          onChange={(e) => setWeight(e.target.value)}
+                          placeholder="75"
+                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Chest</label>
+                        <input
+                          type="number"
+                          value={chest}
+                          onChange={(e) => setChest(e.target.value)}
+                          placeholder="109"
+                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Waist</label>
+                        <input
+                          type="number"
+                          value={waist}
+                          onChange={(e) => setWaist(e.target.value)}
+                          placeholder="81"
+                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Arms</label>
+                        <input
+                          type="number"
+                          value={arms}
+                          onChange={(e) => setArms(e.target.value)}
+                          placeholder="40"
+                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Shoulders</label>
+                        <input
+                          type="number"
+                          value={shoulders}
+                          onChange={(e) => setShoulders(e.target.value)}
+                          placeholder="127"
+                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Legs</label>
+                        <input
+                          type="number"
+                          value={legs}
+                          onChange={(e) => setLegs(e.target.value)}
+                          placeholder="63"
+                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Calves</label>
+                        <input
+                          type="number"
+                          value={calves}
+                          onChange={(e) => setCalves(e.target.value)}
+                          placeholder="38"
+                          className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
