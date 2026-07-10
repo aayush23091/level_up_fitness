@@ -15,9 +15,9 @@ function DashboardPageContent() {
   const [assignedWorkoutPlans, setAssignedWorkoutPlans] = useState<any[]>([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
   const [plansError, setPlansError] = useState<string | null>(null);
-  const [streak, setStreak] = useState<StreakData | null>(null);
-  const [loadingStreak, setLoadingStreak] = useState(true);
-  const [streakError, setStreakError] = useState<string | null>(null);
+  const [dashboard, setDashboard] = useState<any>(null);
+  const [loadingDashboard, setLoadingDashboard] = useState(true);
+  const [dashboardError, setDashboardError] = useState<string | null>(null);
 
   const getAvatarUrl = () => {
     if (user?.profilePhoto) {
@@ -38,15 +38,10 @@ function DashboardPageContent() {
       .slice(0, 2);
   };
 
-  const weeklyActivity = [
-    { day: "Mon", active: true, value: 80 },
-    { day: "Tue", active: true, value: 65 },
-    { day: "Wed", active: false, value: 0 },
-    { day: "Thu", active: true, value: 95 },
-    { day: "Fri", active: true, value: 40 },
-    { day: "Sat", active: false, value: 0 },
-    { day: "Sun", active: false, value: 0 },
-  ];
+  // Calculate XP progress (1000 XP per level)
+  const xpPerLevel = 1000;
+  const currentLevelXp = dashboard?.user?.xp % xpPerLevel;
+  const xpProgressPercent = (currentLevelXp / xpPerLevel) * 100;
 
   useEffect(() => {
     const fetchAssignedWorkoutPlans = async () => {
@@ -66,25 +61,25 @@ function DashboardPageContent() {
       }
     };
 
-    const fetchStreak = async () => {
-      setLoadingStreak(true);
-      setStreakError(null);
+    const fetchDashboard = async () => {
+      setLoadingDashboard(true);
+      setDashboardError(null);
       try {
-        const response = await userAPI.getStreak();
+        const response = await userAPI.getDashboard();
         if (response.success) {
-          setStreak(response.data);
+          setDashboard(response.data);
         } else {
-          setStreakError(response.message || "Failed to fetch streak");
+          setDashboardError(response.message || "Failed to fetch dashboard data");
         }
       } catch (err: any) {
-        setStreakError(err.message || "An error occurred while loading streak");
+        setDashboardError(err.message || "An error occurred while loading dashboard data");
       } finally {
-        setLoadingStreak(false);
+        setLoadingDashboard(false);
       }
     };
 
     fetchAssignedWorkoutPlans();
-    fetchStreak();
+    fetchDashboard();
   }, []);
 
   return (
@@ -121,111 +116,126 @@ function DashboardPageContent() {
         </section>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Coins Card */}
+          <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl flex flex-col justify-between hover:border-yellow-500/20 transition-all">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Coins</p>
+                <p className="text-3xl font-black text-white mt-1">
+                  {loadingDashboard ? (
+                    <span className="w-24 h-8 bg-[#1c1c24] rounded animate-pulse inline-block"></span>
+                  ) : (
+                    dashboard?.user?.coins || 0
+                  )}
+                </p>
+              </div>
+              <span className="p-2 bg-yellow-500/10 text-yellow-500 rounded-lg text-xs font-bold font-mono">
+                🪙
+              </span>
+            </div>
+          </div>
+
+          {/* Level Card */}
           <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl flex flex-col justify-between hover:border-yellow-500/20 transition-all">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Level Status</p>
-                <p className="text-3xl font-black text-white mt-1">Lvl 12</p>
+                <p className="text-3xl font-black text-white mt-1">
+                  {loadingDashboard ? (
+                    <span className="w-20 h-8 bg-[#1c1c24] rounded animate-pulse inline-block"></span>
+                  ) : (
+                    `Lvl ${dashboard?.user?.level || 0}`
+                  )}
+                </p>
               </div>
               <span className="p-2 bg-yellow-500/10 text-yellow-500 rounded-lg text-xs font-bold font-mono">
                 XP
               </span>
             </div>
             <div className="mt-6">
-              <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium">
-                <span>Progress</span>
-                <span>2,450 / 3,000 XP</span>
-              </div>
-              <div className="w-full bg-[#1c1c24] h-2 rounded-full overflow-hidden">
-                <div className="bg-yellow-500 h-full rounded-full" style={{ width: "81%" }}></div>
-              </div>
+              {loadingDashboard ? (
+                <div className="space-y-2">
+                  <div className="w-full h-2 bg-[#1c1c24] rounded-full animate-pulse"></div>
+                </div>
+              ) : (
+                <>
+                  <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium">
+                    <span>Progress</span>
+                    <span>{currentLevelXp} / {xpPerLevel} XP</span>
+                  </div>
+                  <div className="w-full bg-[#1c1c24] h-2 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-yellow-500 h-full rounded-full transition-all" 
+                      style={{ width: `${xpProgressPercent}%` }}
+                    ></div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
+          {/* XP Card */}
           <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl flex flex-col justify-between hover:border-yellow-500/20 transition-all">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Daily Calorie Burn</p>
-                <p className="text-3xl font-black text-white mt-1">620 kcal</p>
-              </div>
-              <span className="p-2 bg-red-500/10 text-red-500 rounded-lg text-xs font-bold">
-                🔥
-              </span>
-            </div>
-            <div className="mt-6">
-              <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium">
-                <span>Goal: 800 kcal</span>
-                <span>77%</span>
-              </div>
-              <div className="w-full bg-[#1c1c24] h-2 rounded-full overflow-hidden">
-                <div className="bg-red-500 h-full rounded-full" style={{ width: "77%" }}></div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl flex flex-col justify-between hover:border-yellow-500/20 transition-all">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Workout Time</p>
-                <p className="text-3xl font-black text-white mt-1">45 min</p>
+                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Total XP</p>
+                <p className="text-3xl font-black text-white mt-1">
+                  {loadingDashboard ? (
+                    <span className="w-24 h-8 bg-[#1c1c24] rounded animate-pulse inline-block"></span>
+                  ) : (
+                    dashboard?.user?.xp || 0
+                  )}
+                </p>
               </div>
               <span className="p-2 bg-blue-500/10 text-blue-500 rounded-lg text-xs font-bold">
-                ⏱️
+                ⚡
               </span>
-            </div>
-            <div className="mt-6">
-              <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium">
-                <span>Goal: 60 min</span>
-                <span>75%</span>
-              </div>
-              <div className="w-full bg-[#1c1c24] h-2 rounded-full overflow-hidden">
-                <div className="bg-blue-500 h-full rounded-full" style={{ width: "75%" }}></div>
-              </div>
             </div>
           </div>
 
+          {/* Streak Card */}
           <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl flex flex-col justify-between hover:border-yellow-500/20 transition-all">
-            {loadingStreak ? (
+            {loadingDashboard ? (
               <div className="flex flex-col items-center justify-center py-4 space-y-3">
                 <span className="w-6 h-6 border-3 border-yellow-500 border-t-transparent rounded-full animate-spin inline-block"></span>
                 <p className="text-gray-500 font-mono text-xs tracking-wider uppercase">Loading streak...</p>
               </div>
-            ) : streakError ? (
+            ) : dashboardError ? (
               <div className="text-center py-4">
-                <p className="text-red-400 text-xs">{streakError}</p>
+                <p className="text-red-400 text-xs">{dashboardError}</p>
               </div>
-            ) : streak ? (
+            ) : dashboard?.streak ? (
               <>
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Current Streak</p>
                     <p className="text-3xl font-black text-white mt-1">
-                      {streak.streakActive ? `${streak.currentStreak} Days` : "Streak Lost"}
+                      {dashboard.streak.streakActive ? `${dashboard.streak.currentStreak} Days` : "Streak Lost"}
                     </p>
                   </div>
-                  <span className={`p-2 rounded-lg text-xs font-bold ${streak.streakActive ? "bg-orange-500/10 text-orange-500" : "bg-red-500/10 text-red-500"}`}>
-                    {streak.streakActive ? "⚡" : "🔥"}
+                  <span className={`p-2 rounded-lg text-xs font-bold ${dashboard.streak.streakActive ? "bg-orange-500/10 text-orange-500" : "bg-red-500/10 text-red-500"}`}>
+                    {dashboard.streak.streakActive ? "⚡" : "🔥"}
                   </span>
                 </div>
                 <div className="mt-6 space-y-3">
-                  {!streak.streakActive && (
+                  {!dashboard.streak.streakActive && (
                     <p className="text-xs text-red-400">Complete a workout today to restart!</p>
                   )}
                   <div className="flex justify-between text-xs text-gray-400 mb-1.5 font-medium">
                     <span>Personal Best</span>
-                    <span>{streak.longestStreak} Days</span>
+                    <span>{dashboard.streak.longestStreak} Days</span>
                   </div>
                   <div className="w-full bg-[#1c1c24] h-2 rounded-full overflow-hidden">
                     <div 
                       className="bg-orange-500 h-full rounded-full transition-all" 
                       style={{ 
-                        width: `${streak.longestStreak > 0 ? Math.min((streak.currentStreak / streak.longestStreak) * 100, 100) : 0}%` 
+                        width: `${dashboard.streak.longestStreak > 0 ? Math.min((dashboard.streak.currentStreak / dashboard.streak.longestStreak) * 100, 100) : 0}%` 
                       }}
                     ></div>
                   </div>
-                  {streak.lastWorkoutDate && (
+                  {dashboard.streak.lastWorkoutDate && (
                     <p className="text-xs text-gray-500">
-                      Last Workout: {new Date(streak.lastWorkoutDate).toLocaleDateString()}
+                      Last Workout: {new Date(dashboard.streak.lastWorkoutDate).toLocaleDateString()}
                     </p>
                   )}
                 </div>
@@ -235,77 +245,71 @@ function DashboardPageContent() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Workout Stats */}
           <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl lg:col-span-2 space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg font-bold text-white">Weekly Activity Analysis</h2>
-              <span className="text-xs text-gray-500 font-medium bg-[#121216] border border-[#1e1e24] px-2.5 py-1 rounded-md">
-                This Week
-              </span>
+              <h2 className="text-lg font-bold text-white">Workout Stats</h2>
             </div>
 
-            <div className="h-64 flex items-end justify-between px-4 pb-2 border-b border-[#1e1e24]">
-              {weeklyActivity.map((day, idx) => (
-                <div key={idx} className="flex flex-col items-center gap-3 w-10">
-                  <div className="w-full bg-[#121216] h-48 rounded-lg relative flex items-end overflow-hidden">
-                    <div
-                      className={`w-full rounded-t-lg transition-all duration-500 ${
-                        day.active
-                          ? "bg-gradient-to-t from-yellow-600 to-yellow-400 shadow-md shadow-yellow-500/15"
-                          : "bg-gray-800/10"
-                      }`}
-                      style={{ height: `${day.value}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-xs text-gray-400 font-medium">{day.day}</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex items-center gap-4 p-4 bg-[#121216] border border-[#1e1e24] rounded-xl">
+                <div className="w-12 h-12 flex items-center justify-center bg-yellow-500/10 text-yellow-500 rounded-xl text-2xl font-bold">
+                  🏃
                 </div>
-              ))}
-            </div>
+                <div>
+                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Total Completed</p>
+                  <p className="text-2xl font-black text-white">
+                    {loadingDashboard ? (
+                      <span className="w-16 h-8 bg-[#1c1c24] rounded animate-pulse inline-block"></span>
+                    ) : (
+                      dashboard?.workouts?.totalCompleted || 0
+                    )}
+                  </p>
+                </div>
+              </div>
 
-            <div className="flex justify-between items-center text-xs text-gray-500">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500"></span> Active Days
-              </span>
-              <span>Total Workout: 4.5 hrs</span>
+              <div className="flex items-center gap-4 p-4 bg-[#121216] border border-[#1e1e24] rounded-xl">
+                <div className="w-12 h-12 flex items-center justify-center bg-blue-500/10 text-blue-500 rounded-xl text-2xl font-bold">
+                  📅
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">This Week</p>
+                  <p className="text-2xl font-black text-white">
+                    {loadingDashboard ? (
+                      <span className="w-16 h-8 bg-[#1c1c24] rounded animate-pulse inline-block"></span>
+                    ) : (
+                      dashboard?.workouts?.weeklyCompleted || 0
+                    )}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
+          {/* Achievements Summary */}
           <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl space-y-6">
-            <h2 className="text-lg font-bold text-white">Recent Achievements</h2>
+            <h2 className="text-lg font-bold text-white">Achievements</h2>
 
             <div className="space-y-4">
-              <div className="flex gap-4 p-4 bg-[#121216] border border-[#1e1e24] rounded-xl hover:border-yellow-500/10 transition-all">
-                <span className="w-10 h-10 shrink-0 bg-yellow-500/10 text-yellow-500 flex items-center justify-center rounded-xl text-lg font-bold">
-                  🥇
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-white">First Step Complete</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Completed the onboarding workout.</p>
+              <div className="flex items-center gap-4 p-4 bg-[#121216] border border-[#1e1e24] rounded-xl">
+                <div className="w-10 h-10 shrink-0 bg-yellow-500/10 text-yellow-500 flex items-center justify-center rounded-xl text-lg font-bold">
+                  🎯
                 </div>
-              </div>
-
-              <div className="flex gap-4 p-4 bg-[#121216] border border-[#1e1e24] rounded-xl hover:border-yellow-500/10 transition-all">
-                <span className="w-10 h-10 shrink-0 bg-orange-500/10 text-orange-500 flex items-center justify-center rounded-xl text-lg font-bold">
-                  🔥
-                </span>
                 <div>
-                  <p className="text-sm font-semibold text-white">5-Day Hot Streak</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Checked in 5 days consecutively.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 p-4 bg-[#121216] border border-[#1e1e24] rounded-xl hover:border-yellow-500/10 transition-all opacity-40">
-                <span className="w-10 h-10 shrink-0 bg-purple-500/10 text-purple-500 flex items-center justify-center rounded-xl text-lg font-bold">
-                  👑
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-white">HIIT Master</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Complete 10 HIIT classes.</p>
+                  <p className="text-sm font-semibold text-white">Unlocked</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {loadingDashboard ? (
+                      <span className="w-12 h-4 bg-[#1c1c24] rounded animate-pulse inline-block"></span>
+                    ) : (
+                      `${dashboard?.achievements?.unlockedCount || 0} / ${dashboard?.achievements?.totalCount || 0}`
+                    )}
+                  </p>
                 </div>
               </div>
             </div>
 
             <Link
-              href="/profile"
+              href="/achievements"
               className="block w-full py-2.5 text-center text-xs font-bold text-yellow-500 bg-[#121216] hover:bg-[#1a1a24] border border-yellow-500/20 hover:border-yellow-500/40 rounded-lg uppercase tracking-wider transition-all"
             >
               View All Achievements

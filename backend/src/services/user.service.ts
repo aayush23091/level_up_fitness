@@ -1,4 +1,7 @@
 import { UserMongoRepository } from "../repositories/user.repository";
+import { WorkoutCompletionRepository } from "../repositories/workoutCompletion.repository";
+import { UserAchievementRepository } from "../repositories/userAchievement.repository";
+import { AchievementRepository } from "../repositories/achievement.repository";
 import { CreateUserDTO, LoginUserDTO } from "../dtos/user.dto";
 import { IUser } from "../models/user.model";
 import { HttpException } from "../exceptions/http-exception";
@@ -7,6 +10,9 @@ import jwt from "jsonwebtoken";
 import { SECRET_KEY } from "../configs/constant";
 
 const userRepository = new UserMongoRepository();
+const workoutCompletionRepository = new WorkoutCompletionRepository();
+const userAchievementRepository = new UserAchievementRepository();
+const achievementRepository = new AchievementRepository();
 
 const getStrippedDate = (date: Date): Date => {
     const d = new Date(date);
@@ -153,6 +159,79 @@ export class UserService {
             longestStreak: user.longestStreak || 0,
             lastWorkoutDate: user.lastWorkoutDate,
             streakActive,
+        };
+    }
+
+    async getDashboard(userId: string) {
+        const user = await userRepository.getUserById(userId);
+        if (!user) {
+            throw new HttpException(404, "User not found");
+        }
+
+        // Get streak
+        const streak = await this.getStreak(userId);
+
+        // Get workout completions
+        const workoutCompletions = await workoutCompletionRepository.getWorkoutCompletionsByUserId(userId);
+        const totalCompleted = workoutCompletions.length;
+
+        // Calculate weekly completed (last 7 days)
+        const today = new Date();
+        const weekAgo = new Date(today);
+        weekAgo.setDate(today.getDate() - 7);
+        const weeklyCompleted = workoutCompletions.filter(
+            (completion) => new Date(completion.completedAt) >= weekAgo
+        ).length;
+
+        // Get achievements
+        const userAchievements = await userAchievementRepository.getUserAchievementsByUserId(userId);
+        const allAchievements = await achievementRepository.getAchievements(1, 100);
+        const unlockedCount = userAchievements.length;
+        const totalCount = allAchievements.total;
+        const latestAchievement = userAchievements.sort(
+            (a, b) => new Date(b.unlockedAt).getTime() - new Date(a.unlockedAt).getTime()
+        )[0];
+
+        // Get recent activity
+        const recentActivity = [
+            ...workoutCompletions.map(completion => ({
+                type: "workout" as const,
+                title: "Workout Completed",
+                description: "You completed a workout",
+                date: completion.completedAt,
+                xpEarned: completion.xpEarned,
+                coinEarned: completion.coinEarned,
+            })),
+            ...userAchievements.map(ua => ({
+                type: "achievement" as const,
+                title: "Achievement Unlocked",
+                description: "You unlocked an achievement",
+                date: ua.unlockedAt,
+            })),
+        ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 10);
+
+        return {
+            user: {
+                level: user.level || 0,
+                xp: user.xp || 0,
+                coins: user.coins || 0,
+            },
+            streak: {
+                currentStreak: streak.currentStreak,
+                longestStreak: streak.longestStreak,
+                lastWorkoutDate: streak.lastWorkoutDate,
+                streakActive: streak.streakActive,
+            },
+            workouts: {
+                totalCompleted,
+                weeklyCompleted,
+            },
+            achievements: {
+                unlockedCount,
+                totalCount,
+                latestAchievement,
+            },
+            recentActivity,
         };
     }
 }

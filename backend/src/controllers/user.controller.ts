@@ -215,5 +215,21 @@ export class UserController {
             return next(err);
         }
     };
+
+    // GET /user/dashboard
+    getDashboard = async (req: Request, res: Response, next: Function) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            const dashboard = await userService.getDashboard(user._id.toString());
+
+            return ApiResponseHelper.success(res, dashboard, "Dashboard data fetched successfully", 200);
+        } catch (err: any) {
+            return next(err);
+        }
+    };
 }
 

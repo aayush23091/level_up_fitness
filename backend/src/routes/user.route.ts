@@ -47,4 +47,10 @@ userRouter.get(
     userController.getStreak
 );
 
+userRouter.get(
+    "/dashboard",
+    authorizedMiddleware,
+    userController.getDashboard
+);
+
 export default userRouter;
