@@ -36,6 +36,8 @@ export interface IUser extends Document {
     shoulders?: number;
     legs?: number;
     calves?: number;
+    resetPasswordToken?: string;
+    resetPasswordExpires?: Date;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -72,7 +74,9 @@ const UserMongoSchema: Schema = new Schema<IUser>(
   arms: { type: Number, required: false },
   shoulders: { type: Number, required: false },
   legs: { type: Number, required: false },
-  calves: { type: Number, required: false }
+  calves: { type: Number, required: false },
+  resetPasswordToken: { type: String, required: false },
+  resetPasswordExpires: { type: Date, required: false }
 },
     {
         timestamps: true // createdAt and updatedAt will be automatically added and managed by mongoose

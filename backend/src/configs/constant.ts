@@ -8,6 +8,16 @@ export const MONGODB_URL: string =
     process.env.MONGODB_URL || "mongodb://localhost:27017/class-36a-db"; // default MongoDB URL
 export const SECRET_KEY: string = 
     process.env.SECRET_KEY || "merosecretkey";
+export const EMAIL_HOST: string = 
+    process.env.EMAIL_HOST || "smtp.gmail.com";
+export const EMAIL_PORT: number = 
+    Number(process.env.EMAIL_PORT) || 587;
+export const EMAIL_USER: string = 
+    process.env.EMAIL_USER || "";
+export const EMAIL_PASSWORD: string = 
+    process.env.EMAIL_PASSWORD || "";
+export const FRONTEND_URL: string = 
+    process.env.FRONTEND_URL || "http://localhost:3000";
 // same as 
 // export {
 //     PORT,

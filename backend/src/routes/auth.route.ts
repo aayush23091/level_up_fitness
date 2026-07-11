@@ -11,5 +11,7 @@ authRouter.post("/login", userController.loginUser);
 authRouter.get("/whoami", authorizedMiddleware, userController.whoAmI);
 authRouter.put("/update", authorizedMiddleware, profileUploadMiddleware, userController.updateProfile);
 authRouter.patch("/change-password", authorizedMiddleware, userController.changePassword);
+authRouter.post("/forgot-password", userController.forgotPassword);
+authRouter.post("/reset-password/:token", userController.resetPassword);
 
 export default authRouter;

@@ -3,12 +3,14 @@ import { WorkoutCompletionRepository } from "../repositories/workoutCompletion.r
 import { UserAchievementRepository } from "../repositories/userAchievement.repository";
 import { AchievementRepository } from "../repositories/achievement.repository";
 import { WorkoutRepository } from "../repositories/workout.repository";
-import { CreateUserDTO, LoginUserDTO } from "../dtos/user.dto";
+import { CreateUserDTO, LoginUserDTO, ChangePasswordDTO, ForgotPasswordDTO, ResetPasswordDTO } from "../dtos/user.dto";
 import { IUser } from "../models/user.model";
 import { HttpException } from "../exceptions/http-exception";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { SECRET_KEY } from "../configs/constant";
+import crypto from "crypto";
+import sendEmail from "./email.service";
+import { SECRET_KEY, FRONTEND_URL } from "../configs/constant";
 
 const userRepository = new UserMongoRepository();
 const workoutCompletionRepository = new WorkoutCompletionRepository();
@@ -154,6 +156,59 @@ export class UserService {
         if (!updated) {
             throw new HttpException(500, "Failed to update password");
         }
+    }
+
+    async forgotPassword(forgotPasswordData: ForgotPasswordDTO): Promise<void> {
+        const user = await userRepository.getUserByEmail(forgotPasswordData.email);
+        if (!user) {
+            throw new HttpException(404, "User not found");
+        }
+
+        const resetToken = crypto.randomBytes(32).toString("hex");
+        const resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
+
+        await userRepository.update(user._id.toString(), {
+            resetPasswordToken: resetToken,
+            resetPasswordExpires,
+        });
+
+        const resetUrl = `${FRONTEND_URL}/reset-password/${resetToken}`;
+
+        const html = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #333;">Reset Your LevelUp Fitness Password</h2>
+                <p>Hello ${user.name},</p>
+                <p>You requested a password reset.</p>
+                <p>Click below to reset your password:</p>
+                <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px; margin: 20px 0;">Reset Password</a>
+                <p>This link expires in 15 minutes.</p>
+                <p>If you did not request this, please ignore this email.</p>
+            </div>
+        `;
+
+        await sendEmail({
+            email: user.email,
+            subject: "Reset Your LevelUp Fitness Password",
+            html,
+        });
+    }
+
+    async resetPassword(resetPasswordData: ResetPasswordDTO, token: string): Promise<void> {
+        const user = await userRepository.getUserByResetPasswordToken(token);
+        if (!user) {
+            throw new HttpException(400, "Invalid or expired reset token");
+        }
+
+        if (!user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+            throw new HttpException(400, "Invalid or expired reset token");
+        }
+
+        const hashedPassword = await bcrypt.hash(resetPasswordData.password, 10);
+        await userRepository.update(user._id.toString(), {
+            password: hashedPassword,
+            resetPasswordToken: undefined,
+            resetPasswordExpires: undefined,
+        });
     }
 
     async getStreak(userId: string): Promise<StreakResponse> {

@@ -4,7 +4,7 @@ import { UserAchievementService } from "../services/userAchievement.service";
 import { GeminiService } from "../services/gemini.service";
 import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
-import { CreateUserDTO, LoginUserDTO, ChangePasswordDTO } from "../dtos/user.dto";
+import { CreateUserDTO, LoginUserDTO, ChangePasswordDTO, ForgotPasswordDTO, ResetPasswordDTO } from "../dtos/user.dto";
 import { IUser } from "../models/user.model";
 import { coachProfileUploadMiddleware } from "../middlewares/upload.middleware";
 
@@ -191,6 +191,41 @@ export class UserController {
             );
 
             return ApiResponseHelper.success(res, {}, "Password updated successfully", 200);
+        } catch (err: any) {
+            return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
+        }
+    };
+
+    // POST /auth/forgot-password
+    forgotPassword = async (req: Request, res: Response) => {
+        try {
+            const parsed = ForgotPasswordDTO.safeParse(req.body ?? {});
+            if (!parsed.success) {
+                const message = parsed.error.issues[0]?.message || "Invalid payload";
+                throw new HttpException(400, message);
+            }
+
+            await userService.forgotPassword(parsed.data);
+
+            return ApiResponseHelper.success(res, {}, "Password reset email sent successfully", 200);
+        } catch (err: any) {
+            return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
+        }
+    };
+
+    // POST /auth/reset-password/:token
+    resetPassword = async (req: Request, res: Response) => {
+        try {
+            const { token } = req.params;
+            const parsed = ResetPasswordDTO.safeParse(req.body ?? {});
+            if (!parsed.success) {
+                const message = parsed.error.issues[0]?.message || "Invalid payload";
+                throw new HttpException(400, message);
+            }
+
+            await userService.resetPassword(parsed.data, token);
+
+            return ApiResponseHelper.success(res, {}, "Password reset successfully", 200);
         } catch (err: any) {
             return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
         }

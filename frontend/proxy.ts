@@ -12,7 +12,7 @@ export function proxy(request: NextRequest) {
     "/profile/password",
   ];
 
-  const publicRoutes = ["/login", "/signup", "/admin/login"];
+  const publicRoutes = ["/login", "/signup", "/admin/login", "/forgot-password", "/reset-password"];
 
   const pathname = request.nextUrl.pathname;
 
@@ -53,6 +53,8 @@ export const config = {
     "/login",
     "/signup",
     "/admin/login",
+    "/forgot-password",
+    "/reset-password/:path*",
     "/app-dashboard/:path*",
     "/admin-dashboard/:path*",
     "/coach-dashboard/:path*",

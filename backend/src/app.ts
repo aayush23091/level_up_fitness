@@ -16,8 +16,10 @@ import coachHiringRoutes from "./routes/coachHiring.route";
 
 const app: Application = express();
 const corsOptions = {
-    origin: ["*"], // ["http://localhost:3000", "http://example.com"]
-    successStatus: 200
+    origin: ["http://localhost:3000"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
 }
 app.use(cors(corsOptions)); // enable CORS for all routes
 

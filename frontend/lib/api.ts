@@ -218,6 +218,50 @@ export const authAPI = {
       );
     }
   },
+
+  forgotPassword: async (data: { email: string }): Promise<{
+    status: number;
+    success: boolean;
+    message: string;
+  }> => {
+    try {
+      const response = await apiClient.post<{
+        status: number;
+        success: boolean;
+        message: string;
+      }>("/api/v1/auth/forgot-password", data);
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to send reset email"
+      );
+    }
+  },
+
+  resetPassword: async (token: string, data: { password: string }): Promise<{
+    status: number;
+    success: boolean;
+    message: string;
+  }> => {
+    try {
+      const response = await apiClient.post<{
+        status: number;
+        success: boolean;
+        message: string;
+      }>(`/api/v1/auth/reset-password/${token}`, data);
+
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+
+      throw new Error(
+        axiosError.response?.data?.message || "Failed to reset password"
+      );
+    }
+  },
 };
 
 export interface PaginatedUsersResponse {

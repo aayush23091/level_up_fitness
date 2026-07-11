@@ -26,4 +26,16 @@ export const ChangePasswordDTO = z.object({
     currentPassword: z.string().min(1, "Current password is required"),
     newPassword: z.string().min(6, "New password must be at least 6 characters long"),
 });
-export type ChangePasswordDTO = z.infer<typeof ChangePasswordDTO>;
+export type ChangePasswordDTO = z.infer<typeof ChangePasswordDTO>;
+
+// Forgot Password DTO
+export const ForgotPasswordDTO = z.object({
+    email: z.string().email("Invalid email address"),
+});
+export type ForgotPasswordDTO = z.infer<typeof ForgotPasswordDTO>;
+
+// Reset Password DTO
+export const ResetPasswordDTO = z.object({
+    password: z.string().min(6, "Password must be at least 6 characters long"),
+});
+export type ResetPasswordDTO = z.infer<typeof ResetPasswordDTO>;

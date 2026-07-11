@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -9,50 +9,37 @@ import AuthCard from "../components/AuthCard";
 import InputField from "../components/InputField";
 import ThemeToggle from "../components/ThemeToggle";
 import Logo from "@/components/Logo";
-import { MailIcon, LockIcon } from "../components/Icons";
+import { MailIcon } from "../components/Icons";
 
-import { loginSchema, type LoginFormData } from "@/lib/validations";
+import { forgotPasswordSchema, type ForgotPasswordFormData } from "@/lib/validations";
 import { authAPI } from "@/lib/api";
-import { getDashboardPath } from "@/lib/auth";
-import { useAuth } from "../context/AuthContext";
 
-function getSignupHref(role: string | null): string {
-  if (role === "coach" || role === "user") {
-    return `/signup?role=${role}`;
-  }
-  return "/signup";
-}
-
-const LoginPageContent = () => {
+const ForgotPasswordPageContent = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const selectedRole = searchParams.get("role");
-  const { refreshUser } = useAuth();
-
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: ForgotPasswordFormData) => {
     setIsLoading(true);
     setApiError("");
+    setSuccess("");
 
     try {
-      const response = await authAPI.login(data);
+      const response = await authAPI.forgotPassword(data);
 
       if (response.success) {
-        const loggedInUser = await refreshUser();
-        const role = loggedInUser?.role ?? response.data.user?.role;
-        router.replace(getDashboardPath(role));
+        setSuccess("If an account exists with this email, a password reset link has been sent.");
       } else {
-        setApiError(response.message || "Login failed");
+        setApiError(response.message || "Failed to send reset email");
       }
     } catch (error) {
       const errorMessage =
@@ -73,13 +60,19 @@ const LoginPageContent = () => {
 
       <main className="flex-1 flex items-center justify-center">
         <AuthCard
-          title="Welcome Back"
-          subtitle="Access your pro-coach dashboard and performance metrics."
+          title="Forgot Password"
+          subtitle="Enter your email to receive a password reset link."
         >
           <form onSubmit={handleSubmit(onSubmit)}>
             {apiError && (
               <div className="mb-4 rounded-md border border-red-500 bg-red-500/20 px-4 py-2 text-sm text-red-400">
                 {apiError}
+              </div>
+            )}
+
+            {success && (
+              <div className="mb-4 rounded-md border border-green-500 bg-green-500/20 px-4 py-2 text-sm text-green-400">
+                {success}
               </div>
             )}
 
@@ -92,40 +85,21 @@ const LoginPageContent = () => {
               error={errors.email?.message}
             />
 
-            <div className="relative">
-              <InputField
-                label="Password"
-                type="password"
-                placeholder="••••••••"
-                icon={<LockIcon />}
-                {...register("password")}
-                error={errors.password?.message}
-              />
-
-              <a
-                href="/forgot-password"
-                className="absolute right-2 top-8 text-xs text-accent hover:underline"
-              >
-                Forgot Password?
-              </a>
-            </div>
-
             <button
               type="submit"
               disabled={isLoading}
               className="mt-2 w-full rounded-md bg-accent py-2 font-semibold text-gray-900 transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isLoading ? "Logging in..." : "Login"}
+              {isLoading ? "Sending..." : "Send Reset Link"}
             </button>
           </form>
 
           <div className="mt-4 text-center text-sm text-muted">
-            Don't have an account?{" "}
             <a
-              href={getSignupHref(selectedRole)}
+              href="/login"
               className="text-accent hover:underline"
             >
-              Start Training
+              Back to Login
             </a>
           </div>
         </AuthCard>
@@ -140,12 +114,12 @@ const LoginPageContent = () => {
   );
 };
 
-const LoginPage = () => {
+const ForgotPasswordPage = () => {
   return (
     <Suspense fallback={null}>
-      <LoginPageContent />
+      <ForgotPasswordPageContent />
     </Suspense>
   );
 };
 
-export default LoginPage;
+export default ForgotPasswordPage;

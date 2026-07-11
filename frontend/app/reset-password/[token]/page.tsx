@@ -9,50 +9,42 @@ import AuthCard from "../components/AuthCard";
 import InputField from "../components/InputField";
 import ThemeToggle from "../components/ThemeToggle";
 import Logo from "@/components/Logo";
-import { MailIcon, LockIcon } from "../components/Icons";
+import { LockIcon } from "../components/Icons";
 
-import { loginSchema, type LoginFormData } from "@/lib/validations";
+import { resetPasswordSchema, type ResetPasswordFormData } from "@/lib/validations";
 import { authAPI } from "@/lib/api";
-import { getDashboardPath } from "@/lib/auth";
-import { useAuth } from "../context/AuthContext";
 
-function getSignupHref(role: string | null): string {
-  if (role === "coach" || role === "user") {
-    return `/signup?role=${role}`;
-  }
-  return "/signup";
-}
-
-const LoginPageContent = () => {
+const ResetPasswordPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const selectedRole = searchParams.get("role");
-  const { refreshUser } = useAuth();
-
+  const token = searchParams.get("token") || "";
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: ResetPasswordFormData) => {
     setIsLoading(true);
     setApiError("");
+    setSuccess("");
 
     try {
-      const response = await authAPI.login(data);
+      const response = await authAPI.resetPassword(token, data);
 
       if (response.success) {
-        const loggedInUser = await refreshUser();
-        const role = loggedInUser?.role ?? response.data.user?.role;
-        router.replace(getDashboardPath(role));
+        setSuccess("Password reset successfully! Redirecting to login...");
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
       } else {
-        setApiError(response.message || "Login failed");
+        setApiError(response.message || "Failed to reset password");
       }
     } catch (error) {
       const errorMessage =
@@ -64,6 +56,33 @@ const LoginPageContent = () => {
     }
   };
 
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <header className="w-full flex justify-between items-center px-8 py-8">
+          <Logo size="auth" />
+          <ThemeToggle />
+        </header>
+        <main className="flex-1 flex items-center justify-center">
+          <AuthCard
+            title="Invalid Reset Link"
+            subtitle="The password reset link is invalid or has expired."
+          >
+            <div className="text-center">
+              <p className="text-red-400 mb-4">No reset token provided.</p>
+              <a
+                href="/forgot-password"
+                className="text-accent hover:underline"
+              >
+                Request a new reset link
+              </a>
+            </div>
+          </AuthCard>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="w-full flex justify-between items-center px-8 py-8">
@@ -73,8 +92,8 @@ const LoginPageContent = () => {
 
       <main className="flex-1 flex items-center justify-center">
         <AuthCard
-          title="Welcome Back"
-          subtitle="Access your pro-coach dashboard and performance metrics."
+          title="Reset Password"
+          subtitle="Enter your new password below."
         >
           <form onSubmit={handleSubmit(onSubmit)}>
             {apiError && (
@@ -83,49 +102,36 @@ const LoginPageContent = () => {
               </div>
             )}
 
+            {success && (
+              <div className="mb-4 rounded-md border border-green-500 bg-green-500/20 px-4 py-2 text-sm text-green-400">
+                {success}
+              </div>
+            )}
+
             <InputField
-              label="Email Address"
-              type="email"
-              placeholder="Enter your email"
-              icon={<MailIcon />}
-              {...register("email")}
-              error={errors.email?.message}
+              label="New Password"
+              type="password"
+              placeholder="••••••••"
+              icon={<LockIcon />}
+              {...register("password")}
+              error={errors.password?.message}
             />
-
-            <div className="relative">
-              <InputField
-                label="Password"
-                type="password"
-                placeholder="••••••••"
-                icon={<LockIcon />}
-                {...register("password")}
-                error={errors.password?.message}
-              />
-
-              <a
-                href="/forgot-password"
-                className="absolute right-2 top-8 text-xs text-accent hover:underline"
-              >
-                Forgot Password?
-              </a>
-            </div>
 
             <button
               type="submit"
               disabled={isLoading}
               className="mt-2 w-full rounded-md bg-accent py-2 font-semibold text-gray-900 transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isLoading ? "Logging in..." : "Login"}
+              {isLoading ? "Updating..." : "Update Password"}
             </button>
           </form>
 
           <div className="mt-4 text-center text-sm text-muted">
-            Don't have an account?{" "}
             <a
-              href={getSignupHref(selectedRole)}
+              href="/login"
               className="text-accent hover:underline"
             >
-              Start Training
+              Back to Login
             </a>
           </div>
         </AuthCard>
@@ -140,12 +146,12 @@ const LoginPageContent = () => {
   );
 };
 
-const LoginPage = () => {
+const ResetPasswordPage = () => {
   return (
     <Suspense fallback={null}>
-      <LoginPageContent />
+      <ResetPasswordPageContent />
     </Suspense>
   );
 };
 
-export default LoginPage;
+export default ResetPasswordPage;
