@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import mongoose from "mongoose";
 import { CoachHiringService } from "../services/coachHiring.service";
 import { ApiResponseHelper } from "../utils/apihelper.util";
 import { HttpException } from "../exceptions/http-exception";
@@ -25,8 +26,8 @@ export class CoachHiringController {
     getCoachById = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const id = req.params.id as string;
-            if (!id) {
-                throw new HttpException(400, "Coach ID is required");
+            if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+                throw new HttpException(404, "Coach not found");
             }
 
             const coach = await coachHiringService.getCoachById(id);
