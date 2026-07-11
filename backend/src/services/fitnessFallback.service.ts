@@ -3,54 +3,33 @@ export interface FallbackResult {
   isFallback: boolean;
 }
 
-const WORKOUT_FALLBACK = `Here is a muscle-building workout plan:
+const WORKOUT_FALLBACK = `Here is a solid weekly split to build muscle:
 
-Day 1 Push:
-- Bench Press 3x8-12
-- Shoulder Press 3x8-12
-- Incline Dumbbell Press 3x10
-- Lateral Raises 3x15
-- Triceps Extensions 3x12
+Push: Bench Press 3x8-12, Shoulder Press 3x8-12, Incline Dumbbell 3x10, Lateral Raises 3x15, Triceps Extensions 3x12
 
-Day 2 Pull:
-- Pull Ups 3x8
-- Rows 3x10
-- Lat Pulldown 3x12
-- Curls 3x12
+Pull: Pull Ups 3x8, Rows 3x10, Lat Pulldown 3x12, Curls 3x12
 
-Day 3 Legs:
-- Squats 3x8
-- Leg Press 3x12
-- Leg Curl 3x12
-- Calf Raises 4x15`;
+Legs: Squats 3x8, Leg Press 3x12, Leg Curl 3x12, Calf Raises 4x15
 
-const NUTRITION_FALLBACK = `Here is some nutrition guidance to support your training:
+Focus on progressive overload — add weight or reps when it feels easy. Keep leveling up!`;
 
-Protein-focused meals:
-- Aim for 1.6-2.2g of protein per kg of bodyweight daily.
-- Include lean sources like chicken, fish, eggs, Greek yogurt, tofu, and lentils.
-- Spread protein across 3-4 meals to maximize muscle protein synthesis.
+const NUTRITION_FALLBACK = `Fuel your training with these nutrition essentials:
 
-Calorie advice:
-- To build muscle, eat in a slight surplus (250-300 kcal above maintenance).
-- To lose fat, stay in a moderate deficit (300-500 kcal below maintenance).
-- Prioritize whole foods over processed options for satiety and nutrients.
+Protein: 1.6-2.2g per kg of bodyweight daily from chicken, fish, eggs, Greek yogurt, tofu, and lentils.
 
-Hydration advice:
-- Drink ~3-4 liters of water per day, more on training days.
-- Have 500ml of water around your workout window.
-- Monitor urine color: pale yellow means you are well hydrated.`;
+Calories: Eat 250-300 kcal above maintenance to build muscle, or 300-500 kcal below to lose fat.
 
-const MOTIVATION_FALLBACK = `You've got this! Every rep, every walk, every healthy meal is a small win that compounds over time. Progress isn't always linear, so be patient and consistent. Show up today, even if it's just a short session — your future self will thank you. Keep leveling up!`;
+Hydration: Drink 3-4 liters of water daily, plus 500ml around your workout.
 
-const GENERAL_FALLBACK = `I'm running on a built-in assistant right now. Here are a few quick tips:
+Stick to whole foods and eat protein with every meal for better recovery.`;
 
-- Train 3-4 times per week with a mix of strength and cardio.
-- Eat protein with every meal to support recovery.
-- Stay hydrated and aim for 7-9 hours of sleep.
-- Track your progress and celebrate small wins.
+const MOTIVATION_FALLBACK = `You've got this! Every rep, every walk, every healthy meal is progress. Results take time — stay patient and consistent. Show up today, even if it's just a short session. Your future self will thank you. Keep leveling up!`;
 
-If you ask about a specific workout, nutrition, or motivation, I can give more focused advice!`;
+const GENERAL_FALLBACK = `Here are some quick fitness tips to help you level up 💪
+
+Train 3-4 times per week mixing strength and cardio. Eat protein with every meal to support recovery. Stay hydrated and prioritize 7-9 hours of sleep. Track progress and celebrate small wins.
+
+Ask me about workouts, nutrition, or motivation for more focused advice!`;
 
 export class FitnessFallbackService {
   getFallback(message: string): FallbackResult {
