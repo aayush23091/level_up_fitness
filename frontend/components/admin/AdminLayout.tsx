@@ -33,9 +33,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#030303] flex flex-col items-center justify-center gap-4 text-white">
-        <span className="w-10 h-10 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></span>
-        <p className="text-zinc-500 font-mono text-sm tracking-wider uppercase">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4 text-foreground">
+        <span className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin"></span>
+        <p className="text-muted font-mono text-sm tracking-wider uppercase">
           LOADING...
         </p>
       </div>
@@ -48,7 +48,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#08080a] text-zinc-100 flex flex-col font-sans overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans overflow-hidden">
       {/* Top Navbar */}
       <AdminNavbar
         onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
@@ -63,7 +63,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         />
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto bg-[#08080a] p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto bg-background p-6 lg:p-8">
           {children}
         </main>
       </div>

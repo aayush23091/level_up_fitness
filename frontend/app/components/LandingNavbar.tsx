@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/app/context/AuthContext";
 import { getDashboardPath } from "@/lib/auth";
+import ThemeToggle from "./ThemeToggle";
 
 export default function LandingNavbar() {
   const { user } = useAuth();
@@ -12,14 +13,14 @@ export default function LandingNavbar() {
   const dashboardPath = !user ? "/login" : getDashboardPath(user.role);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#0B0B0D]/80 backdrop-blur-xl border-b border-white/[0.05]">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
-              <span className="text-black font-bold text-xl">L</span>
+              <span className="text-gray-900 font-bold text-xl">L</span>
             </div>
-            <span className="text-white font-bold text-xl tracking-tight">
+            <span className="text-foreground font-bold text-xl tracking-tight">
               LevelUp Fitness
             </span>
           </Link>
@@ -30,13 +31,13 @@ export default function LandingNavbar() {
               <>
                 <Link
                   href={dashboardPath}
-                  className="text-gray-300 hover:text-yellow-400 transition-colors text-sm font-medium"
+                  className="text-muted hover:text-accent transition-colors text-sm font-medium"
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/role"
-                  className="px-6 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full transition-all shadow-lg shadow-yellow-400/20 hover:shadow-yellow-400/30 text-sm"
+                  className="px-6 py-2.5 bg-accent hover:bg-accent/90 text-gray-900 font-semibold rounded-full transition-all shadow-lg shadow-accent/20 hover:shadow-accent/30 text-sm"
                 >
                   Get Started
                 </Link>
@@ -45,24 +46,27 @@ export default function LandingNavbar() {
               <>
                 <Link
                   href="/login"
-                  className="text-gray-300 hover:text-yellow-400 transition-colors text-sm font-medium"
+                  className="text-muted hover:text-accent transition-colors text-sm font-medium"
                 >
                   Login
                 </Link>
                 <Link
                   href="/role"
-                  className="px-6 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full transition-all shadow-lg shadow-yellow-400/20 hover:shadow-yellow-400/30 text-sm"
+                  className="px-6 py-2.5 bg-accent hover:bg-accent/90 text-gray-900 font-semibold rounded-full transition-all shadow-lg shadow-accent/20 hover:shadow-accent/30 text-sm"
                 >
                   Get Started
                 </Link>
               </>
             )}
+            <ThemeToggle />
           </div>
 
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-gray-400 hover:text-white"
-          >
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 text-muted hover:text-foreground"
+            >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {mobileMenuOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -72,21 +76,22 @@ export default function LandingNavbar() {
             </svg>
           </button>
         </div>
+      </div>
 
-        {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-white/[0.05]">
+      {mobileMenuOpen && (
+          <div className="md:hidden py-4 border-t border-border">
             <nav className="flex flex-col gap-4">
               {user ? (
                 <>
                   <Link
                     href={dashboardPath}
-                    className="text-gray-300 hover:text-yellow-400 transition-colors text-sm font-medium"
+                    className="text-muted hover:text-accent transition-colors text-sm font-medium"
                   >
                     Dashboard
                   </Link>
                   <Link
                     href="/role"
-                    className="px-6 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full transition-all text-sm text-center"
+                    className="px-6 py-2.5 bg-accent hover:bg-accent/90 text-gray-900 font-semibold rounded-full transition-all text-sm text-center"
                   >
                     Get Started
                   </Link>
@@ -95,13 +100,13 @@ export default function LandingNavbar() {
                 <>
                   <Link
                     href="/login"
-                    className="text-gray-300 hover:text-yellow-400 transition-colors text-sm font-medium"
+                    className="text-muted hover:text-accent transition-colors text-sm font-medium"
                   >
                     Login
                   </Link>
                   <Link
                     href="/role"
-                    className="px-6 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-full transition-all text-sm text-center"
+                    className="px-6 py-2.5 bg-accent hover:bg-accent/90 text-gray-900 font-semibold rounded-full transition-all text-sm text-center"
                   >
                     Get Started
                   </Link>

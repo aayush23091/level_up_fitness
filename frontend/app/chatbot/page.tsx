@@ -81,20 +81,20 @@ function ChatbotPageContent() {
     <DashboardLayout>
       <div className="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto h-[calc(100vh-120px)] flex flex-col">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-black text-white">AI Fitness Assistant</h1>
-          <p className="text-gray-400 text-xs lg:text-sm mt-1">
+          <h1 className="text-2xl lg:text-3xl font-black text-foreground">AI Fitness Assistant</h1>
+          <p className="text-muted text-xs lg:text-sm mt-1">
             Get personalized fitness advice and workout recommendations.
           </p>
         </div>
 
-        <div className="flex-1 flex flex-col bg-[#0e0e12] border border-[#1e1e24] rounded-2xl overflow-hidden">
+        <div className="flex-1 flex flex-col bg-card border border-border rounded-2xl overflow-hidden">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 lg:p-6 space-y-4">
             {messages.length === 0 && (
               <div className="text-center py-12">
                 <span className="text-5xl block mb-4">🤖</span>
-                <h4 className="text-lg font-bold text-white mb-2">Hello! I'm your AI Fitness Coach</h4>
-                <p className="text-gray-400 text-sm max-w-md mx-auto mb-6">
+                <h4 className="text-lg font-bold text-foreground mb-2">Hello! I'm your AI Fitness Coach</h4>
+                <p className="text-muted text-sm max-w-md mx-auto mb-6">
                   Ask me anything about workouts, nutrition, or your fitness progress!
                 </p>
                 {/* Quick Actions */}
@@ -103,7 +103,7 @@ function ChatbotPageContent() {
                     <button
                       key={action.text}
                       onClick={() => sendMessage(action.message)}
-                      className="flex items-center gap-2 px-4 py-2 bg-[#16161d] border border-[#2a2a35] rounded-full text-white text-sm hover:border-[#ffc107] hover:text-[#ffc107] transition-all"
+                      className="flex items-center gap-2 px-4 py-2 bg-card-secondary border border-border rounded-full text-foreground text-sm hover:border-accent hover:text-accent transition-all"
                     >
                       <span>{action.emoji}</span>
                       <span>{action.text}</span>
@@ -121,14 +121,14 @@ function ChatbotPageContent() {
                 <div
                   className={`max-w-[80%] lg:max-w-[70%] p-4 rounded-2xl ${
                     msg.role === "user"
-                      ? "bg-[#ffc107] text-black rounded-tr-none"
-                      : "bg-[#16161d] text-white border border-[#2a2a35] rounded-tl-none"
+                      ? "bg-accent text-gray-900 rounded-tr-none"
+                      : "bg-card-secondary text-foreground border border-border rounded-tl-none"
                   }`}
                 >
                   <p className="whitespace-pre-wrap">{msg.content}</p>
                   <p
                     className={`text-xs mt-2 opacity-70 ${
-                      msg.role === "user" ? "text-black/70" : "text-gray-400"
+                      msg.role === "user" ? "text-gray-900/70" : "text-muted"
                     }`}
                   >
                     {msg.timestamp.toLocaleTimeString([], {
@@ -142,11 +142,11 @@ function ChatbotPageContent() {
 
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-[#16161d] text-white border border-[#2a2a35] p-4 rounded-2xl rounded-tl-none">
+                <div className="bg-card-secondary text-foreground border border-border p-4 rounded-2xl rounded-tl-none">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-[#ffc107] rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <div className="w-2 h-2 bg-[#ffc107] rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <div className="w-2 h-2 bg-[#ffc107] rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                    <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                   </div>
                 </div>
               </div>
@@ -155,7 +155,7 @@ function ChatbotPageContent() {
           </div>
 
           {/* Input */}
-          <div className="p-4 border-t border-[#1e1e24] bg-[#0e0e12]">
+          <div className="p-4 border-t border-border bg-card">
             <div className="flex items-center gap-3">
               <input
                 type="text"
@@ -164,12 +164,12 @@ function ChatbotPageContent() {
                 onKeyDown={handleKeyDown}
                 placeholder="Type your message..."
                 disabled={isLoading}
-                className="flex-1 bg-[#16161d] border border-[#2a2a35] rounded-full px-5 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-[#ffc107] transition-all"
+                className="flex-1 bg-card-secondary border border-border rounded-full px-5 py-3 text-foreground placeholder-muted focus:outline-none focus:border-accent transition-all"
               />
               <button
                 onClick={() => sendMessage(input)}
                 disabled={isLoading || !input.trim()}
-                className="bg-[#ffc107] text-black px-6 py-3 rounded-full font-bold hover:bg-[#e6ac00] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-accent text-gray-900 px-6 py-3 rounded-full font-bold hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Send
               </button>

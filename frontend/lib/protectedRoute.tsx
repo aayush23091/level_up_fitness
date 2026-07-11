@@ -29,8 +29,8 @@ export function withProtectedRoute<P extends object>(
 
     if (loading) {
       return (
-        <div className="min-h-screen bg-[#0B0B0D] flex items-center justify-center">
-          <div className="text-white">Loading...</div>
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-foreground">Loading...</div>
         </div>
       );
     }

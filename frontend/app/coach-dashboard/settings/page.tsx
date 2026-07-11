@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { authAPI } from "@/lib/api";
+import ThemeSelector from "@/app/components/ThemeSelector";
 
 export default function CoachSettingsPage() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -44,36 +45,54 @@ export default function CoachSettingsPage() {
   };
 
   const inputClass =
-    "w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2.5 focus:outline-none transition-all placeholder:text-gray-600";
+    "w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-lg px-4 py-2.5 focus:outline-none transition-all placeholder:text-muted";
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <section className="border-b border-zinc-800 pb-5">
-        <h1 className="text-2xl lg:text-3xl font-black text-white uppercase tracking-wider">
-          Coach <span className="text-yellow-400 drop-shadow-[0_0_10px_rgba(234,179,8,0.15)]">Settings</span>
+      <section className="border-b border-border pb-5">
+        <h1 className="text-2xl lg:text-3xl font-black text-foreground uppercase tracking-wider">
+          Coach <span className="text-accent drop-shadow-[0_0_10px_rgba(234,179,8,0.15)]">Settings</span>
         </h1>
-        <p className="text-zinc-500 text-xs mt-1">
+        <p className="text-muted text-xs mt-1">
           Manage your account security and credentials.
         </p>
       </section>
 
-      {/* Security Settings Card */}
-      <div className="bg-[#0e0e12] border border-zinc-800/80 rounded-2xl p-6 lg:p-8 shadow-2xl relative overflow-hidden">
-        <div className="absolute -top-12 -right-12 w-40 h-40 bg-yellow-500/5 rounded-full blur-2xl pointer-events-none" />
+      {/* Appearance Card */}
+      <div className="bg-card border border-border rounded-2xl p-6 lg:p-8 shadow-2xl relative overflow-hidden">
+        <div className="absolute -top-12 -right-12 w-40 h-40 bg-accent/5 rounded-full blur-2xl pointer-events-none" />
 
         <div className="relative">
-          <h2 className="text-lg font-bold text-white uppercase tracking-wider">
+          <h2 className="text-lg font-bold text-foreground uppercase tracking-wider">
+            Appearance
+          </h2>
+          <p className="text-muted text-xs mt-1">
+            Choose your preferred theme.
+          </p>
+
+          <div className="mt-6">
+            <ThemeSelector />
+          </div>
+        </div>
+      </div>
+
+      {/* Security Settings Card */}
+      <div className="bg-card border border-border rounded-2xl p-6 lg:p-8 shadow-2xl relative overflow-hidden">
+        <div className="absolute -top-12 -right-12 w-40 h-40 bg-accent/5 rounded-full blur-2xl pointer-events-none" />
+
+        <div className="relative">
+          <h2 className="text-lg font-bold text-foreground uppercase tracking-wider">
             Security Settings
           </h2>
-          <p className="text-zinc-500 text-xs mt-1">
+          <p className="text-muted text-xs mt-1">
             Update your password to keep your account secure.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-5 max-w-xl">
             {/* Current Password */}
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">
                 Current Password
               </label>
               <input
@@ -88,7 +107,7 @@ export default function CoachSettingsPage() {
 
             {/* New Password */}
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">
                 New Password
               </label>
               <input
@@ -103,7 +122,7 @@ export default function CoachSettingsPage() {
 
             {/* Confirm New Password */}
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">
                 Confirm New Password
               </label>
               <input
@@ -132,7 +151,7 @@ export default function CoachSettingsPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full sm:w-auto px-8 py-2.5 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-colors shadow-lg shadow-yellow-500/10"
+              className="w-full sm:w-auto px-8 py-2.5 bg-accent hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed text-gray-900 text-xs font-bold rounded-lg uppercase tracking-wider transition-colors shadow-lg shadow-accent/10"
             >
               {isSubmitting ? "Updating..." : "Update Password"}
             </button>

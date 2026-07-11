@@ -96,15 +96,15 @@ export default function CoachWorkoutPlans() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <section className="border-b border-zinc-800 pb-5">
-        <h1 className="text-2xl lg:text-3xl font-black text-white uppercase tracking-wider">
+      <section className="border-b border-border pb-5">
+        <h1 className="text-2xl lg:text-3xl font-black text-foreground uppercase tracking-wider">
           Workout Plans
         </h1>
-        <p className="text-zinc-500 text-xs mt-1">Create and manage workout plans for your athletes.</p>
+        <p className="text-muted text-xs mt-1">Create and manage workout plans for your athletes.</p>
       </section>
 
       {/* Search, Filters & Create Button */}
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-4 bg-zinc-900 border border-zinc-800 p-4 rounded-2xl">
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-4 bg-card-secondary border border-border p-4 rounded-2xl">
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
           {/* Status Filter */}
           <select
@@ -113,7 +113,7 @@ export default function CoachWorkoutPlans() {
               setStatus(e.target.value);
               setPage(1);
             }}
-            className="w-full sm:w-40 bg-zinc-950 border border-zinc-800 focus:border-yellow-500 text-xs text-white rounded-xl px-3 py-2.5 focus:outline-none cursor-pointer transition-all"
+            className="w-full sm:w-40 bg-background border border-border focus:border-accent text-xs text-foreground rounded-xl px-3 py-2.5 focus:outline-none cursor-pointer transition-all"
           >
             <option value="all">All Status</option>
             <option value="Draft">Draft</option>
@@ -124,7 +124,7 @@ export default function CoachWorkoutPlans() {
         {/* Create Button */}
         <button
           onClick={() => openBuilderModal()}
-          className="w-full lg:w-auto px-5 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-colors shadow-lg shadow-yellow-500/10"
+          className="w-full lg:w-auto px-5 py-2.5 bg-accent hover:bg-accent/90 text-gray-900 text-xs font-bold rounded-lg uppercase tracking-wider transition-colors shadow-lg shadow-accent/10"
         >
           Create Workout Plan
         </button>
@@ -148,68 +148,68 @@ export default function CoachWorkoutPlans() {
 
       {/* Loading State */}
       {loading ? (
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center space-y-4">
-          <span className="w-8 h-8 border-3 border-yellow-500 border-t-transparent rounded-full animate-spin inline-block"></span>
-          <p className="text-zinc-500 font-mono text-xs tracking-wider uppercase">Loading workout plans...</p>
+        <div className="bg-card-secondary border border-border rounded-2xl p-8 text-center space-y-4">
+          <span className="w-8 h-8 border-3 border-accent border-t-transparent rounded-full animate-spin inline-block"></span>
+          <p className="text-muted font-mono text-xs tracking-wider uppercase">Loading workout plans...</p>
         </div>
       ) : workoutPlans.length === 0 ? (
         /* Empty State */
-        <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-12 text-center">
+        <div className="bg-card-secondary/40 border border-border/80 rounded-2xl p-12 text-center">
           <div className="space-y-3">
             <span className="text-4xl block">🏋️‍♂️</span>
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider">No workout plans found</h4>
-            <p className="text-xs text-zinc-500 max-w-xs mx-auto">
+            <h4 className="text-sm font-bold text-foreground uppercase tracking-wider">No workout plans found</h4>
+            <p className="text-xs text-muted max-w-xs mx-auto">
               Create your first workout plan to get started.
             </p>
           </div>
         </div>
       ) : (
         /* Workout Plans Table */
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+        <div className="bg-card-secondary border border-border rounded-2xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-zinc-950 border-b border-zinc-800">
+              <thead className="bg-background border-b border-border">
                 <tr>
-                  <th className="text-left px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Workout Plan</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Difficulty</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Duration</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Exercises</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Status</th>
-                  <th className="text-right px-6 py-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Actions</th>
+                  <th className="text-left px-6 py-4 text-xs font-bold text-muted uppercase tracking-wider">Workout Plan</th>
+                  <th className="text-left px-6 py-4 text-xs font-bold text-muted uppercase tracking-wider">Difficulty</th>
+                  <th className="text-left px-6 py-4 text-xs font-bold text-muted uppercase tracking-wider">Duration</th>
+                  <th className="text-left px-6 py-4 text-xs font-bold text-muted uppercase tracking-wider">Exercises</th>
+                  <th className="text-left px-6 py-4 text-xs font-bold text-muted uppercase tracking-wider">Status</th>
+                  <th className="text-right px-6 py-4 text-xs font-bold text-muted uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800">
+              <tbody className="divide-y divide-border/60">
                 {workoutPlans.map((workoutPlan) => (
-                  <tr key={workoutPlan._id || workoutPlan.id} className="hover:bg-zinc-800/30 transition-colors">
+                  <tr key={workoutPlan._id || workoutPlan.id} className="hover:bg-card-secondary/30 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         {workoutPlan.coverImage ? (
                           <img
                             src={workoutPlan.coverImage}
                             alt={workoutPlan.title}
-                            className="w-16 h-16 object-cover rounded-lg border border-zinc-800"
+                            className="w-16 h-16 object-cover rounded-lg border border-border"
                           />
                         ) : (
-                          <div className="w-16 h-16 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center">
-                            <svg className="w-6 h-6 text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <div className="w-16 h-16 rounded-lg bg-card-secondary border border-border flex items-center justify-center">
+                            <svg className="w-6 h-6 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                           </div>
                         )}
                         <div>
-                          <p className="text-sm font-semibold text-white">{workoutPlan.title}</p>
-                          <p className="text-xs text-zinc-500 truncate max-w-xs">{workoutPlan.description}</p>
+                          <p className="text-sm font-semibold text-foreground">{workoutPlan.title}</p>
+                          <p className="text-xs text-muted truncate max-w-xs">{workoutPlan.description}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-xs text-zinc-400 capitalize">{workoutPlan.difficulty}</span>
+                      <span className="text-xs text-muted capitalize">{workoutPlan.difficulty}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-xs text-zinc-400">{workoutPlan.estimatedDuration} min</span>
+                      <span className="text-xs text-muted">{workoutPlan.estimatedDuration} min</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-xs text-yellow-500 font-semibold bg-yellow-500/10 px-2 py-1 rounded">
+                      <span className="text-xs text-accent font-semibold bg-accent/10 px-2 py-1 rounded">
                         {workoutPlan.exercises?.length || 0} exercises
                       </span>
                     </td>
@@ -217,7 +217,7 @@ export default function CoachWorkoutPlans() {
                       <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${
                         workoutPlan.status === "Published" 
                           ? "bg-green-500/10 text-green-400 border border-green-500/20" 
-                          : "bg-zinc-500/10 text-zinc-400 border border-zinc-500/20"
+                          : "bg-muted/10 text-muted border border-muted/20"
                       }`}>
                         {workoutPlan.status}
                       </span>
@@ -227,7 +227,7 @@ export default function CoachWorkoutPlans() {
                         {workoutPlan.status === "Draft" && (
                           <button
                             onClick={() => handlePublish(workoutPlan)}
-                            className="p-2 text-zinc-400 hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-colors"
+                            className="p-2 text-muted hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-colors"
                             title="Publish"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -237,7 +237,7 @@ export default function CoachWorkoutPlans() {
                         )}
                         <button
                           onClick={() => openBuilderModal(workoutPlan)}
-                          className="p-2 text-zinc-400 hover:text-yellow-400 hover:bg-yellow-500/10 rounded-lg transition-colors"
+                          className="p-2 text-muted hover:text-accent hover:bg-accent/10 rounded-lg transition-colors"
                           title="Edit"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -246,7 +246,7 @@ export default function CoachWorkoutPlans() {
                         </button>
                         <button
                           onClick={() => openDeleteModal(workoutPlan)}
-                          className="p-2 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                          className="p-2 text-muted hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                           title="Delete"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -263,23 +263,23 @@ export default function CoachWorkoutPlans() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="border-t border-zinc-800 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <span className="text-xs text-zinc-500">
-                Showing page <span className="text-white font-semibold">{page}</span> of{" "}
-                <span className="text-white font-semibold">{totalPages}</span> (Total: <span className="text-yellow-400">{totalWorkoutPlans}</span>)
+            <div className="border-t border-border px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <span className="text-xs text-muted">
+                Showing page <span className="text-foreground font-semibold">{page}</span> of{" "}
+                <span className="text-foreground font-semibold">{totalPages}</span> (Total: <span className="text-accent">{totalWorkoutPlans}</span>)
               </span>
               <div className="flex items-center gap-2">
                 <button
                   disabled={page <= 1}
                   onClick={() => setPage(page - 1)}
-                  className="px-4 py-2 bg-zinc-950 border border-zinc-800 hover:border-yellow-500/40 disabled:opacity-30 disabled:hover:border-zinc-800 text-zinc-400 hover:text-white disabled:hover:text-zinc-400 text-xs font-bold rounded-xl uppercase tracking-wider transition-all disabled:cursor-not-allowed cursor-pointer"
+                  className="px-4 py-2 bg-background border border-border hover:border-accent/40 disabled:opacity-30 disabled:hover:border-border text-muted hover:text-foreground disabled:hover:text-muted text-xs font-bold rounded-xl uppercase tracking-wider transition-all disabled:cursor-not-allowed cursor-pointer"
                 >
                   Previous
                 </button>
                 <button
                   disabled={page >= totalPages}
                   onClick={() => setPage(page + 1)}
-                  className="px-4 py-2 bg-zinc-950 border border-zinc-800 hover:border-yellow-500/40 disabled:opacity-30 disabled:hover:border-zinc-800 text-zinc-400 hover:text-white disabled:hover:text-zinc-400 text-xs font-bold rounded-xl uppercase tracking-wider transition-all disabled:cursor-not-allowed cursor-pointer"
+                  className="px-4 py-2 bg-background border border-border hover:border-accent/40 disabled:opacity-30 disabled:hover:border-border text-muted hover:text-foreground disabled:hover:text-muted text-xs font-bold rounded-xl uppercase tracking-wider transition-all disabled:cursor-not-allowed cursor-pointer"
                 >
                   Next
                 </button>
@@ -303,13 +303,13 @@ export default function CoachWorkoutPlans() {
       {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md">
-            <div className="p-6 border-b border-zinc-800">
-              <h2 className="text-lg font-bold text-white">Delete Workout Plan</h2>
+          <div className="bg-card-secondary border border-border rounded-2xl w-full max-w-md">
+            <div className="p-6 border-b border-border">
+              <h2 className="text-lg font-bold text-foreground">Delete Workout Plan</h2>
             </div>
             <div className="p-6 space-y-4">
-              <p className="text-sm text-zinc-400">
-                Are you sure you want to delete <span className="text-white font-semibold">{selectedWorkoutPlan?.title}</span>? This action cannot be undone.
+              <p className="text-sm text-muted">
+                Are you sure you want to delete <span className="text-foreground font-semibold">{selectedWorkoutPlan?.title}</span>? This action cannot be undone.
               </p>
               <div className="flex gap-3">
                 <button
@@ -317,14 +317,14 @@ export default function CoachWorkoutPlans() {
                     setIsDeleteModalOpen(false);
                     setSelectedWorkoutPlan(null);
                   }}
-                  className="flex-1 px-4 py-2.5 bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-white text-xs font-bold rounded-xl uppercase tracking-wider transition-all"
+                  className="flex-1 px-4 py-2.5 bg-background border border-border hover:border-muted text-muted hover:text-foreground text-xs font-bold rounded-xl uppercase tracking-wider transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDelete}
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-xl uppercase tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-foreground text-xs font-bold rounded-xl uppercase tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Deleting..." : "Delete"}
                 </button>

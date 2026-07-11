@@ -113,7 +113,7 @@ export default function CoachSidebar({ isOpen, onClose }: CoachSidebarProps) {
       )}
 
       <aside
-        className={`fixed top-16 bottom-0 left-0 z-45 w-64 bg-zinc-950 border-r border-zinc-800 flex flex-col justify-between transition-transform duration-300 transform lg:translate-x-0 lg:static lg:h-[calc(100vh-4rem)] ${
+        className={`fixed top-16 bottom-0 left-0 z-45 w-64 bg-card border-r border-border flex flex-col justify-between transition-transform duration-300 transform lg:translate-x-0 lg:static lg:h-[calc(100vh-4rem)] ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -128,22 +128,22 @@ export default function CoachSidebar({ isOpen, onClose }: CoachSidebarProps) {
                   onClick={onClose}
                   className={`flex items-center gap-3 px-6 py-3.5 text-sm font-medium transition-all group border-l-[3px] relative ${
                     isActive
-                      ? "bg-yellow-400/5 border-yellow-400 text-yellow-400 font-bold"
-                      : "border-transparent text-zinc-400 hover:text-yellow-400 hover:bg-zinc-900/60"
+                      ? "bg-accent/5 border-accent text-accent font-bold"
+                      : "border-transparent text-muted hover:text-accent hover:bg-card-secondary"
                   }`}
                 >
                   <span
                     className={
                       isActive
-                        ? "text-yellow-400"
-                        : "text-zinc-500 group-hover:text-yellow-400 transition-colors"
+                        ? "text-accent"
+                        : "text-muted group-hover:text-accent transition-colors"
                     }
                   >
                     {item.icon}
                   </span>
                   {item.name}
                   {isActive && (
-                    <span className="absolute right-0 top-0 bottom-0 w-1 bg-yellow-400/20 blur-sm" />
+                    <span className="absolute right-0 top-0 bottom-0 w-1 bg-accent/20 blur-sm" />
                   )}
                 </Link>
               );
@@ -151,16 +151,16 @@ export default function CoachSidebar({ isOpen, onClose }: CoachSidebarProps) {
           </nav>
         </div>
 
-        <div className="p-4 border-t border-zinc-800">
+        <div className="p-4 border-t border-border">
           <button
             onClick={() => {
               onClose();
               logout();
             }}
-            className="w-full flex items-center gap-3 px-6 py-3.5 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl text-sm font-medium transition-all group"
+            className="w-full flex items-center gap-3 px-6 py-3.5 text-muted hover:text-red-400 hover:bg-red-500/10 rounded-xl text-sm font-medium transition-all group"
           >
             <svg
-              className="w-5 h-5 text-zinc-500 group-hover:text-red-400 transition-colors"
+              className="w-5 h-5 text-muted group-hover:text-red-400 transition-colors"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

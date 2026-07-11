@@ -46,42 +46,42 @@ export default function AdminTransactionsTable() {
           Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 animate-pulse"
+              className="bg-card border border-border rounded-2xl p-6 animate-pulse"
             >
-              <div className="h-4 bg-zinc-800 rounded w-1/2 mb-3"></div>
-              <div className="h-8 bg-zinc-800 rounded w-1/3"></div>
+              <div className="h-4 bg-card-secondary rounded w-1/2 mb-3"></div>
+              <div className="h-8 bg-card-secondary rounded w-1/3"></div>
             </div>
           ))
         ) : (
           <>
-            <div className="bg-[#0e0e12] border border-zinc-800/80 rounded-2xl p-6 hover:border-yellow-500/30 transition-all group">
+            <div className="bg-card border border-border/80 rounded-2xl p-6 hover:border-accent/30 transition-all group">
               <div className="space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted">
                   Total Revenue
                 </p>
-                <p className="text-3xl lg:text-4xl font-black text-white group-hover:text-yellow-400 transition-colors">
+                <p className="text-3xl lg:text-4xl font-black text-foreground group-hover:text-accent transition-colors">
                   {transactionsData?.totalRevenue?.toLocaleString() || 0}
                 </p>
               </div>
             </div>
 
-            <div className="bg-[#0e0e12] border border-zinc-800/80 rounded-2xl p-6 hover:border-yellow-500/30 transition-all group">
+            <div className="bg-card border border-border/80 rounded-2xl p-6 hover:border-accent/30 transition-all group">
               <div className="space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted">
                   Admin Commission
                 </p>
-                <p className="text-3xl lg:text-4xl font-black text-yellow-400 group-hover:text-white transition-colors">
+                <p className="text-3xl lg:text-4xl font-black text-accent group-hover:text-foreground transition-colors">
                   {transactionsData?.adminCommission?.toLocaleString() || 0}
                 </p>
               </div>
             </div>
 
-            <div className="bg-[#0e0e12] border border-zinc-800/80 rounded-2xl p-6 hover:border-yellow-500/30 transition-all group">
+            <div className="bg-card border border-border/80 rounded-2xl p-6 hover:border-accent/30 transition-all group">
               <div className="space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted">
                   Transactions
                 </p>
-                <p className="text-3xl lg:text-4xl font-black text-white group-hover:text-yellow-400 transition-colors">
+                <p className="text-3xl lg:text-4xl font-black text-foreground group-hover:text-accent transition-colors">
                   {transactionsData?.transactionCount?.toLocaleString() || 0}
                 </p>
               </div>
@@ -107,11 +107,11 @@ export default function AdminTransactionsTable() {
       )}
 
       {/* Transactions Table */}
-      <div className="bg-[#0e0e12] border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl relative">
+      <div className="bg-card border border-border/80 rounded-2xl overflow-hidden shadow-2xl relative">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-zinc-900/50 border-b border-zinc-800 text-[10px] font-black uppercase tracking-wider text-zinc-400">
+              <tr className="bg-card-secondary/50 border-b border-border text-[10px] font-black uppercase tracking-wider text-muted">
                 <th className="px-6 py-4">Athlete</th>
                 <th className="px-6 py-4">Coach</th>
                 <th className="px-6 py-4">Amount</th>
@@ -121,30 +121,30 @@ export default function AdminTransactionsTable() {
                 <th className="px-6 py-4">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-900/60 text-sm">
+            <tbody className="divide-y divide-border/60 text-sm">
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-32"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-32"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-32"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-32"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-20"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-20"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-20"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-20"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-20"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-20"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-24"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-24"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-6 bg-zinc-800/60 rounded-full w-16"></div>
+                      <div className="h-6 bg-card-secondary/60 rounded-full w-16"></div>
                     </td>
                   </tr>
                 ))
@@ -153,10 +153,10 @@ export default function AdminTransactionsTable() {
                   <td colSpan={7} className="px-6 py-12 text-center">
                     <div className="space-y-3">
                       <span className="text-3xl">💰</span>
-                      <h4 className="text-sm font-bold text-white uppercase tracking-wider">
+                      <h4 className="text-sm font-bold text-foreground uppercase tracking-wider">
                         No transactions yet
                       </h4>
-                      <p className="text-xs text-zinc-500 max-w-xs mx-auto">
+                      <p className="text-xs text-muted max-w-xs mx-auto">
                         Transactions will appear here once athletes hire coaches.
                       </p>
                     </div>
@@ -166,25 +166,25 @@ export default function AdminTransactionsTable() {
                 transactionsData?.transactions?.map((tx: AdminTransaction) => (
                   <tr
                     key={tx._id}
-                    className="hover:bg-zinc-900/20 transition-colors group"
+                    className="hover:bg-card-secondary/20 transition-colors group"
                   >
                     <td className="px-6 py-4">
-                      <p className="font-semibold text-white">
+                      <p className="font-semibold text-foreground">
                         {tx.athleteName}
                       </p>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-semibold text-white">
+                      <p className="font-semibold text-foreground">
                         {tx.coachName}
                       </p>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-zinc-300 font-medium">
+                      <p className="text-foreground font-medium">
                         {tx.amount.toLocaleString()}
                       </p>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-yellow-400 font-semibold">
+                      <p className="text-accent font-semibold">
                         {tx.adminCommission.toLocaleString()}
                       </p>
                     </td>
@@ -193,7 +193,7 @@ export default function AdminTransactionsTable() {
                         {tx.coachEarning.toLocaleString()}
                       </p>
                     </td>
-                    <td className="px-6 py-4 text-zinc-400 text-xs">
+                    <td className="px-6 py-4 text-muted text-xs">
                       {formatDate(tx.date)}
                     </td>
                     <td className="px-6 py-4">

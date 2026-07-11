@@ -12,7 +12,7 @@ const GoogleIcon = (
 const SocialButton: React.FC<SocialButtonProps> = ({ provider }) => (
   <button
     type="button"
-    className="flex items-center justify-center w-full py-2 mb-2 rounded-md border border-[#333] bg-[#181818] hover:bg-[#232323] text-gray-100 font-medium transition-colors"
+    className="flex items-center justify-center w-full py-2 mb-2 rounded-md border border-border bg-card hover:bg-card-secondary text-foreground font-medium transition-colors"
   >
     <span className="mr-2">
       {provider === 'Google' ? GoogleIcon : <AppleIcon />}

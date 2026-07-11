@@ -249,7 +249,7 @@ export default function AdminUsersTable() {
       {/* Search Filter Header */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="relative w-full max-w-md">
-          <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+          <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -259,12 +259,12 @@ export default function AdminUsersTable() {
             placeholder="Search by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-[#121216] border border-zinc-800 hover:border-yellow-500/40 focus:border-yellow-500 text-sm text-white rounded-xl pl-10 pr-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-600"
+            className="w-full bg-card-secondary border border-border hover:border-accent/40 focus:border-accent text-sm text-foreground rounded-xl pl-10 pr-4 py-2.5 focus:outline-none transition-all placeholder:text-muted"
           />
           {searchTerm && (
             <button
               onClick={() => setSearchTerm("")}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-500 hover:text-white"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted hover:text-foreground"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -275,13 +275,13 @@ export default function AdminUsersTable() {
         
         <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
           {totalUsers > 0 && (
-            <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider">
-              Total Users: <span className="text-yellow-400">{totalUsers}</span>
+            <span className="text-xs text-muted font-bold uppercase tracking-wider">
+              Total Users: <span className="text-accent">{totalUsers}</span>
             </span>
           )}
           <button
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black text-xs font-bold rounded-xl uppercase tracking-wider transition-colors shadow-lg shadow-yellow-400/10 flex items-center gap-1.5 cursor-pointer shrink-0"
+            className="px-4 py-2 bg-accent hover:bg-accent/90 text-gray-900 text-xs font-bold rounded-xl uppercase tracking-wider transition-colors shadow-lg shadow-accent/10 flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -308,11 +308,11 @@ export default function AdminUsersTable() {
       )}
 
       {/* Main Table View */}
-      <div className="bg-[#0e0e12] border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl relative">
+      <div className="bg-card border border-border/80 rounded-2xl overflow-hidden shadow-2xl relative">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-zinc-900/50 border-b border-zinc-800 text-[10px] font-black uppercase tracking-wider text-zinc-400">
+              <tr className="bg-card-secondary/50 border-b border-border text-[10px] font-black uppercase tracking-wider text-muted">
                 <th className="px-6 py-4">ID</th>
                 <th className="px-6 py-4">Name</th>
                 <th className="px-6 py-4">Email</th>
@@ -322,35 +322,35 @@ export default function AdminUsersTable() {
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-900/60 text-sm">
+            <tbody className="divide-y divide-border/60 text-sm">
               {loading ? (
                 // Loading Skeleton Rows
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-12"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-12"></div>
                     </td>
                     <td className="px-6 py-4 flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-zinc-800/60 shrink-0"></div>
+                      <div className="w-9 h-9 rounded-full bg-card-secondary/60 shrink-0"></div>
                       <div className="space-y-2">
-                        <div className="h-4 bg-zinc-800/60 rounded w-24"></div>
-                        <div className="h-3 bg-zinc-800/60 rounded w-16"></div>
+                        <div className="h-4 bg-card-secondary/60 rounded w-24"></div>
+                        <div className="h-3 bg-card-secondary/60 rounded w-16"></div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-36"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-36"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-6 bg-zinc-800/60 rounded-full w-16"></div>
+                      <div className="h-6 bg-card-secondary/60 rounded-full w-16"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-6 bg-zinc-800/60 rounded-full w-16"></div>
+                      <div className="h-6 bg-card-secondary/60 rounded-full w-16"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-20"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-20"></div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="h-8 bg-zinc-800/60 rounded w-28 ml-auto"></div>
+                      <div className="h-8 bg-card-secondary/60 rounded w-28 ml-auto"></div>
                     </td>
                   </tr>
                 ))
@@ -360,8 +360,8 @@ export default function AdminUsersTable() {
                   <td colSpan={7} className="px-6 py-12 text-center">
                     <div className="space-y-3">
                       <span className="text-3xl">👥</span>
-                      <h4 className="text-sm font-bold text-white uppercase tracking-wider">No users found</h4>
-                      <p className="text-xs text-zinc-500 max-w-xs mx-auto">
+                      <h4 className="text-sm font-bold text-foreground uppercase tracking-wider">No users found</h4>
+                      <p className="text-xs text-muted max-w-xs mx-auto">
                         We couldn't find any user profiles matching your current filters or search term.
                       </p>
                     </div>
@@ -373,8 +373,8 @@ export default function AdminUsersTable() {
                   const userIdStr = user._id || user.id || "";
                   const displayId = userIdStr ? `#${userIdStr.slice(-6).toUpperCase()}` : "N/A";
                   return (
-                    <tr key={userIdStr} className="hover:bg-zinc-900/20 transition-colors group">
-                      <td className="px-6 py-4 text-zinc-500 font-mono text-xs">
+                    <tr key={userIdStr} className="hover:bg-card-secondary/20 transition-colors group">
+                      <td className="px-6 py-4 text-muted font-mono text-xs">
                         {displayId}
                       </td>
                       <td className="px-6 py-4">
@@ -387,33 +387,33 @@ export default function AdminUsersTable() {
                                   : `http://localhost:5000${user.profilePhoto}`
                               }
                               alt={user.name}
-                              className="w-9 h-9 rounded-full object-cover border border-zinc-800 group-hover:border-yellow-500/30 transition-all shrink-0"
+                              className="w-9 h-9 rounded-full object-cover border border-border group-hover:border-accent/30 transition-all shrink-0"
                             />
                           ) : (
-                            <div className="w-9 h-9 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700/30 group-hover:border-yellow-500/30 flex items-center justify-center text-xs font-bold font-mono tracking-wider transition-all shrink-0">
+                            <div className="w-9 h-9 rounded-full bg-card-secondary text-muted border border-border/30 group-hover:border-accent/30 flex items-center justify-center text-xs font-bold font-mono tracking-wider transition-all shrink-0">
                               {getInitials(user.name)}
                             </div>
                           )}
                           <div>
-                            <p className="font-bold text-white group-hover:text-yellow-400 transition-colors">
+                            <p className="font-bold text-foreground group-hover:text-accent transition-colors">
                               {user.name}
                             </p>
-                            <p className="text-[10px] text-zinc-500">
+                            <p className="text-[10px] text-muted">
                               @{user.username || "username"}
                             </p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-zinc-300 font-medium">
+                      <td className="px-6 py-4 text-foreground font-medium">
                         {user.email}
                       </td>
                       <td className="px-6 py-4">
                         {user.role === "admin" ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-yellow-400/10 text-yellow-400 border border-yellow-500/20 shadow-[0_0_10px_rgba(234,179,8,0.05)]">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-accent/10 text-accent border border-accent/20 shadow-[0_0_10px_rgba(234,179,8,0.05)]">
                             Admin
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-zinc-800 text-zinc-400 border border-zinc-700/50">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-card-secondary text-muted border border-border/50">
                             User
                           </span>
                         )}
@@ -424,13 +424,13 @@ export default function AdminUsersTable() {
                           Active
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-zinc-400 text-xs">
+                      <td className="px-6 py-4 text-muted text-xs">
                         {formatDate((user as any).createdAt)}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
-                            className="p-1 text-zinc-500 hover:text-yellow-400 hover:bg-[#121216]/80 rounded-lg transition-all"
+                            className="p-1 text-muted hover:text-accent hover:bg-card-secondary/80 rounded-lg transition-all"
                             title="View Profile"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -440,7 +440,7 @@ export default function AdminUsersTable() {
                           </button>
                           <button
                             onClick={() => handleEditClick(user)}
-                            className="p-1 text-zinc-500 hover:text-white hover:bg-[#121216]/80 rounded-lg transition-all cursor-pointer"
+                            className="p-1 text-muted hover:text-foreground hover:bg-card-secondary/80 rounded-lg transition-all cursor-pointer"
                             title="Edit"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -449,7 +449,7 @@ export default function AdminUsersTable() {
                           </button>
                           <button
                             onClick={() => handleDeleteClick(user)}
-                            className="p-1 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all cursor-pointer"
+                            className="p-1 text-muted hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all cursor-pointer"
                             title="Delete User"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -468,23 +468,23 @@ export default function AdminUsersTable() {
 
         {/* Pagination Section Footer */}
         {!loading && totalPages > 1 && (
-          <div className="bg-zinc-900/30 border-t border-zinc-800 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span className="text-xs text-zinc-500">
-              Showing page <span className="text-white font-semibold">{page}</span> of{" "}
-              <span className="text-white font-semibold">{totalPages}</span>
+          <div className="bg-card-secondary/30 border-t border-border px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-xs text-muted">
+              Showing page <span className="text-foreground font-semibold">{page}</span> of{" "}
+              <span className="text-foreground font-semibold">{totalPages}</span>
             </span>
             <div className="flex items-center gap-2">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage(page - 1)}
-                className="px-3.5 py-1.5 bg-[#121216] border border-zinc-800 hover:border-yellow-500/40 disabled:opacity-30 disabled:hover:border-zinc-800 text-zinc-400 hover:text-white disabled:hover:text-zinc-400 text-xs font-bold rounded-lg uppercase tracking-wider transition-all disabled:cursor-not-allowed"
+                className="px-3.5 py-1.5 bg-card-secondary border border-border hover:border-accent/40 disabled:opacity-30 disabled:hover:border-border text-muted hover:text-foreground disabled:hover:text-muted text-xs font-bold rounded-lg uppercase tracking-wider transition-all disabled:cursor-not-allowed"
               >
                 Previous
               </button>
               <button
                 disabled={page >= totalPages}
                 onClick={() => setPage(page + 1)}
-                className="px-3.5 py-1.5 bg-[#121216] border border-zinc-800 hover:border-yellow-500/40 disabled:opacity-30 disabled:hover:border-zinc-800 text-zinc-400 hover:text-white disabled:hover:text-zinc-400 text-xs font-bold rounded-lg uppercase tracking-wider transition-all disabled:cursor-not-allowed"
+                className="px-3.5 py-1.5 bg-card-secondary border border-border hover:border-accent/40 disabled:opacity-30 disabled:hover:border-border text-muted hover:text-foreground disabled:hover:text-muted text-xs font-bold rounded-lg uppercase tracking-wider transition-all disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -508,16 +508,16 @@ export default function AdminUsersTable() {
       {/* Create User Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0e0e12] border border-zinc-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+          <div className="bg-card border border-border rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/40">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+            <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-card-secondary/40">
+              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
                 {editingUserId ? "Edit User Profile" : "Add New User"}
               </h3>
               <button
                 type="button"
                 onClick={handleCancelClose}
-                className="p-1 rounded text-zinc-500 hover:text-white hover:bg-zinc-800 transition-all focus:outline-none cursor-pointer"
+                className="p-1 rounded text-muted hover:text-foreground hover:bg-card-secondary transition-all focus:outline-none cursor-pointer"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -536,7 +536,7 @@ export default function AdminUsersTable() {
               <div className="grid grid-cols-2 gap-4">
                 {/* Name */}
                 <div className="col-span-2">
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Name
                   </label>
                   <input
@@ -545,13 +545,13 @@ export default function AdminUsersTable() {
                     placeholder="Enter full name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-700"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-muted"
                   />
                 </div>
 
                 {/* Username */}
                 <div>
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Username
                   </label>
                   <input
@@ -560,13 +560,13 @@ export default function AdminUsersTable() {
                     placeholder="username"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-700"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-muted"
                   />
                 </div>
 
                 {/* Phone */}
                 <div>
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Phone Number
                   </label>
                   <input
@@ -575,13 +575,13 @@ export default function AdminUsersTable() {
                     placeholder="9876543210"
                     value={formData.phoneNumber}
                     onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-700"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-muted"
                   />
                 </div>
 
                 {/* Email */}
                 <div className="col-span-2">
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Email Address
                   </label>
                   <input
@@ -590,13 +590,13 @@ export default function AdminUsersTable() {
                     placeholder="email@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-700"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-muted"
                   />
                 </div>
 
                 {/* Password */}
                 <div className="col-span-2">
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Password
                   </label>
                   <input
@@ -604,19 +604,19 @@ export default function AdminUsersTable() {
                     placeholder={editingUserId ? "•••••••• (Leave blank to keep current)" : "••••••••"}
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-700"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-muted"
                   />
                 </div>
 
                 {/* Role */}
                 <div>
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Role
                   </label>
                   <select
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all cursor-pointer bg-zinc-950 text-white"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all cursor-pointer bg-background text-foreground"
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
@@ -625,13 +625,13 @@ export default function AdminUsersTable() {
 
                 {/* Gender */}
                 <div>
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Gender
                   </label>
                   <select
                     value={formData.gender}
                     onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all cursor-pointer bg-zinc-950 text-white"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all cursor-pointer bg-background text-foreground"
                   >
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -641,18 +641,18 @@ export default function AdminUsersTable() {
               </div>
 
               {/* Modal Actions */}
-              <div className="pt-4 border-t border-zinc-800 flex justify-end gap-3">
+              <div className="pt-4 border-t border-border flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={handleCancelClose}
-                  className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
+                  className="px-4 py-2 bg-card-secondary hover:bg-card-secondary text-foreground text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-all shadow-lg shadow-yellow-400/10 cursor-pointer"
+                  className="px-4 py-2 bg-accent hover:bg-accent/90 disabled:opacity-50 text-gray-900 text-xs font-bold rounded-lg uppercase tracking-wider transition-all shadow-lg shadow-accent/10 cursor-pointer"
                 >
                   {isSubmitting ? "Saving..." : (editingUserId ? "Save Changes" : "Create User")}
                 </button>
@@ -665,7 +665,7 @@ export default function AdminUsersTable() {
       {/* Delete Confirmation Modal */}
       {deletingUser && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0e0e12] border border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+          <div className="bg-card border border-border rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             {/* Modal Body */}
             <div className="p-6 text-center space-y-4">
               <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto text-red-500">
@@ -675,13 +675,13 @@ export default function AdminUsersTable() {
               </div>
 
               <div className="space-y-1">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
                   Delete User Account
                 </h3>
-                <p className="text-xs text-zinc-400">
+                <p className="text-xs text-muted">
                   Are you sure you want to permanently delete the profile for:
                 </p>
-                <p className="text-sm font-black text-yellow-400 py-1">
+                <p className="text-sm font-black text-accent py-1">
                   {deletingUser.name} ({deletingUser.email})
                 </p>
                 <p className="text-[10px] text-red-400/80 bg-red-500/5 border border-red-500/10 rounded-lg p-2 max-w-xs mx-auto">
@@ -694,7 +694,7 @@ export default function AdminUsersTable() {
                 <button
                   type="button"
                   onClick={() => setDeletingUser(null)}
-                  className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
+                  className="px-4 py-2 bg-card-secondary hover:bg-card-secondary text-foreground text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -702,7 +702,7 @@ export default function AdminUsersTable() {
                   type="button"
                   onClick={handleDeleteSubmit}
                   disabled={isDeleting}
-                  className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white text-xs font-bold rounded-lg uppercase tracking-wider transition-all shadow-lg shadow-red-500/10 cursor-pointer"
+                  className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-foreground text-xs font-bold rounded-lg uppercase tracking-wider transition-all shadow-lg shadow-red-500/10 cursor-pointer"
                 >
                   {isDeleting ? "Deleting..." : "Permanently Delete"}
                 </button>

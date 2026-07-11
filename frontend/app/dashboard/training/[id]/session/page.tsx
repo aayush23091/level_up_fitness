@@ -209,8 +209,8 @@ export default function WorkoutSessionPage() {
     return (
       <DashboardLayout>
         <div className="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto animate-pulse">
-          <div className="h-4 bg-zinc-800/60 rounded w-24"></div>
-          <div className="h-96 bg-zinc-800/60 rounded-2xl"></div>
+          <div className="h-4 bg-card-secondary/60 rounded w-24"></div>
+          <div className="h-96 bg-card-secondary/60 rounded-2xl"></div>
         </div>
       </DashboardLayout>
     );
@@ -226,14 +226,14 @@ export default function WorkoutSessionPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-white uppercase tracking-wider">Workout Not Found</h2>
-          <p className="text-xs text-zinc-500 max-w-xs mx-auto">
+          <h2 className="text-xl font-bold text-foreground uppercase tracking-wider">Workout Not Found</h2>
+          <p className="text-xs text-muted max-w-xs mx-auto">
             {error || "We couldn't retrieve the requested workout session database record."}
           </p>
           <div className="flex justify-center gap-3 pt-4">
             <button
               onClick={() => router.push("/dashboard")}
-              className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-lg uppercase tracking-wider transition-all"
+              className="px-4 py-2 bg-card-secondary hover:bg-card text-foreground text-xs font-bold rounded-lg uppercase tracking-wider transition-all"
             >
               Back to Training
             </button>
@@ -252,7 +252,7 @@ export default function WorkoutSessionPage() {
         <div className="p-6 lg:p-8 max-w-3xl mx-auto space-y-8">
           <button
             onClick={() => router.push("/dashboard")}
-            className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-yellow-400 transition-colors self-start cursor-pointer"
+            className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted hover:text-accent transition-colors self-start cursor-pointer"
           >
             &larr; Back to Training
           </button>
@@ -266,24 +266,24 @@ export default function WorkoutSessionPage() {
             <h2 className="text-3xl font-black text-green-400 uppercase tracking-wide">
               Workout Completed! 🎉
             </h2>
-            <p className="text-sm text-zinc-400">
+            <p className="text-sm text-muted">
               Great job! You earned rewards for completing this workout.
             </p>
 
             <div className="grid grid-cols-2 gap-6 mt-8">
-              <div className="bg-zinc-800/30 border border-zinc-700/30 p-6 rounded-xl text-center">
-                <span className="block text-xs text-zinc-500 uppercase tracking-widest mb-2">
+              <div className="bg-card-secondary/30 border border-border/30 p-6 rounded-xl text-center">
+                <span className="block text-xs text-muted uppercase tracking-widest mb-2">
                   XP Earned
                 </span>
-                <span className="text-4xl font-black text-yellow-400">
+                <span className="text-4xl font-black text-accent">
                   ✨ +{completionResult.data.xpEarned}
                 </span>
               </div>
-              <div className="bg-zinc-800/30 border border-zinc-700/30 p-6 rounded-xl text-center">
-                <span className="block text-xs text-zinc-500 uppercase tracking-widest mb-2">
+              <div className="bg-card-secondary/30 border border-border/30 p-6 rounded-xl text-center">
+                <span className="block text-xs text-muted uppercase tracking-widest mb-2">
                   Coins Earned
                 </span>
-                <span className="text-4xl font-black text-yellow-400">
+                <span className="text-4xl font-black text-accent">
                   🪙 +{completionResult.data.coinsEarned}
                 </span>
               </div>
@@ -291,7 +291,7 @@ export default function WorkoutSessionPage() {
 
             <button
               onClick={() => router.push("/dashboard")}
-              className="mt-8 w-full py-3 bg-yellow-400 hover:bg-yellow-500 text-black text-xs font-bold rounded-xl uppercase tracking-widest transition-all hover:scale-[1.02] shadow-lg shadow-yellow-400/10 cursor-pointer"
+              className="mt-8 w-full py-3 bg-accent hover:bg-accent/90 text-gray-900 text-xs font-bold rounded-xl uppercase tracking-widest transition-all hover:scale-[1.02] shadow-lg shadow-accent/10 cursor-pointer"
             >
               Back to Training
             </button>
@@ -306,7 +306,7 @@ export default function WorkoutSessionPage() {
       <div className="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
         <button
           onClick={() => router.push(`/dashboard/training/${id}`)}
-          className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-yellow-400 transition-colors self-start cursor-pointer"
+          className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted hover:text-accent transition-colors self-start cursor-pointer"
         >
           &larr; Back to Workout Details
         </button>
@@ -314,9 +314,9 @@ export default function WorkoutSessionPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           {/* Left Side: Workout Info */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-[#0e0e12] border border-[#1e1e24] rounded-2xl overflow-hidden shadow-xl">
+            <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xl">
               {workout.thumbnail && (
-                <div className="relative h-64 sm:h-80 w-full border-b border-[#1e1e24]">
+                <div className="relative h-64 sm:h-80 w-full border-b border-border">
                   <img
                     src={workout.thumbnail}
                     alt={workout.title}
@@ -327,19 +327,19 @@ export default function WorkoutSessionPage() {
 
               <div className="p-6 space-y-6">
                 <div>
-                  <span className="text-xs text-yellow-500 font-bold uppercase tracking-widest font-mono">
+                  <span className="text-xs text-accent font-bold uppercase tracking-widest font-mono">
                     {workout.category}
                   </span>
-                  <h1 className="text-2xl lg:text-3xl font-black text-white mt-1 uppercase tracking-wide">
+                  <h1 className="text-2xl lg:text-3xl font-black text-foreground mt-1 uppercase tracking-wide">
                     {workout.title}
                   </h1>
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
+                  <h3 className="text-xs font-bold text-foreground uppercase tracking-wider font-mono">
                     Description
                   </h3>
-                  <p className="text-sm text-zinc-400 leading-relaxed">
+                  <p className="text-sm text-muted leading-relaxed">
                     {workout.description}
                   </p>
                 </div>
@@ -350,22 +350,22 @@ export default function WorkoutSessionPage() {
           {/* Right Side: Timer & Exercises */}
           <div className="space-y-6">
             {/* Timer Card */}
-            <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl shadow-xl space-y-5">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3">
+            <div className="bg-card border border-border p-6 rounded-2xl shadow-xl space-y-5">
+              <h2 className="text-sm font-bold text-foreground uppercase tracking-wider border-b border-border pb-3">
                 Workout Timer
               </h2>
 
               <div className="text-center">
-                <div className="text-5xl font-black text-yellow-400 font-mono tracking-widest">
+                <div className="text-5xl font-black text-accent font-mono tracking-widest">
                   {formatTime(timer)}
                 </div>
-                <p className="text-xs text-zinc-500 mt-2 uppercase tracking-wider">
+                <p className="text-xs text-muted mt-2 uppercase tracking-wider">
                   Time Elapsed
                 </p>
               </div>
 
               {!canComplete ? (
-                <p className="text-xs text-yellow-500/80 text-center">
+                <p className="text-xs text-accent/80 text-center">
                   Complete workout available after 30 seconds
                 </p>
               ) : null}
@@ -375,8 +375,8 @@ export default function WorkoutSessionPage() {
                 disabled={!canComplete || completing}
                 className={`w-full py-3 text-xs font-bold rounded-xl uppercase tracking-widest transition-all shadow-lg ${
                   canComplete && !completing
-                    ? "bg-green-500 hover:bg-green-600 text-black hover:scale-[1.02] shadow-green-500/10 hover:shadow-green-500/20 cursor-pointer"
-                    : "bg-zinc-700 text-zinc-500 cursor-not-allowed"
+                    ? "bg-green-500 hover:bg-green-600 text-gray-900 hover:scale-[1.02] shadow-green-500/10 hover:shadow-green-500/20 cursor-pointer"
+                    : "bg-card-secondary text-muted cursor-not-allowed"
                 }`}
               >
                 {completing ? "Completing..." : "Complete Workout"}
@@ -384,27 +384,27 @@ export default function WorkoutSessionPage() {
             </div>
 
             {/* Exercises List Card */}
-            <div className="bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl shadow-xl space-y-4">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1e1e24] pb-3 flex items-center justify-between">
+            <div className="bg-card border border-border p-6 rounded-2xl shadow-xl space-y-4">
+              <h2 className="text-sm font-bold text-foreground uppercase tracking-wider border-b border-border pb-3 flex items-center justify-between">
                 <span>Workout Routine</span>
-                <span className="text-zinc-500 font-mono text-xs">{exercises.length} Exercises</span>
+                <span className="text-muted font-mono text-xs">{exercises.length} Exercises</span>
               </h2>
 
               <div className="space-y-3">
                 {exercises.map((ex, idx) => (
                   <div
                     key={idx}
-                    className="flex justify-between items-center p-3 bg-[#121216] border border-[#1e1e24] hover:border-yellow-500/10 rounded-xl transition-all group"
+                    className="flex justify-between items-center p-3 bg-card-secondary border border-border hover:border-accent/10 rounded-xl transition-all group"
                   >
                     <div>
-                      <p className="text-xs font-black text-white group-hover:text-yellow-400 transition-colors">
+                      <p className="text-xs font-black text-foreground group-hover:text-accent transition-colors">
                         {idx + 1}. {ex.name}
                       </p>
-                      <p className="text-[10px] text-zinc-500 font-mono mt-0.5">
+                      <p className="text-[10px] text-muted font-mono mt-0.5">
                         {ex.sets}
                       </p>
                     </div>
-                    <span className="w-6 h-6 shrink-0 bg-yellow-500/5 text-yellow-500 rounded-lg flex items-center justify-center text-[10px] font-bold">
+                    <span className="w-6 h-6 shrink-0 bg-accent/5 text-accent rounded-lg flex items-center justify-center text-[10px] font-bold">
                       🏋️‍♂️
                     </span>
                   </div>

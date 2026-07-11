@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import AuthCard from "../components/AuthCard";
 import InputField from "../components/InputField";
 import SocialButton from "../components/SocialButton";
+import ThemeToggle from "../components/ThemeToggle";
 import { MailIcon, LockIcon } from "../components/Icons";
 
 import { loginSchema, type LoginFormData } from "@/lib/validations";
@@ -64,11 +65,12 @@ const LoginPageContent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#181818] to-[#232323] flex flex-col">
-      <header className="w-full flex justify-center items-center py-8">
-        <span className="text-2xl font-bold text-yellow-400">
+    <div className="min-h-screen bg-background flex flex-col">
+      <header className="w-full flex justify-between items-center px-8 py-8">
+        <span className="text-2xl font-bold text-accent">
           LevelUp Fitness
         </span>
+        <ThemeToggle />
       </header>
 
       <main className="flex-1 flex items-center justify-center">
@@ -104,7 +106,7 @@ const LoginPageContent = () => {
 
               <a
                 href="#"
-                className="absolute right-2 top-8 text-xs text-yellow-400 hover:underline"
+                className="absolute right-2 top-8 text-xs text-accent hover:underline"
               >
                 Forgot Password?
               </a>
@@ -113,18 +115,18 @@ const LoginPageContent = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="mt-2 w-full rounded-md bg-yellow-400 py-2 font-semibold text-black transition-colors hover:bg-yellow-500 disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-2 w-full rounded-md bg-accent py-2 font-semibold text-gray-900 transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoading ? "Logging in..." : "Login"}
             </button>
           </form>
 
           <div className="my-4 flex items-center">
-            <div className="h-px flex-grow bg-[#232323]" />
-            <span className="mx-2 text-xs text-gray-400">
+            <div className="h-px flex-grow bg-border" />
+            <span className="mx-2 text-xs text-muted">
               OR CONTINUE WITH
             </span>
-            <div className="h-px flex-grow bg-[#232323]" />
+            <div className="h-px flex-grow bg-border" />
           </div>
 
           <div className="flex flex-col gap-2">
@@ -132,11 +134,11 @@ const LoginPageContent = () => {
             <SocialButton provider="Apple" />
           </div>
 
-          <div className="mt-4 text-center text-sm text-gray-400">
+          <div className="mt-4 text-center text-sm text-muted">
             Don't have an account?{" "}
             <a
               href={getSignupHref(selectedRole)}
-              className="text-yellow-400 hover:underline"
+              className="text-accent hover:underline"
             >
               Start Training
             </a>
@@ -144,7 +146,7 @@ const LoginPageContent = () => {
         </AuthCard>
       </main>
 
-      <footer className="flex w-full justify-center gap-8 py-4 text-xs text-gray-500">
+      <footer className="flex w-full justify-center gap-8 py-4 text-xs text-muted">
         <a href="#">PRIVACY POLICY</a>
         <a href="#">TERMS OF SERVICE</a>
         <a href="#">COOKIE POLICY</a>

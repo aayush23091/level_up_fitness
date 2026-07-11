@@ -53,20 +53,20 @@ function CoachDashboardContent() {
   if (tab === "settings") {
     return (
       <div className="space-y-6">
-        <section className="border-b border-zinc-800 pb-5">
-          <h1 className="text-2xl lg:text-3xl font-black text-white uppercase tracking-wider">
+        <section className="border-b border-border pb-5">
+          <h1 className="text-2xl lg:text-3xl font-black text-foreground uppercase tracking-wider">
             Settings
           </h1>
-          <p className="text-zinc-500 text-xs mt-1">Manage your coach settings.</p>
+          <p className="text-muted text-xs mt-1">Manage your coach settings.</p>
         </section>
-        <div className="bg-[#0e0e12]/40 border border-zinc-800/80 rounded-2xl p-8 text-center space-y-3">
-          <div className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-600">
+        <div className="bg-card/40 border border-border/80 rounded-2xl p-8 text-center space-y-3">
+          <div className="w-12 h-12 rounded-full bg-card-secondary border border-border flex items-center justify-center mx-auto text-muted">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h3 className="text-sm font-bold text-white uppercase tracking-wider">Coming Soon</h3>
-          <p className="text-xs text-zinc-500 max-w-sm mx-auto">
+          <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">Coming Soon</h3>
+          <p className="text-xs text-muted max-w-sm mx-auto">
             This section is currently disabled.
           </p>
         </div>
@@ -140,14 +140,14 @@ function CoachDashboardContent() {
   if (loading) {
     return (
       <div className="space-y-6 lg:space-y-8">
-        <section className="border-b border-zinc-800 pb-5">
-          <h1 className="text-2xl lg:text-3xl font-black text-white tracking-wide">
+        <section className="border-b border-border pb-5">
+          <h1 className="text-2xl lg:text-3xl font-black text-foreground tracking-wide">
             Welcome Back,{" "}
-            <span className="text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.15)]">
+            <span className="text-accent drop-shadow-[0_0_10px_rgba(234,179,8,0.15)]">
               Coach
             </span>
           </h1>
-          <p className="text-zinc-500 text-sm mt-2">
+          <p className="text-muted text-sm mt-2">
             Manage your athletes and workout plans.
           </p>
         </section>
@@ -156,15 +156,15 @@ function CoachDashboardContent() {
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
               key={i}
-              className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 lg:p-6 shadow-lg"
+              className="bg-card-secondary border border-border rounded-2xl p-5 lg:p-6 shadow-lg"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-3 flex-1">
-                  <div className="h-3 w-24 bg-zinc-800 rounded animate-pulse" />
-                  <div className="h-8 w-16 bg-zinc-800 rounded animate-pulse" />
-                  <div className="h-3 w-20 bg-zinc-800 rounded animate-pulse" />
+                  <div className="h-3 w-24 bg-card-secondary rounded animate-pulse" />
+                  <div className="h-8 w-16 bg-card-secondary rounded animate-pulse" />
+                  <div className="h-3 w-20 bg-card-secondary rounded animate-pulse" />
                 </div>
-                <div className="w-11 h-11 rounded-xl bg-zinc-800 animate-pulse shrink-0" />
+                <div className="w-11 h-11 rounded-xl bg-card-secondary animate-pulse shrink-0" />
               </div>
             </div>
           ))}
@@ -176,14 +176,14 @@ function CoachDashboardContent() {
   if (error) {
     return (
       <div className="space-y-6 lg:space-y-8">
-        <section className="border-b border-zinc-800 pb-5">
-          <h1 className="text-2xl lg:text-3xl font-black text-white tracking-wide">
+        <section className="border-b border-border pb-5">
+          <h1 className="text-2xl lg:text-3xl font-black text-foreground tracking-wide">
             Welcome Back,{" "}
-            <span className="text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.15)]">
+            <span className="text-accent drop-shadow-[0_0_10px_rgba(234,179,8,0.15)]">
               Coach
             </span>
           </h1>
-          <p className="text-zinc-500 text-sm mt-2">
+          <p className="text-muted text-sm mt-2">
             Manage your athletes and workout plans.
           </p>
         </section>
@@ -203,14 +203,14 @@ function CoachDashboardContent() {
 
   return (
     <div className="space-y-6 lg:space-y-8">
-      <section className="border-b border-zinc-800 pb-5">
-        <h1 className="text-2xl lg:text-3xl font-black text-white tracking-wide">
+      <section className="border-b border-border pb-5">
+        <h1 className="text-2xl lg:text-3xl font-black text-foreground tracking-wide">
           Welcome Back,{" "}
-          <span className="text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.15)]">
+          <span className="text-accent drop-shadow-[0_0_10px_rgba(234,179,8,0.15)]">
             Coach
           </span>
         </h1>
-        <p className="text-zinc-500 text-sm mt-2">
+        <p className="text-muted text-sm mt-2">
           Manage your athletes and workout plans.
         </p>
       </section>
@@ -219,19 +219,19 @@ function CoachDashboardContent() {
         {statCards.map((card) => (
           <div
             key={card.label}
-            className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 lg:p-6 shadow-lg hover:border-yellow-400/30 hover:shadow-[0_0_20px_rgba(250,204,21,0.05)] transition-all group"
+            className="bg-card-secondary border border-border rounded-2xl p-5 lg:p-6 shadow-lg hover:border-accent/30 hover:shadow-[0_0_20px_rgba(234,179,8,0.05)] transition-all group"
           >
             <div className="flex items-start justify-between gap-4">
               <div className="space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted">
                   {card.label}
                 </p>
-                <p className="text-3xl lg:text-4xl font-black text-white group-hover:text-yellow-400 transition-colors">
+                <p className="text-3xl lg:text-4xl font-black text-foreground group-hover:text-accent transition-colors">
                   {card.value}
                 </p>
-                <p className="text-xs text-zinc-500">{card.change}</p>
+                <p className="text-xs text-muted">{card.change}</p>
               </div>
-              <div className="w-11 h-11 rounded-xl bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center text-yellow-400 shrink-0">
+              <div className="w-11 h-11 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent shrink-0">
                 {card.icon}
               </div>
             </div>
@@ -246,9 +246,9 @@ export default function CoachDashboardPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-[400px] flex flex-col items-center justify-center gap-4 text-white">
-          <span className="w-8 h-8 border-3 border-yellow-500 border-t-transparent rounded-full animate-spin"></span>
-          <p className="text-zinc-500 font-mono text-xs tracking-wider uppercase">
+        <div className="min-h-[400px] flex flex-col items-center justify-center gap-4 text-foreground">
+          <span className="w-8 h-8 border-3 border-accent border-t-transparent rounded-full animate-spin"></span>
+          <p className="text-muted font-mono text-xs tracking-wider uppercase">
             Loading views...
           </p>
         </div>

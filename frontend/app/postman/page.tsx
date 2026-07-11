@@ -81,25 +81,25 @@ export default function PostmanTesterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#121212] to-[#1e1e1e] text-gray-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
       {/* Header */}
-      <header className="border-b border-gray-800 bg-[#161616]/80 backdrop-blur px-6 py-4 flex items-center justify-between">
+      <header className="border-b border-border bg-card/80 backdrop-blur px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-yellow-400 font-bold text-xl tracking-wider">LevelUp Fitness</span>
-          <span className="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded font-mono">MockPostman v1.0</span>
+          <span className="text-accent font-bold text-xl tracking-wider">LevelUp Fitness</span>
+          <span className="text-xs bg-card-secondary text-muted px-2 py-0.5 rounded font-mono">MockPostman v1.0</span>
         </div>
         <div className="flex items-center gap-4">
-          <a href="/login" className="text-sm text-gray-400 hover:text-white transition-colors">Back to Login</a>
-          <a href="/signup" className="text-sm bg-yellow-400 text-black px-3 py-1 rounded font-semibold hover:bg-yellow-500 transition-colors">Join Now</a>
+          <a href="/login" className="text-sm text-muted hover:text-foreground transition-colors">Back to Login</a>
+          <a href="/signup" className="text-sm bg-accent text-gray-900 px-3 py-1 rounded font-semibold hover:bg-accent/90 transition-colors">Join Now</a>
         </div>
       </header>
 
       {/* Main Workspace */}
       <main className="flex-1 flex flex-col lg:flex-row p-6 gap-6">
         {/* Left pane: API Client */}
-        <div className="flex-1 flex flex-col bg-[#161616] rounded-xl border border-gray-800 p-6 gap-6">
-          <h2 className="text-lg font-semibold text-white border-b border-gray-800 pb-3 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 bg-yellow-400 rounded-full animate-pulse"></span>
+        <div className="flex-1 flex flex-col bg-card rounded-xl border border-border p-6 gap-6">
+          <h2 className="text-lg font-semibold text-foreground border-b border-border pb-3 flex items-center gap-2">
+            <span className="w-2.5 h-2.5 bg-accent rounded-full animate-pulse"></span>
             Postman API Playground
           </h2>
 
@@ -111,8 +111,8 @@ export default function PostmanTesterPage() {
                 onClick={() => handleRouteSelection('register')}
                 className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all border ${
                   selectedRoute === 'register'
-                    ? 'bg-yellow-400/10 border-yellow-400/50 text-yellow-400'
-                    : 'bg-gray-800/40 border-transparent text-gray-400 hover:text-white'
+                    ? 'bg-accent/10 border-accent/50 text-accent'
+                    : 'bg-card-secondary/40 border-transparent text-muted hover:text-foreground'
                 }`}
               >
                 POST /api/auth/register
@@ -122,28 +122,28 @@ export default function PostmanTesterPage() {
                 onClick={() => handleRouteSelection('login')}
                 className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all border ${
                   selectedRoute === 'login'
-                    ? 'bg-yellow-400/10 border-yellow-400/50 text-yellow-400'
-                    : 'bg-gray-800/40 border-transparent text-gray-400 hover:text-white'
+                    ? 'bg-accent/10 border-accent/50 text-accent'
+                    : 'bg-card-secondary/40 border-transparent text-muted hover:text-foreground'
                 }`}
               >
                 POST /api/auth/login
               </button>
             </div>
 
-            <div className="flex gap-2 bg-[#202020] p-1 rounded-lg border border-gray-800 items-center">
-              <span className="text-green-400 font-bold font-mono px-3 py-1 text-sm bg-green-500/10 rounded">POST</span>
-              <span className="text-gray-400 font-mono text-sm flex-1 truncate">
+            <div className="flex gap-2 bg-card-secondary p-1 rounded-lg border border-border items-center">
+              <span className="text-green-500 font-bold font-mono px-3 py-1 text-sm bg-green-500/10 rounded">POST</span>
+              <span className="text-muted font-mono text-sm flex-1 truncate">
                 http://localhost:5000{REQUESTS[selectedRoute].url}
               </span>
               <button
                 type="button"
                 onClick={handleSend}
                 disabled={isLoading}
-                className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-1.5 rounded-md text-sm transition-all disabled:opacity-50 flex items-center gap-2"
+                className="bg-accent hover:bg-accent/90 text-gray-900 font-semibold px-6 py-1.5 rounded-md text-sm transition-all disabled:opacity-50 flex items-center gap-2"
               >
                 {isLoading ? (
                   <>
-                    <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+                    <span className="w-4 h-4 border-2 border-foreground border-t-transparent rounded-full animate-spin"></span>
                     Sending...
                   </>
                 ) : (
@@ -155,9 +155,9 @@ export default function PostmanTesterPage() {
 
           {/* Body Section */}
           <div className="flex flex-col flex-1 gap-2">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Request Body (JSON)</span>
+            <span className="text-xs font-semibold text-muted uppercase tracking-wider">Request Body (JSON)</span>
             <textarea
-              className="flex-1 min-h-[160px] bg-[#202020] text-green-400 font-mono text-sm p-4 rounded-lg border border-gray-800 focus:outline-none focus:border-yellow-400/50 resize-y"
+              className="flex-1 min-h-[160px] bg-card-secondary text-green-500 font-mono text-sm p-4 rounded-lg border border-border focus:outline-none focus:border-accent/50 resize-y"
               value={requestBody}
               onChange={(e) => setRequestBody(e.target.value)}
             />
@@ -166,7 +166,7 @@ export default function PostmanTesterPage() {
           {/* Response Section */}
           <div className="flex flex-col flex-1 gap-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Response</span>
+              <span className="text-xs font-semibold text-muted uppercase tracking-wider">Response</span>
               {responseStatus && (
                 <span className={`text-xs px-2 py-0.5 rounded font-mono font-semibold ${
                   responseStatus >= 200 && responseStatus < 300
@@ -177,53 +177,53 @@ export default function PostmanTesterPage() {
                 </span>
               )}
             </div>
-            <div className="bg-[#202020] border border-gray-800 rounded-lg p-4 font-mono text-xs text-blue-300 min-h-[160px] overflow-auto whitespace-pre">
-              {responseBody || <span className="text-gray-500 italic">No request sent yet. Click 'Send' above to trigger the call.</span>}
+            <div className="bg-card-secondary border border-border rounded-lg p-4 font-mono text-xs text-blue-500 min-h-[160px] overflow-auto whitespace-pre">
+              {responseBody || <span className="text-muted italic">No request sent yet. Click 'Send' above to trigger the call.</span>}
             </div>
           </div>
         </div>
 
         {/* Right pane: Explanation & Breakdown */}
-        <div className="w-full lg:w-[420px] flex flex-col bg-[#161616] rounded-xl border border-gray-800 p-6 gap-6">
-          <h2 className="text-lg font-semibold text-white border-b border-gray-800 pb-3">Response Breakdown</h2>
+        <div className="w-full lg:w-[420px] flex flex-col bg-card rounded-xl border border-border p-6 gap-6">
+          <h2 className="text-lg font-semibold text-foreground border-b border-border pb-3">Response Breakdown</h2>
           
-          <div className="flex flex-col gap-4 text-sm text-gray-300 overflow-y-auto">
+          <div className="flex flex-col gap-4 text-sm text-foreground overflow-y-auto">
             <p>
               When sending requests to the LevelUp Fitness API, the backend responds with a JSON object. Here is what the key properties mean:
             </p>
 
-            <div className="border border-gray-800 rounded-lg p-3 bg-gray-900/40">
-              <span className="text-yellow-400 font-mono font-semibold text-xs">success</span>
-              <p className="text-xs text-gray-400 mt-1">
-                A boolean (<code className="text-gray-300 font-mono">true</code> / <code className="text-gray-300 font-mono">false</code>) indicating if the request succeeded.
+            <div className="border border-border rounded-lg p-3 bg-card-secondary/40">
+              <span className="text-accent font-mono font-semibold text-xs">success</span>
+              <p className="text-xs text-muted mt-1">
+                A boolean (<code className="text-foreground font-mono">true</code> / <code className="text-foreground font-mono">false</code>) indicating if the request succeeded.
               </p>
             </div>
 
-            <div className="border border-gray-800 rounded-lg p-3 bg-gray-900/40">
-              <span className="text-yellow-400 font-mono font-semibold text-xs">message</span>
-              <p className="text-xs text-gray-400 mt-1">
+            <div className="border border-border rounded-lg p-3 bg-card-secondary/40">
+              <span className="text-accent font-mono font-semibold text-xs">message</span>
+              <p className="text-xs text-muted mt-1">
                 A human-readable text detailing the outcome (e.g. "User created successfully" or "Login successful").
               </p>
             </div>
 
-            <div className="border border-gray-800 rounded-lg p-3 bg-gray-900/40">
-              <span className="text-yellow-400 font-mono font-semibold text-xs">token</span>
-              <p className="text-xs text-gray-400 mt-1">
-                A JSON Web Token (JWT) returned upon success. This token is stored securely in cookies by the frontend and sent in the <code className="text-gray-300 font-mono">Authorization</code> header for authenticated requests.
+            <div className="border border-border rounded-lg p-3 bg-card-secondary/40">
+              <span className="text-accent font-mono font-semibold text-xs">token</span>
+              <p className="text-xs text-muted mt-1">
+                A JSON Web Token (JWT) returned upon success. This token is stored securely in cookies by the frontend and sent in the <code className="text-foreground font-mono">Authorization</code> header for authenticated requests.
               </p>
             </div>
 
-            <div className="border border-gray-800 rounded-lg p-3 bg-gray-900/40">
-              <span className="text-yellow-400 font-mono font-semibold text-xs">user</span>
-              <p className="text-xs text-gray-400 mt-1">
-                Contains essential profile info: the database <code className="text-gray-300 font-mono">id</code>, <code className="text-gray-300 font-mono">name</code>, <code className="text-gray-300 font-mono">email</code>, and default <code className="text-gray-300 font-mono">role</code> ("user").
+            <div className="border border-border rounded-lg p-3 bg-card-secondary/40">
+              <span className="text-accent font-mono font-semibold text-xs">user</span>
+              <p className="text-xs text-muted mt-1">
+                Contains essential profile info: the database <code className="text-foreground font-mono">id</code>, <code className="text-foreground font-mono">name</code>, <code className="text-foreground font-mono">email</code>, and default <code className="text-foreground font-mono">role</code> ("user").
               </p>
             </div>
 
-            <div className="border border-gray-800/80 rounded-lg p-3 bg-red-500/5 border-red-500/20">
-              <span className="text-red-400 font-mono font-semibold text-xs">Validation Errors (400)</span>
-              <p className="text-xs text-gray-400 mt-1">
-                If inputs fail the schema checks (e.g., password without capital letter), the backend returns a <code className="text-red-400 font-mono">400</code> error, list of errors, and <code className="text-red-400 font-mono">success: false</code>.
+            <div className="border border-border/80 rounded-lg p-3 bg-red-500/5 border-red-500/20">
+              <span className="text-red-500 font-mono font-semibold text-xs">Validation Errors (400)</span>
+              <p className="text-xs text-muted mt-1">
+                If inputs fail the schema checks (e.g., password without capital letter), the backend returns a <code className="text-red-500 font-mono">400</code> error, list of errors, and <code className="text-red-500 font-mono">success: false</code>.
               </p>
             </div>
           </div>

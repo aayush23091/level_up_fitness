@@ -203,7 +203,7 @@ export default function AdminAchievementsTable() {
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex gap-4 w-full sm:w-auto">
           <div className="relative w-full max-w-md">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -213,12 +213,12 @@ export default function AdminAchievementsTable() {
               placeholder="Search achievements..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-[#121216] border border-zinc-800 hover:border-yellow-500/40 focus:border-yellow-500 text-sm text-white rounded-xl pl-10 pr-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-600"
+              className="w-full bg-card-secondary border border-border hover:border-accent/40 focus:border-accent text-sm text-foreground rounded-xl pl-10 pr-4 py-2.5 focus:outline-none transition-all placeholder:text-muted"
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm("")}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-500 hover:text-white"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted hover:text-foreground"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -229,7 +229,7 @@ export default function AdminAchievementsTable() {
           <select
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-            className="bg-[#121216] border border-zinc-800 hover:border-yellow-500/40 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all"
+            className="bg-card-secondary border border-border hover:border-accent/40 focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -239,13 +239,13 @@ export default function AdminAchievementsTable() {
 
         <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
           {totalAchievements > 0 && (
-            <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider">
-              Total Achievements: <span className="text-yellow-400">{totalAchievements}</span>
+            <span className="text-xs text-muted font-bold uppercase tracking-wider">
+              Total Achievements: <span className="text-accent">{totalAchievements}</span>
             </span>
           )}
           <button
             onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-all shadow-lg shadow-yellow-400/10 flex items-center gap-1.5 cursor-pointer shrink-0"
+            className="px-4 py-2 bg-accent hover:bg-accent/90 text-gray-900 text-xs font-bold rounded-lg uppercase tracking-wider transition-all shadow-lg shadow-accent/10 flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -272,11 +272,11 @@ export default function AdminAchievementsTable() {
       )}
 
       {/* Main Table View */}
-      <div className="bg-[#0e0e12] border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl relative">
+      <div className="bg-card border border-border/80 rounded-2xl overflow-hidden shadow-2xl relative">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-zinc-900/50 border-b border-zinc-800 text-[10px] font-black uppercase tracking-wider text-zinc-400">
+              <tr className="bg-card-secondary/50 border-b border-border text-[10px] font-black uppercase tracking-wider text-muted">
                 <th className="px-6 py-4">Title</th>
                 <th className="px-6 py-4">Condition</th>
                 <th className="px-6 py-4">Requirement</th>
@@ -286,31 +286,31 @@ export default function AdminAchievementsTable() {
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-900/60 text-sm">
+            <tbody className="divide-y divide-border/60 text-sm">
               {loading ? (
                 // Loading Skeleton Rows
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-32"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-32"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-24"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-24"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-16"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-16"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-12"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-12"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-12"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-12"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-12"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-12"></div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="h-8 bg-zinc-800/60 rounded w-28 ml-auto"></div>
+                      <div className="h-8 bg-card-secondary/60 rounded w-28 ml-auto"></div>
                     </td>
                   </tr>
                 ))
@@ -320,8 +320,8 @@ export default function AdminAchievementsTable() {
                   <td colSpan={7} className="px-6 py-12 text-center">
                     <div className="space-y-3">
                       <span className="text-3xl">🏆</span>
-                      <h4 className="text-sm font-bold text-white uppercase tracking-wider">No achievements found</h4>
-                      <p className="text-xs text-zinc-500 max-w-xs mx-auto">
+                      <h4 className="text-sm font-bold text-foreground uppercase tracking-wider">No achievements found</h4>
+                      <p className="text-xs text-muted max-w-xs mx-auto">
                         We couldn't find any achievements matching your current filters or search term.
                       </p>
                     </div>
@@ -332,28 +332,28 @@ export default function AdminAchievementsTable() {
                 achievements.map((achievement) => {
                   const achievementId = achievement._id || achievement.id || "";
                   return (
-                    <tr key={achievementId} className="hover:bg-zinc-900/20 transition-colors group">
+                    <tr key={achievementId} className="hover:bg-card-secondary/20 transition-colors group">
                       <td className="px-6 py-4">
-                        <p className="font-bold text-white group-hover:text-yellow-400 transition-colors">
+                        <p className="font-bold text-foreground group-hover:text-accent transition-colors">
                           {achievement.title}
                         </p>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-zinc-300 text-xs">{formatConditionType(achievement.conditionType)}</span>
+                        <span className="text-foreground text-xs">{formatConditionType(achievement.conditionType)}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-zinc-300 text-xs">{achievement.conditionValue}</span>
+                        <span className="text-foreground text-xs">{achievement.conditionValue}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-zinc-300 text-xs">{achievement.xpReward}</span>
+                        <span className="text-foreground text-xs">{achievement.xpReward}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-zinc-300 text-xs">{achievement.coinReward}</span>
+                        <span className="text-foreground text-xs">{achievement.coinReward}</span>
                       </td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${achievement.status === "active"
                             ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                            : "bg-zinc-800 text-zinc-400 border-zinc-700/50"}`}>
+                            : "bg-card-secondary text-muted border-border/50"}`}>
                           {achievement.status === "active" && (
                             <span className="w-1 h-1 rounded-full bg-emerald-400"></span>
                           )}
@@ -364,7 +364,7 @@ export default function AdminAchievementsTable() {
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => handleEditClick(achievement)}
-                            className="p-1 text-zinc-500 hover:text-white hover:bg-[#121216]/80 rounded-lg transition-all cursor-pointer"
+                            className="p-1 text-muted hover:text-foreground hover:bg-card-secondary/80 rounded-lg transition-all cursor-pointer"
                             title="Edit"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -373,7 +373,7 @@ export default function AdminAchievementsTable() {
                           </button>
                           <button
                             onClick={() => handleDeleteClick(achievement)}
-                            className="p-1 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all cursor-pointer"
+                            className="p-1 text-muted hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all cursor-pointer"
                             title="Delete Achievement"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -392,23 +392,23 @@ export default function AdminAchievementsTable() {
 
         {/* Pagination Section Footer */}
         {!loading && totalPages > 1 && (
-          <div className="bg-zinc-900/30 border-t border-zinc-800 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span className="text-xs text-zinc-500">
-              Showing page <span className="text-white font-semibold">{page}</span> of{" "}
-              <span className="text-white font-semibold">{totalPages}</span>
+          <div className="bg-card-secondary/30 border-t border-border px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-xs text-muted">
+              Showing page <span className="text-foreground font-semibold">{page}</span> of{" "}
+              <span className="text-foreground font-semibold">{totalPages}</span>
             </span>
             <div className="flex items-center gap-2">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage(page - 1)}
-                className="px-3.5 py-1.5 bg-[#121216] border border-zinc-800 hover:border-yellow-500/40 disabled:opacity-30 disabled:hover:border-zinc-800 text-zinc-400 hover:text-white disabled:hover:text-zinc-400 text-xs font-bold rounded-lg uppercase tracking-wider transition-all disabled:cursor-not-allowed"
+                className="px-3.5 py-1.5 bg-card-secondary border border-border hover:border-accent/40 disabled:opacity-30 disabled:hover:border-border text-muted hover:text-foreground disabled:hover:text-muted text-xs font-bold rounded-lg uppercase tracking-wider transition-all disabled:cursor-not-allowed"
               >
                 Previous
               </button>
               <button
                 disabled={page >= totalPages}
                 onClick={() => setPage(page + 1)}
-                className="px-3.5 py-1.5 bg-[#121216] border border-zinc-800 hover:border-yellow-500/40 disabled:opacity-30 disabled:hover:border-zinc-800 text-zinc-400 hover:text-white disabled:hover:text-zinc-400 text-xs font-bold rounded-lg uppercase tracking-wider transition-all disabled:cursor-not-allowed"
+                className="px-3.5 py-1.5 bg-card-secondary border border-border hover:border-accent/40 disabled:opacity-30 disabled:hover:border-border text-muted hover:text-foreground disabled:hover:text-muted text-xs font-bold rounded-lg uppercase tracking-wider transition-all disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -430,16 +430,16 @@ export default function AdminAchievementsTable() {
       {/* Create/Edit Achievement Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0e0e12] border border-zinc-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+          <div className="bg-card border border-border rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/40">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+            <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-card-secondary/40">
+              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
                 {editingAchievementId ? "Edit Achievement" : "Add New Achievement"}
               </h3>
               <button
                 type="button"
                 onClick={handleCancelClose}
-                className="p-1 rounded text-zinc-500 hover:text-white hover:bg-zinc-800 transition-all focus:outline-none cursor-pointer"
+                className="p-1 rounded text-muted hover:text-foreground hover:bg-card-secondary transition-all focus:outline-none cursor-pointer"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -458,7 +458,7 @@ export default function AdminAchievementsTable() {
               <div className="grid grid-cols-2 gap-4">
                 {/* Title */}
                 <div className="col-span-2">
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Title
                   </label>
                   <input
@@ -467,13 +467,13 @@ export default function AdminAchievementsTable() {
                     placeholder="Enter achievement title"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-700"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-muted"
                   />
                 </div>
 
                 {/* Description */}
                 <div className="col-span-2">
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Description
                   </label>
                   <textarea
@@ -482,19 +482,19 @@ export default function AdminAchievementsTable() {
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={3}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-700 resize-none"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-muted resize-none"
                   />
                 </div>
 
                 {/* Condition Type */}
                 <div>
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Condition Type
                   </label>
                   <select
                     value={formData.conditionType}
                     onChange={(e) => setFormData({ ...formData, conditionType: e.target.value as any })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all cursor-pointer bg-zinc-950"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all cursor-pointer bg-background"
                   >
                     <option value="workout_completed">Workout Completed</option>
                     <option value="xp_earned">XP Earned</option>
@@ -505,7 +505,7 @@ export default function AdminAchievementsTable() {
 
                 {/* Condition Value */}
                 <div>
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Condition Value
                   </label>
                   <input
@@ -514,13 +514,13 @@ export default function AdminAchievementsTable() {
                     min="1"
                     value={formData.conditionValue}
                     onChange={(e) => setFormData({ ...formData, conditionValue: parseInt(e.target.value) || 1 })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-700"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-muted"
                   />
                 </div>
 
                 {/* XP Reward */}
                 <div>
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     XP Reward
                   </label>
                   <input
@@ -528,13 +528,13 @@ export default function AdminAchievementsTable() {
                     min="0"
                     value={formData.xpReward}
                     onChange={(e) => setFormData({ ...formData, xpReward: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-700"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-muted"
                   />
                 </div>
 
                 {/* Coin Reward */}
                 <div>
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Coin Reward
                   </label>
                   <input
@@ -542,13 +542,13 @@ export default function AdminAchievementsTable() {
                     min="0"
                     value={formData.coinReward}
                     onChange={(e) => setFormData({ ...formData, coinReward: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-700"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-muted"
                   />
                 </div>
 
                 {/* Badge Image (Optional */}
                 <div className="col-span-2">
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Badge Image URL (Optional)
                   </label>
                   <input
@@ -556,19 +556,19 @@ export default function AdminAchievementsTable() {
                     placeholder="https://example.com/badge.png"
                     value={formData.badgeImage}
                     onChange={(e) => setFormData({ ...formData, badgeImage: e.target.value })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-700"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all placeholder:text-muted"
                   />
                 </div>
 
                 {/* Status */}
                 <div>
-                  <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">
+                  <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1.5">
                     Status
                   </label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                    className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all cursor-pointer bg-zinc-950"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all cursor-pointer bg-background"
                   >
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
@@ -577,18 +577,18 @@ export default function AdminAchievementsTable() {
               </div>
 
               {/* Modal Actions */}
-              <div className="pt-4 border-t border-zinc-800 flex justify-end gap-3">
+              <div className="pt-4 border-t border-border flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={handleCancelClose}
-                  className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
+                  className="px-4 py-2 bg-card-secondary hover:bg-card-secondary text-foreground text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-all shadow-lg shadow-yellow-400/10 cursor-pointer"
+                  className="px-4 py-2 bg-accent hover:bg-accent/90 disabled:opacity-50 text-gray-900 text-xs font-bold rounded-lg uppercase tracking-wider transition-all shadow-lg shadow-accent/10 cursor-pointer"
                 >
                   {isSubmitting ? "Saving..." : (editingAchievementId ? "Save Changes" : "Create Achievement")}
                 </button>
@@ -601,7 +601,7 @@ export default function AdminAchievementsTable() {
       {/* Delete Confirmation Modal */}
       {deletingAchievement && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0e0e12] border border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+          <div className="bg-card border border-border rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             {/* Modal Body */}
             <div className="p-6 text-center space-y-4">
               <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto text-red-500">
@@ -611,13 +611,13 @@ export default function AdminAchievementsTable() {
               </div>
 
               <div className="space-y-1">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
                   Delete Achievement
                 </h3>
-                <p className="text-xs text-zinc-400">
+                <p className="text-xs text-muted">
                   Are you sure you want to permanently delete the achievement:
                 </p>
-                <p className="text-sm font-black text-yellow-400 py-1">
+                <p className="text-sm font-black text-accent py-1">
                   {deletingAchievement.title}
                 </p>
                 <p className="text-[10px] text-red-400/80 bg-red-500/5 border border-red-500/10 rounded-lg p-2 max-w-xs mx-auto">
@@ -630,7 +630,7 @@ export default function AdminAchievementsTable() {
                 <button
                   type="button"
                   onClick={() => setDeletingAchievement(null)}
-                  className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
+                  className="px-4 py-2 bg-card-secondary hover:bg-card-secondary text-foreground text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -638,7 +638,7 @@ export default function AdminAchievementsTable() {
                   type="button"
                   onClick={handleDeleteSubmit}
                   disabled={isDeleting}
-                  className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white text-xs font-bold rounded-lg uppercase tracking-wider transition-all shadow-lg shadow-red-500/10 cursor-pointer"
+                  className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-foreground text-xs font-bold rounded-lg uppercase tracking-wider transition-all shadow-lg shadow-red-500/10 cursor-pointer"
                 >
                   {isDeleting ? "Deleting..." : "Permanently Delete"}
                 </button>

@@ -186,22 +186,22 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-45 w-64 bg-[#0a0a0c] border-r border-[#1e1e24] flex flex-col justify-between transition-transform duration-300 transform lg:translate-x-0 lg:static ${
+        className={`fixed top-0 bottom-0 left-0 z-45 w-64 bg-card border-r border-border flex flex-col justify-between transition-transform duration-300 transform lg:translate-x-0 lg:static ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Top Header / Branding */}
         <div>
-          <div className="h-16 px-6 border-b border-[#1e1e24] flex items-center justify-between">
+          <div className="h-16 px-6 border-b border-border flex items-center justify-between">
             <Link href="/app-dashboard" className="flex items-center gap-2">
               <span className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></span>
-              <span className="text-xl font-black text-white tracking-widest uppercase">
-                Level<span className="text-yellow-500">Up</span>
+              <span className="text-xl font-black text-foreground tracking-widest uppercase">
+                Level<span className="text-accent">Up</span>
               </span>
             </Link>
             <button
               onClick={onClose}
-              className="p-1 rounded text-gray-400 hover:text-white lg:hidden focus:outline-none"
+              className="p-1 rounded text-muted hover:text-foreground lg:hidden focus:outline-none"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -217,12 +217,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 return (
                   <div
                     key={index}
-                    className="flex items-center gap-3 px-4 py-3 text-gray-600 rounded-lg cursor-not-allowed select-none"
+                    className="flex items-center gap-3 px-4 py-3 text-muted rounded-lg cursor-not-allowed select-none"
                     title={`${item.name} (Coming soon)`}
                   >
                     {item.icon}
                     <span className="text-sm font-medium">{item.name}</span>
-                    <span className="ml-auto text-[10px] bg-[#1e1e24] text-gray-500 px-1.5 py-0.5 rounded font-semibold uppercase">
+                    <span className="ml-auto text-[10px] bg-card-secondary text-muted px-1.5 py-0.5 rounded font-semibold uppercase">
                       Lock
                     </span>
                   </div>
@@ -236,11 +236,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   onClick={onClose}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all group border-l-2 ${
                     isActive
-                      ? "bg-yellow-500/10 border-yellow-500 text-yellow-500"
-                      : "border-transparent text-gray-400 hover:text-yellow-500 hover:bg-[#121216]"
+                      ? "bg-accent/10 border-accent text-accent"
+                      : "border-transparent text-muted hover:text-accent hover:bg-card-secondary"
                   }`}
                 >
-                  <span className={isActive ? "text-yellow-500" : "text-gray-400 group-hover:text-yellow-500 transition-colors"}>
+                  <span className={isActive ? "text-accent" : "text-muted group-hover:text-accent transition-colors"}>
                     {item.icon}
                   </span>
                   {item.name}
@@ -251,15 +251,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
 
         {/* Bottom / Logout Action */}
-        <div className="p-4 border-t border-[#1e1e24]">
+        <div className="p-4 border-t border-border">
           <button
             onClick={() => {
               onClose();
               logout();
             }}
-            className="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg text-sm font-medium transition-all"
+            className="w-full flex items-center gap-3 px-4 py-3 text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg text-sm font-medium transition-all"
           >
-            <svg className="w-5 h-5 text-gray-400 group-hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-muted group-hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
             Logout

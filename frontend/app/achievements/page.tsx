@@ -58,8 +58,8 @@ function AchievementsPageContent() {
     <DashboardLayout>
       <div className="p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-black text-white">Achievements</h1>
-          <p className="text-gray-400 text-xs lg:text-sm mt-1">
+          <h1 className="text-2xl lg:text-3xl font-black text-foreground">Achievements</h1>
+          <p className="text-muted text-xs lg:text-sm mt-1">
             Track your progress and unlock achievements.
           </p>
         </div>
@@ -73,29 +73,29 @@ function AchievementsPageContent() {
             {achievements.map((item, idx) => (
               <div
                 key={idx}
-                className={`bg-[#0e0e12] border border-[#1e1e24] p-6 rounded-2xl flex flex-col gap-4 ${
+                className={`bg-card border border-border p-6 rounded-2xl flex flex-col gap-4 ${
                   item.unlocked ? "hover:border-yellow-500/20" : "opacity-70"
                 } transition-all`}
               >
                 <div className="flex gap-4">
-                  <span className="w-12 h-12 shrink-0 bg-yellow-500/10 text-yellow-500 flex items-center justify-center rounded-xl text-2xl font-bold">
+                  <span className="w-12 h-12 shrink-0 bg-accent/10 text-accent flex items-center justify-center rounded-xl text-2xl font-bold">
                     {getIconForCondition(item.achievement.conditionType)}
                   </span>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-white">{item.achievement.title}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{item.achievement.description}</p>
+                    <p className="text-sm font-semibold text-foreground">{item.achievement.title}</p>
+                    <p className="text-xs text-muted mt-0.5">{item.achievement.description}</p>
                   </div>
                 </div>
 
                 {!item.unlocked && (
                   <div className="space-y-2">
-                    <div className="flex justify-between text-xs text-gray-400">
+                    <div className="flex justify-between text-xs text-muted">
                       <span>{formatCondition(item.achievement.conditionType, item.achievement.conditionValue)}</span>
                       <span>{item.progress}%</span>
                     </div>
-                    <div className="w-full h-2 bg-[#1e1e24] rounded-full overflow-hidden">
+                    <div className="w-full h-2 bg-card-secondary rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-yellow-500 transition-all duration-300"
+                        className="h-full bg-accent transition-all duration-300"
                         style={{ width: `${item.progress}%` }}
                       />
                     </div>
@@ -103,11 +103,11 @@ function AchievementsPageContent() {
                 )}
 
                 {item.unlocked && (
-                  <div className="flex flex-wrap gap-2 text-xs text-yellow-500">
+                  <div className="flex flex-wrap gap-2 text-xs text-accent">
                     <span>+{item.achievement.xpReward} XP</span>
                     <span>+{item.achievement.coinReward} Coins</span>
                     {item.unlockedAt && (
-                      <span className="text-gray-500 ml-auto">
+                      <span className="text-muted ml-auto">
                         Unlocked {new Date(item.unlockedAt).toLocaleDateString()}
                       </span>
                     )}

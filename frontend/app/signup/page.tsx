@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import AuthCard from "../components/AuthCard";
 import InputField from "../components/InputField";
 import Checkbox from "../components/Checkbox";
+import ThemeToggle from "../components/ThemeToggle";
 
 import {
   PersonIcon,
@@ -87,24 +88,25 @@ function SignupPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#181818] to-[#232323] flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="w-full flex justify-between items-center px-8 py-4">
-        <span className="text-lg font-bold text-yellow-400">
+        <span className="text-lg font-bold text-accent">
           LevelUp Fitness
         </span>
 
-        <div>
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
           <a
             href={selectedRole === "coach" ? "/login?role=coach" : "/login"}
-            className="text-gray-300 mr-6 hover:underline"
+            className="text-foreground mr-6 hover:underline"
           >
             Login
           </a>
 
           <a
             href="/signup"
-            className="bg-yellow-400 text-black px-4 py-1 rounded font-semibold"
+            className="bg-accent text-gray-900 px-4 py-1 rounded font-semibold"
           >
             Join Now
           </a>
@@ -160,13 +162,13 @@ function SignupPageContent() {
             />
 
             <div>
-              <label className="block text-sm text-gray-300 mb-2">
+              <label className="block text-sm text-foreground mb-2">
                 Gender
               </label>
 
               <select
                 {...register("gender")}
-                className="w-full rounded-md bg-[#232323] border border-gray-700 p-3 text-white"
+                className="w-full rounded-md bg-card-secondary border border-border p-3 text-foreground"
               >
                 <option value="">Select Gender</option>
                 <option value="male">Male</option>
@@ -210,14 +212,14 @@ function SignupPageContent() {
                   I agree to the{" "}
                   <a
                     href="#"
-                    className="underline text-yellow-400"
+                    className="underline text-accent"
                   >
                     Terms of Service
                   </a>{" "}
                   and{" "}
                   <a
                     href="#"
-                    className="underline text-yellow-400"
+                    className="underline text-accent"
                   >
                     Privacy Policy
                   </a>
@@ -229,7 +231,7 @@ function SignupPageContent() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded-md transition flex items-center justify-center disabled:opacity-50"
+              className="w-full bg-accent hover:bg-accent/90 text-gray-900 font-semibold py-3 rounded-md transition flex items-center justify-center disabled:opacity-50"
             >
               {isLoading ? "Creating Account..." : "Create Account"}
 
@@ -239,11 +241,11 @@ function SignupPageContent() {
             </button>
           </form>
 
-          <div className="text-center mt-6 text-gray-400 text-sm">
+          <div className="text-center mt-6 text-muted text-sm">
             Already have an account?{" "}
             <a
               href={selectedRole === "coach" ? "/login?role=coach" : "/login"}
-              className="text-yellow-400 hover:underline"
+              className="text-accent hover:underline"
             >
               Login to LevelUp
             </a>

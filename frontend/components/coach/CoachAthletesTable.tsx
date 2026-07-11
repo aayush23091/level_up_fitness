@@ -128,17 +128,17 @@ export default function CoachAthletesTable() {
   return (
     <div className="space-y-6">
       {/* Page Header Section */}
-      <section className="border-b border-zinc-800 pb-5">
-        <h1 className="text-2xl lg:text-3xl font-black text-white uppercase tracking-wider">
+      <section className="border-b border-border pb-5">
+        <h1 className="text-2xl lg:text-3xl font-black text-foreground uppercase tracking-wider">
           Athletes
         </h1>
-        <p className="text-zinc-500 text-xs mt-1">Manage your assigned athletes.</p>
+        <p className="text-muted text-xs mt-1">Manage your assigned athletes.</p>
       </section>
 
       {/* Search Filter Header */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="relative w-full max-w-md">
-          <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+          <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -148,12 +148,12 @@ export default function CoachAthletesTable() {
             placeholder="Search by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-[#121216] border border-zinc-800 hover:border-yellow-500/40 focus:border-yellow-500 text-sm text-white rounded-xl pl-10 pr-4 py-2.5 focus:outline-none transition-all placeholder:text-zinc-600"
+            className="w-full bg-card-secondary border border-border hover:border-accent/40 focus:border-accent text-sm text-foreground rounded-xl pl-10 pr-4 py-2.5 focus:outline-none transition-all placeholder:text-muted"
           />
           {searchTerm && (
             <button
               onClick={() => setSearchTerm("")}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-500 hover:text-white"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted hover:text-foreground"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -164,8 +164,8 @@ export default function CoachAthletesTable() {
 
         <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
           {totalAthletes > 0 && (
-            <span className="text-xs text-zinc-500 font-bold uppercase tracking-wider bg-zinc-900 px-3 py-1.5 border border-zinc-800 rounded-xl">
-              Total Athletes: <span className="text-yellow-400">{totalAthletes}</span>
+            <span className="text-xs text-muted font-bold uppercase tracking-wider bg-card-secondary px-3 py-1.5 border border-border rounded-xl">
+              Total Athletes: <span className="text-accent">{totalAthletes}</span>
             </span>
           )}
         </div>
@@ -188,11 +188,11 @@ export default function CoachAthletesTable() {
       )}
 
       {/* Main Table View */}
-      <div className="bg-[#0e0e12] border border-zinc-800/80 rounded-2xl overflow-hidden shadow-2xl relative">
+      <div className="bg-card border border-border/80 rounded-2xl overflow-hidden shadow-2xl relative">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-zinc-900/50 border-b border-zinc-800 text-[10px] font-black uppercase tracking-wider text-zinc-400">
+              <tr className="bg-card-secondary/50 border-b border-border text-[10px] font-black uppercase tracking-wider text-muted">
                 <th className="px-6 py-4">Avatar</th>
                 <th className="px-6 py-4">Name</th>
                 <th className="px-6 py-4">Username</th>
@@ -203,37 +203,37 @@ export default function CoachAthletesTable() {
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-900/60 text-sm">
+            <tbody className="divide-y divide-border/60 text-sm">
               {loading ? (
                 // Loading Skeleton Rows
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
                     <td className="px-6 py-4">
-                      <div className="w-9 h-9 rounded-full bg-zinc-800/60 shrink-0"></div>
+                      <div className="w-9 h-9 rounded-full bg-card-secondary/60 shrink-0"></div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="space-y-2">
-                        <div className="h-4 bg-zinc-800/60 rounded w-24"></div>
-                        <div className="h-3 bg-zinc-800/60 rounded w-16"></div>
+                        <div className="h-4 bg-card-secondary/60 rounded w-24"></div>
+                        <div className="h-3 bg-card-secondary/60 rounded w-16"></div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-20"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-20"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-12"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-12"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-12"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-12"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-6 bg-zinc-800/60 rounded-full w-16"></div>
+                      <div className="h-6 bg-card-secondary/60 rounded-full w-16"></div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="h-4 bg-zinc-800/60 rounded w-20"></div>
+                      <div className="h-4 bg-card-secondary/60 rounded w-20"></div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="h-8 bg-zinc-800/60 rounded w-8 ml-auto"></div>
+                      <div className="h-8 bg-card-secondary/60 rounded w-8 ml-auto"></div>
                     </td>
                   </tr>
                 ))
@@ -243,8 +243,8 @@ export default function CoachAthletesTable() {
                   <td colSpan={8} className="px-6 py-12 text-center">
                     <div className="space-y-3">
                       <span className="text-3xl">👥</span>
-                      <h4 className="text-sm font-bold text-white uppercase tracking-wider">No athletes found</h4>
-                      <p className="text-xs text-zinc-500 max-w-xs mx-auto">
+                      <h4 className="text-sm font-bold text-foreground uppercase tracking-wider">No athletes found</h4>
+                      <p className="text-xs text-muted max-w-xs mx-auto">
                         We couldn't find any athletes matching your current filters or search term.
                       </p>
                     </div>
@@ -255,7 +255,7 @@ export default function CoachAthletesTable() {
                 athletes.map((athlete) => {
                   const athleteIdStr = athlete._id || athlete.id || "";
                   return (
-                    <tr key={athleteIdStr} className="hover:bg-zinc-900/20 transition-colors group">
+                    <tr key={athleteIdStr} className="hover:bg-card-secondary/20 transition-colors group">
                       <td className="px-6 py-4">
                         {athlete.profilePhoto ? (
                           <img
@@ -265,28 +265,28 @@ export default function CoachAthletesTable() {
                                 : `http://localhost:5000${athlete.profilePhoto}`
                             }
                             alt={athlete.name}
-                            className="w-9 h-9 rounded-full object-cover border border-zinc-800 group-hover:border-yellow-500/30 transition-all shrink-0"
+                            className="w-9 h-9 rounded-full object-cover border border-border group-hover:border-accent/30 transition-all shrink-0"
                           />
                         ) : (
-                          <div className="w-9 h-9 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700/30 group-hover:border-yellow-500/30 flex items-center justify-center text-xs font-bold font-mono tracking-wider transition-all shrink-0">
+                          <div className="w-9 h-9 rounded-full bg-card-secondary text-muted border border-border/30 group-hover:border-accent/30 flex items-center justify-center text-xs font-bold font-mono tracking-wider transition-all shrink-0">
                             {getInitials(athlete.name)}
                           </div>
                         )}
                       </td>
                       <td className="px-6 py-4">
                         <div>
-                          <p className="font-bold text-white group-hover:text-yellow-400 transition-colors">
+                          <p className="font-bold text-foreground group-hover:text-accent transition-colors">
                             {athlete.name}
                           </p>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-zinc-300 font-medium text-xs">
+                      <td className="px-6 py-4 text-foreground font-medium text-xs">
                         @{athlete.username || "username"}
                       </td>
-                      <td className="px-6 py-4 text-zinc-300 font-medium text-xs">
+                      <td className="px-6 py-4 text-foreground font-medium text-xs">
                         {athlete.level || 0}
                       </td>
-                      <td className="px-6 py-4 text-zinc-300 font-medium text-xs">
+                      <td className="px-6 py-4 text-foreground font-medium text-xs">
                         {athlete.xp || 0}
                       </td>
                       <td className="px-6 py-4">
@@ -295,14 +295,14 @@ export default function CoachAthletesTable() {
                           {(athlete as any).status || "active"}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-zinc-400 text-xs">
+                      <td className="px-6 py-4 text-muted text-xs">
                         {formatDate((athlete as any).hiredAt)}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => openAssignModal(athlete)}
-                            className="p-1.5 text-zinc-500 hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-all cursor-pointer"
+                            className="p-1.5 text-muted hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-all cursor-pointer"
                             title="Assign Workout Plan"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -311,7 +311,7 @@ export default function CoachAthletesTable() {
                           </button>
                           <button
                             onClick={() => setViewingAthlete(athlete)}
-                            className="p-1.5 text-zinc-500 hover:text-yellow-400 hover:bg-[#121216]/80 rounded-lg transition-all cursor-pointer"
+                            className="p-1.5 text-muted hover:text-accent hover:bg-card-secondary/80 rounded-lg transition-all cursor-pointer"
                             title="View Athlete Profile"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -331,23 +331,23 @@ export default function CoachAthletesTable() {
 
         {/* Pagination Section Footer */}
         {!loading && totalPages > 1 && (
-          <div className="bg-zinc-900/30 border-t border-zinc-800 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span className="text-xs text-zinc-500">
-              Showing page <span className="text-white font-semibold">{page}</span> of{" "}
-              <span className="text-white font-semibold">{totalPages}</span>
+          <div className="bg-card-secondary/30 border-t border-border px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-xs text-muted">
+              Showing page <span className="text-foreground font-semibold">{page}</span> of{" "}
+              <span className="text-foreground font-semibold">{totalPages}</span>
             </span>
             <div className="flex items-center gap-2">
               <button
                 disabled={page <= 1}
                 onClick={() => setPage(page - 1)}
-                className="px-3.5 py-1.5 bg-[#121216] border border-zinc-800 hover:border-yellow-500/40 disabled:opacity-30 disabled:hover:border-zinc-800 text-zinc-400 hover:text-white disabled:hover:text-zinc-400 text-xs font-bold rounded-lg uppercase tracking-wider transition-all disabled:cursor-not-allowed"
+                className="px-3.5 py-1.5 bg-card-secondary border border-border hover:border-accent/40 disabled:opacity-30 disabled:hover:border-border text-muted hover:text-foreground disabled:hover:text-muted text-xs font-bold rounded-lg uppercase tracking-wider transition-all disabled:cursor-not-allowed"
               >
                 Previous
               </button>
               <button
                 disabled={page >= totalPages}
                 onClick={() => setPage(page + 1)}
-                className="px-3.5 py-1.5 bg-[#121216] border border-zinc-800 hover:border-yellow-500/40 disabled:opacity-30 disabled:hover:border-zinc-800 text-zinc-400 hover:text-white disabled:hover:text-zinc-400 text-xs font-bold rounded-lg uppercase tracking-wider transition-all disabled:cursor-not-allowed"
+                className="px-3.5 py-1.5 bg-card-secondary border border-border hover:border-accent/40 disabled:opacity-30 disabled:hover:border-border text-muted hover:text-foreground disabled:hover:text-muted text-xs font-bold rounded-lg uppercase tracking-wider transition-all disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -359,16 +359,16 @@ export default function CoachAthletesTable() {
       {/* Read-Only View Athlete Details Modal */}
       {viewingAthlete && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0e0e12] border border-zinc-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+          <div className="bg-card border border-border rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/40">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+            <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-card-secondary/40">
+              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
                 Athlete Profile Details
               </h3>
               <button
                 type="button"
                 onClick={() => setViewingAthlete(null)}
-                className="p-1 rounded text-zinc-500 hover:text-white hover:bg-zinc-800 transition-all focus:outline-none cursor-pointer"
+                className="p-1 rounded text-muted hover:text-foreground hover:bg-card-secondary transition-all focus:outline-none cursor-pointer"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -379,7 +379,7 @@ export default function CoachAthletesTable() {
             {/* Modal Body */}
             <div className="p-6 space-y-6">
               {/* Profile Photo Display */}
-              <div className="flex flex-col items-center gap-2 pb-4 border-b border-zinc-900">
+              <div className="flex flex-col items-center gap-2 pb-4 border-b border-border">
                 {viewingAthlete.profilePhoto ? (
                   <img
                     src={
@@ -388,52 +388,52 @@ export default function CoachAthletesTable() {
                         : `http://localhost:5000${viewingAthlete.profilePhoto}`
                     }
                     alt={viewingAthlete.name}
-                    className="w-24 h-24 rounded-full object-cover border-2 border-yellow-400/40"
+                    className="w-24 h-24 rounded-full object-cover border-2 border-accent/40"
                   />
                 ) : (
-                  <div className="w-24 h-24 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700/50 flex items-center justify-center text-2xl font-bold font-mono">
+                  <div className="w-24 h-24 rounded-full bg-card-secondary text-muted border border-border/50 flex items-center justify-center text-2xl font-bold font-mono">
                     {getInitials(viewingAthlete.name)}
                   </div>
                 )}
-                <h4 className="text-lg font-black text-white mt-2">{viewingAthlete.name}</h4>
-                <p className="text-xs text-yellow-400 font-mono">@{viewingAthlete.username}</p>
+                <h4 className="text-lg font-black text-foreground mt-2">{viewingAthlete.name}</h4>
+                <p className="text-xs text-accent font-mono">@{viewingAthlete.username}</p>
               </div>
 
               {/* Data Grid */}
               <div className="grid grid-cols-2 gap-4 text-xs">
                 <div>
-                  <span className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">
+                  <span className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1">
                     Level
                   </span>
-                  <p className="text-sm text-zinc-100 bg-[#121216] border border-zinc-900 rounded-xl px-4 py-2.5">
+                  <p className="text-sm text-foreground bg-card-secondary border border-border rounded-xl px-4 py-2.5">
                     {viewingAthlete.level || 0}
                   </p>
                 </div>
 
                 <div>
-                  <span className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">
+                  <span className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1">
                     XP
                   </span>
-                  <p className="text-sm text-zinc-100 bg-[#121216] border border-zinc-900 rounded-xl px-4 py-2.5">
+                  <p className="text-sm text-foreground bg-card-secondary border border-border rounded-xl px-4 py-2.5">
                     {viewingAthlete.xp || 0}
                   </p>
                 </div>
 
                 <div>
-                  <span className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">
+                  <span className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1">
                     Status
                   </span>
-                  <div className="text-sm text-zinc-100 bg-[#121216] border border-zinc-900 rounded-xl px-4 py-2 flex items-center gap-1.5">
+                  <div className="text-sm text-foreground bg-card-secondary border border-border rounded-xl px-4 py-2 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                     <span>{(viewingAthlete as any).status || "active"}</span>
                   </div>
                 </div>
 
                 <div>
-                  <span className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">
+                  <span className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-1">
                     Hired Date
                   </span>
-                  <p className="text-sm text-zinc-100 bg-[#121216] border border-zinc-900 rounded-xl px-4 py-2.5">
+                  <p className="text-sm text-foreground bg-card-secondary border border-border rounded-xl px-4 py-2.5">
                     {formatDate((viewingAthlete as any).hiredAt)}
                   </p>
                 </div>
@@ -441,11 +441,11 @@ export default function CoachAthletesTable() {
             </div>
 
             {/* Modal Actions */}
-            <div className="px-6 py-4 border-t border-zinc-800 flex justify-end bg-zinc-900/20">
+            <div className="px-6 py-4 border-t border-border flex justify-end bg-card-secondary/20">
               <button
                 type="button"
                 onClick={() => setViewingAthlete(null)}
-                className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
+                className="px-4 py-2 bg-card-secondary hover:bg-card-secondary text-foreground text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
               >
                 Close
               </button>
@@ -457,16 +457,16 @@ export default function CoachAthletesTable() {
       {/* Assign Workout Plan Modal */}
       {isAssignModalOpen && selectedAthlete && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0e0e12] border border-zinc-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+          <div className="bg-card border border-border rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/40">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+            <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-card-secondary/40">
+              <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
                 Assign Workout Plan
               </h3>
               <button
                 type="button"
                 onClick={() => setIsAssignModalOpen(false)}
-                className="p-1 rounded text-zinc-500 hover:text-white hover:bg-zinc-800 transition-all focus:outline-none cursor-pointer"
+                className="p-1 rounded text-muted hover:text-foreground hover:bg-card-secondary transition-all focus:outline-none cursor-pointer"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -476,7 +476,7 @@ export default function CoachAthletesTable() {
 
             {/* Modal Body */}
             <div className="p-6 space-y-4">
-              <div className="flex items-center gap-3 pb-4 border-b border-zinc-900">
+              <div className="flex items-center gap-3 pb-4 border-b border-border">
                 {selectedAthlete.profilePhoto ? (
                   <img
                     src={
@@ -485,27 +485,27 @@ export default function CoachAthletesTable() {
                         : `http://localhost:5000${selectedAthlete.profilePhoto}`
                     }
                     alt={selectedAthlete.name}
-                    className="w-12 h-12 rounded-full object-cover border border-zinc-800"
+                    className="w-12 h-12 rounded-full object-cover border border-border"
                   />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700/30 flex items-center justify-center text-sm font-bold font-mono">
+                  <div className="w-12 h-12 rounded-full bg-card-secondary text-muted border border-border/30 flex items-center justify-center text-sm font-bold font-mono">
                     {getInitials(selectedAthlete.name)}
                   </div>
                 )}
                 <div>
-                  <p className="text-sm font-bold text-white">{selectedAthlete.name}</p>
-                  <p className="text-xs text-zinc-500">@{selectedAthlete.username}</p>
+                  <p className="text-sm font-bold text-foreground">{selectedAthlete.name}</p>
+                  <p className="text-xs text-muted">@{selectedAthlete.username}</p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">
+                <label className="block text-[10px] font-bold text-muted uppercase tracking-wider mb-2">
                   Select Workout Plan
                 </label>
                 <select
                   value={selectedWorkoutPlan}
                   onChange={(e) => setSelectedWorkoutPlan(e.target.value)}
-                  className="w-full bg-[#121216] border border-zinc-800 focus:border-yellow-500 text-xs text-white rounded-xl px-4 py-3 focus:outline-none transition-all cursor-pointer"
+                  className="w-full bg-card-secondary border border-border focus:border-accent text-xs text-foreground rounded-xl px-4 py-3 focus:outline-none transition-all cursor-pointer"
                 >
                   <option value="">Choose a workout plan...</option>
                   {publishedWorkoutPlans.map((plan) => (
@@ -524,11 +524,11 @@ export default function CoachAthletesTable() {
             </div>
 
             {/* Modal Actions */}
-            <div className="px-6 py-4 border-t border-zinc-800 flex justify-end gap-3 bg-zinc-900/20">
+            <div className="px-6 py-4 border-t border-border flex justify-end gap-3 bg-card-secondary/20">
               <button
                 type="button"
                 onClick={() => setIsAssignModalOpen(false)}
-                className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
+                className="px-4 py-2 bg-card-secondary hover:bg-card-secondary text-foreground text-xs font-bold rounded-lg uppercase tracking-wider transition-all cursor-pointer"
               >
                 Cancel
               </button>
@@ -536,7 +536,7 @@ export default function CoachAthletesTable() {
                 type="button"
                 onClick={handleAssignWorkoutPlan}
                 disabled={isAssigning || !selectedWorkoutPlan}
-                className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-accent hover:bg-accent/90 text-gray-900 text-xs font-bold rounded-lg uppercase tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isAssigning ? "Assigning..." : "Assign Plan"}
               </button>

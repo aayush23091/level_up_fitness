@@ -210,15 +210,15 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-card-secondary border border-border rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="p-6 border-b border-zinc-800 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white">
+        <div className="p-6 border-b border-border flex items-center justify-between">
+          <h2 className="text-lg font-bold text-foreground">
             {editWorkoutPlan ? "Edit Workout Plan" : "Create Workout Plan"}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
+            className="p-2 text-muted hover:text-foreground hover:bg-card-secondary rounded-lg transition-colors"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -230,7 +230,7 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Cover Image */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-yellow-400 uppercase tracking-wider">Workout Cover Image</h3>
+            <h3 className="text-sm font-bold text-accent uppercase tracking-wider">Workout Cover Image</h3>
             
             {formData.coverImage ? (
               <div className="relative group">
@@ -241,11 +241,11 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
                       : (formData.coverImage as any).__previewUrl || URL.createObjectURL(formData.coverImage as File)
                   }
                   alt="Workout cover"
-                  className="w-full h-48 object-cover rounded-xl border border-zinc-800"
+                  className="w-full h-48 object-cover rounded-xl border border-border"
                 />
                 <button
                   onClick={handleRemoveCoverImage}
-                  className="absolute top-2 right-2 p-2 bg-red-500/80 hover:bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute top-2 right-2 p-2 bg-red-500/80 hover:bg-red-600 text-foreground rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -253,7 +253,7 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
                 </button>
               </div>
             ) : (
-              <div className="border-2 border-dashed border-zinc-800 rounded-xl p-8 text-center hover:border-yellow-500/40 transition-colors">
+              <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-accent/40 transition-colors">
                 <input
                   type="file"
                   accept="image/*"
@@ -265,11 +265,11 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
                   htmlFor="coverImageInput"
                   className="cursor-pointer flex flex-col items-center gap-3"
                 >
-                  <svg className="w-8 h-8 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-8 h-8 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <span className="text-sm text-zinc-400">Click to upload cover image</span>
-                  <span className="text-xs text-zinc-600">PNG, JPG up to 5MB</span>
+                  <span className="text-sm text-muted">Click to upload cover image</span>
+                  <span className="text-xs text-muted">PNG, JPG up to 5MB</span>
                 </label>
               </div>
             )}
@@ -277,27 +277,27 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
 
           {/* Basic Info */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-yellow-400 uppercase tracking-wider">Basic Information</h3>
+            <h3 className="text-sm font-bold text-accent uppercase tracking-wider">Basic Information</h3>
             
             <div>
-              <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Title</label>
+              <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">Title</label>
               <input
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className={`w-full bg-zinc-950 border ${formErrors.title ? 'border-red-500' : 'border-zinc-800'} focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all`}
+                className={`w-full bg-background border ${formErrors.title ? 'border-red-500' : 'border-border'} focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all`}
                 placeholder="Enter workout title"
               />
               {formErrors.title && <p className="text-red-400 text-xs mt-1">{formErrors.title}</p>}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Description</label>
+              <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">Description</label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
-                className={`w-full bg-zinc-950 border ${formErrors.description ? 'border-red-500' : 'border-zinc-800'} focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all resize-none`}
+                className={`w-full bg-background border ${formErrors.description ? 'border-red-500' : 'border-border'} focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all resize-none`}
                 placeholder="Enter workout description"
               />
               {formErrors.description && <p className="text-red-400 text-xs mt-1">{formErrors.description}</p>}
@@ -305,11 +305,11 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Difficulty</label>
+                <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">Difficulty</label>
                 <select
                   value={formData.difficulty}
                   onChange={(e) => setFormData({ ...formData, difficulty: e.target.value as any })}
-                  className={`w-full bg-zinc-950 border ${formErrors.difficulty ? 'border-red-500' : 'border-zinc-800'} focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all cursor-pointer`}
+                  className={`w-full bg-background border ${formErrors.difficulty ? 'border-red-500' : 'border-border'} focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all cursor-pointer`}
                 >
                   <option value="Beginner">Beginner</option>
                   <option value="Intermediate">Intermediate</option>
@@ -318,13 +318,13 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Estimated Duration (minutes)</label>
+                <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">Estimated Duration (minutes)</label>
                 <input
                   type="number"
                   value={formData.estimatedDuration}
                   onChange={(e) => setFormData({ ...formData, estimatedDuration: parseInt(e.target.value) || 0 })}
                   min="1"
-                  className={`w-full bg-zinc-950 border ${formErrors.estimatedDuration ? 'border-red-500' : 'border-zinc-800'} focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all`}
+                  className={`w-full bg-background border ${formErrors.estimatedDuration ? 'border-red-500' : 'border-border'} focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all`}
                   placeholder="30"
                 />
                 {formErrors.estimatedDuration && <p className="text-red-400 text-xs mt-1">{formErrors.estimatedDuration}</p>}
@@ -334,12 +334,12 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
 
           {/* Exercise Form */}
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-yellow-400 uppercase tracking-wider">Add Exercises</h3>
+            <h3 className="text-sm font-bold text-accent uppercase tracking-wider">Add Exercises</h3>
 
             {!showExerciseForm ? (
               <button
                 onClick={() => setShowExerciseForm(true)}
-                className="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 hover:border-yellow-500/40 text-zinc-400 hover:text-white text-sm font-semibold rounded-xl uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                className="w-full px-4 py-3 bg-background border border-border hover:border-accent/40 text-muted hover:text-foreground text-sm font-semibold rounded-xl uppercase tracking-wider transition-all flex items-center justify-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -347,26 +347,26 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
                 Add Exercise
               </button>
             ) : (
-              <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 space-y-4">
+              <div className="bg-background border border-border rounded-xl p-4 space-y-4">
                 {/* Exercise Name */}
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Exercise Name</label>
+                  <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">Exercise Name</label>
                   <input
                     type="text"
                     value={exerciseForm.exerciseName}
                     onChange={(e) => setExerciseForm({ ...exerciseForm, exerciseName: e.target.value })}
-                    className="w-full bg-zinc-900 border border-zinc-700 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all"
                     placeholder="e.g., Bench Press"
                   />
                 </div>
 
                 {/* Category Dropdown */}
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Category</label>
+                  <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-2">Category</label>
                   <select
                     value={exerciseForm.category}
                     onChange={(e) => setExerciseForm({ ...exerciseForm, category: e.target.value })}
-                    className="w-full bg-zinc-900 border border-zinc-700 focus:border-yellow-500 text-sm text-white rounded-xl px-4 py-2.5 focus:outline-none transition-all cursor-pointer"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-xl px-4 py-2.5 focus:outline-none transition-all cursor-pointer"
                   >
                     <option value="Chest">Chest</option>
                     <option value="Back">Back</option>
@@ -383,45 +383,45 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
                 {/* Sets, Reps, Rest */}
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Sets</label>
+                    <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1">Sets</label>
                     <input
                       type="number"
                       value={exerciseForm.sets}
                       onChange={(e) => setExerciseForm({ ...exerciseForm, sets: parseInt(e.target.value) || 1 })}
                       min="1"
-                      className="w-full bg-zinc-900 border border-zinc-700 focus:border-yellow-500 text-sm text-white rounded-lg px-3 py-2 focus:outline-none transition-all"
+                      className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-lg px-3 py-2 focus:outline-none transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Reps</label>
+                    <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1">Reps</label>
                     <input
                       type="text"
                       value={exerciseForm.reps}
                       onChange={(e) => setExerciseForm({ ...exerciseForm, reps: e.target.value })}
-                      className="w-full bg-zinc-900 border border-zinc-700 focus:border-yellow-500 text-sm text-white rounded-lg px-3 py-2 focus:outline-none transition-all"
+                      className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-lg px-3 py-2 focus:outline-none transition-all"
                       placeholder="10-12"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Rest (sec)</label>
+                    <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1">Rest (sec)</label>
                     <input
                       type="number"
                       value={exerciseForm.restSeconds}
                       onChange={(e) => setExerciseForm({ ...exerciseForm, restSeconds: parseInt(e.target.value) || 0 })}
                       min="0"
-                      className="w-full bg-zinc-900 border border-zinc-700 focus:border-yellow-500 text-sm text-white rounded-lg px-3 py-2 focus:outline-none transition-all"
+                      className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-lg px-3 py-2 focus:outline-none transition-all"
                     />
                   </div>
                 </div>
 
                 {/* Notes */}
                 <div>
-                  <label className="block text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Notes (optional)</label>
+                  <label className="block text-xs font-semibold text-muted uppercase tracking-wider mb-1">Notes (optional)</label>
                   <textarea
                     value={exerciseForm.notes}
                     onChange={(e) => setExerciseForm({ ...exerciseForm, notes: e.target.value })}
                     rows={2}
-                    className="w-full bg-zinc-900 border border-zinc-700 focus:border-yellow-500 text-sm text-white rounded-lg px-3 py-2 focus:outline-none transition-all resize-none"
+                    className="w-full bg-card-secondary border border-border focus:border-accent text-sm text-foreground rounded-lg px-3 py-2 focus:outline-none transition-all resize-none"
                     placeholder="Form cues, tips, etc."
                   />
                 </div>
@@ -430,7 +430,7 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
                 <div className="flex gap-2">
                   <button
                     onClick={handleAddExercise}
-                    className="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold rounded-lg uppercase tracking-wider transition-colors"
+                    className="flex-1 px-4 py-2 bg-accent hover:bg-accent/90 text-gray-900 text-xs font-bold rounded-lg uppercase tracking-wider transition-colors"
                   >
                     Add to Workout
                   </button>
@@ -439,7 +439,7 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
                       setExerciseForm(INITIAL_EXERCISE_FORM);
                       setShowExerciseForm(false);
                     }}
-                    className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white text-xs font-bold rounded-lg uppercase tracking-wider transition-colors"
+                    className="px-4 py-2 bg-card-secondary hover:bg-card-secondary text-muted hover:text-foreground text-xs font-bold rounded-lg uppercase tracking-wider transition-colors"
                   >
                     Cancel
                   </button>
@@ -451,21 +451,21 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
           {/* Exercise List */}
           {formData.exercises.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-yellow-400 uppercase tracking-wider">
+              <h3 className="text-sm font-bold text-accent uppercase tracking-wider">
                 Exercises ({formData.exercises.length})
               </h3>
               <div className="space-y-3">
                 {formData.exercises.map((exercise, index) => (
-                  <div key={index} className="bg-zinc-950 border border-zinc-800 rounded-xl p-4">
+                  <div key={index} className="bg-background border border-border rounded-xl p-4">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 space-y-3">
                         <div className="flex items-center gap-3">
-                          <span className="w-6 h-6 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-bold flex items-center justify-center">
+                          <span className="w-6 h-6 rounded-full bg-accent/20 text-accent text-xs font-bold flex items-center justify-center">
                             {index + 1}
                           </span>
                           <div>
-                            <p className="font-semibold text-white text-sm">{exercise.exerciseName}</p>
-                            <p className="text-xs text-zinc-500">
+                            <p className="font-semibold text-foreground text-sm">{exercise.exerciseName}</p>
+                            <p className="text-xs text-muted">
                               {exercise.category}
                             </p>
                           </div>
@@ -473,41 +473,41 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
 
                         <div className="grid grid-cols-4 gap-3">
                           <div>
-                            <label className="block text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1">Sets</label>
+                            <label className="block text-[10px] font-semibold text-muted uppercase tracking-wider mb-1">Sets</label>
                             <input
                               type="number"
                               value={exercise.sets}
                               onChange={(e) => handleUpdateExercise(index, "sets", parseInt(e.target.value) || 1)}
                               min="1"
-                              className="w-full bg-zinc-900 border border-zinc-700 focus:border-yellow-500 text-xs text-white rounded-lg px-2 py-1.5 focus:outline-none transition-all"
+                              className="w-full bg-card-secondary border border-border focus:border-accent text-xs text-foreground rounded-lg px-2 py-1.5 focus:outline-none transition-all"
                             />
                           </div>
                           <div>
-                            <label className="block text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1">Reps</label>
+                            <label className="block text-[10px] font-semibold text-muted uppercase tracking-wider mb-1">Reps</label>
                             <input
                               type="text"
                               value={exercise.reps}
                               onChange={(e) => handleUpdateExercise(index, "reps", e.target.value)}
-                              className="w-full bg-zinc-900 border border-zinc-700 focus:border-yellow-500 text-xs text-white rounded-lg px-2 py-1.5 focus:outline-none transition-all"
+                              className="w-full bg-card-secondary border border-border focus:border-accent text-xs text-foreground rounded-lg px-2 py-1.5 focus:outline-none transition-all"
                             />
                           </div>
                           <div>
-                            <label className="block text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1">Rest (sec)</label>
+                            <label className="block text-[10px] font-semibold text-muted uppercase tracking-wider mb-1">Rest (sec)</label>
                             <input
                               type="number"
                               value={exercise.restSeconds}
                               onChange={(e) => handleUpdateExercise(index, "restSeconds", parseInt(e.target.value) || 0)}
                               min="0"
-                              className="w-full bg-zinc-900 border border-zinc-700 focus:border-yellow-500 text-xs text-white rounded-lg px-2 py-1.5 focus:outline-none transition-all"
+                              className="w-full bg-card-secondary border border-border focus:border-accent text-xs text-foreground rounded-lg px-2 py-1.5 focus:outline-none transition-all"
                             />
                           </div>
                           <div>
-                            <label className="block text-[10px] font-semibold text-zinc-500 uppercase tracking-wider mb-1">Notes</label>
+                            <label className="block text-[10px] font-semibold text-muted uppercase tracking-wider mb-1">Notes</label>
                             <input
                               type="text"
                               value={exercise.notes || ""}
                               onChange={(e) => handleUpdateExercise(index, "notes", e.target.value)}
-                              className="w-full bg-zinc-900 border border-zinc-700 focus:border-yellow-500 text-xs text-white rounded-lg px-2 py-1.5 focus:outline-none transition-all"
+                              className="w-full bg-card-secondary border border-border focus:border-accent text-xs text-foreground rounded-lg px-2 py-1.5 focus:outline-none transition-all"
                             />
                           </div>
                         </div>
@@ -517,7 +517,7 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
                         <button
                           onClick={() => handleMoveExercise(index, "up")}
                           disabled={index === 0}
-                          className="p-1.5 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors disabled:opacity-30 disabled:hover:text-zinc-500 disabled:hover:bg-transparent"
+                          className="p-1.5 text-muted hover:text-foreground hover:bg-card-secondary rounded-lg transition-colors disabled:opacity-30 disabled:hover:text-muted disabled:hover:bg-transparent"
                           title="Move Up"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -527,7 +527,7 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
                         <button
                           onClick={() => handleMoveExercise(index, "down")}
                           disabled={index === formData.exercises.length - 1}
-                          className="p-1.5 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors disabled:opacity-30 disabled:hover:text-zinc-500 disabled:hover:bg-transparent"
+                          className="p-1.5 text-muted hover:text-foreground hover:bg-card-secondary rounded-lg transition-colors disabled:opacity-30 disabled:hover:text-muted disabled:hover:bg-transparent"
                           title="Move Down"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -536,7 +536,7 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
                         </button>
                         <button
                           onClick={() => handleRemoveExercise(index)}
-                          className="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                          className="p-1.5 text-muted hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                           title="Remove"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -553,24 +553,24 @@ export default function WorkoutBuilderModal({ isOpen, onClose, onSuccess, editWo
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-zinc-800 flex gap-3">
+        <div className="p-6 border-t border-border flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-white text-xs font-bold rounded-xl uppercase tracking-wider transition-all"
+            className="flex-1 px-4 py-2.5 bg-background border border-border hover:border-accent/40 text-muted hover:text-foreground text-xs font-bold rounded-xl uppercase tracking-wider transition-all"
           >
             Cancel
           </button>
           <button
             onClick={() => handleSave("Draft")}
             disabled={isSubmitting || formData.exercises.length === 0}
-            className="flex-1 px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold rounded-xl uppercase tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-2.5 bg-card-secondary hover:bg-card-secondary text-foreground text-xs font-bold rounded-xl uppercase tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Saving..." : "Save as Draft"}
           </button>
           <button
             onClick={() => handleSave("Published")}
             disabled={isSubmitting || formData.exercises.length === 0}
-            className="flex-1 px-4 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold rounded-xl uppercase tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-2.5 bg-accent hover:bg-accent/90 text-gray-900 text-xs font-bold rounded-xl uppercase tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Publishing..." : "Publish Workout"}
           </button>
