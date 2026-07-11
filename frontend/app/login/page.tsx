@@ -9,6 +9,7 @@ import AuthCard from "../components/AuthCard";
 import InputField from "../components/InputField";
 import SocialButton from "../components/SocialButton";
 import ThemeToggle from "../components/ThemeToggle";
+import Logo from "@/components/Logo";
 import { MailIcon, LockIcon } from "../components/Icons";
 
 import { loginSchema, type LoginFormData } from "@/lib/validations";
@@ -67,9 +68,7 @@ const LoginPageContent = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="w-full flex justify-between items-center px-8 py-8">
-        <span className="text-2xl font-bold text-accent">
-          LevelUp Fitness
-        </span>
+        <Logo size="large" />
         <ThemeToggle />
       </header>
 

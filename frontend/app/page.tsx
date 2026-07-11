@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import LandingNavbar from "./components/LandingNavbar";
+import Logo from "@/components/Logo";
 
 export default function LandingPage() {
   return (
@@ -193,15 +194,7 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center flex-shrink-0">
-                      <span className="text-accent">👥</span>
-                    </div>
-                    <div>
-                      <h3 className="text-foreground font-semibold text-lg mb-1">Smart Community Challenges</h3>
-                      <p className="text-muted">Compete with friends and join global fitness challenges.</p>
-                    </div>
-                  </div>
+                  
 
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center flex-shrink-0">
@@ -299,10 +292,7 @@ export default function LandingPage() {
             <div className="grid md:grid-cols-2 gap-12">
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center">
-                    <span className="text-gray-900 font-bold">L</span>
-                  </div>
-                  <span className="text-foreground font-bold">LevelUp Fitness</span>
+                  <Logo size="small" />
                 </div>
                 <p className="text-muted text-sm">
                   Your personal fitness journey platform.

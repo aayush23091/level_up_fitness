@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
+import Logo from "@/components/Logo";
 
 interface CoachSidebarProps {
   isOpen: boolean;
@@ -117,6 +118,13 @@ export default function CoachSidebar({ isOpen, onClose }: CoachSidebarProps) {
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
+        {/* Branding */}
+        <div className="h-16 px-6 flex items-center border-b border-border">
+          <Link href="/coach-dashboard" className="flex items-center">
+            <Logo size="medium" />
+          </Link>
+        </div>
+
         <div className="pt-6 overflow-y-auto">
           <nav className="space-y-1">
             {menuItems.map((item) => {

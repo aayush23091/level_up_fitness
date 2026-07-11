@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
+import Logo from "@/components/Logo";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -193,11 +194,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         {/* Top Header / Branding */}
         <div>
           <div className="h-16 px-6 border-b border-border flex items-center justify-between">
-            <Link href="/app-dashboard" className="flex items-center gap-2">
-              <span className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></span>
-              <span className="text-xl font-black text-foreground tracking-widest uppercase">
-                Level<span className="text-accent">Up</span>
-              </span>
+            <Link href="/app-dashboard" className="flex items-center">
+              <Logo size="medium" />
             </Link>
             <button
               onClick={onClose}

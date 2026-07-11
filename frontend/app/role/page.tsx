@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ThemeToggle from "../components/ThemeToggle";
+import Logo from "@/components/Logo";
 
 export const metadata: Metadata = {
   title: "Select Role | LevelUp Fitness",
@@ -23,9 +24,9 @@ export default function RoleSelectionPage() {
       <main className="relative z-10 flex-1 flex flex-col justify-center items-center px-6 py-16 max-w-6xl mx-auto w-full">
         {/* Header Section */}
         <header className="text-center mb-12 lg:mb-16 space-y-4">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-wider text-foreground">
-            LEVELUP <span className="text-accent drop-shadow-[0_0_15px_rgba(234,179,8,0.2)]">FITNESS</span>
-          </h1>
+          <div className="flex justify-center">
+            <Logo size="large" />
+          </div>
           <p className="text-muted text-sm sm:text-base md:text-lg max-w-md mx-auto font-medium">
             Choose your role to continue
           </p>

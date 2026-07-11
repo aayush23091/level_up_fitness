@@ -9,6 +9,7 @@ import AuthCard from "../components/AuthCard";
 import InputField from "../components/InputField";
 import Checkbox from "../components/Checkbox";
 import ThemeToggle from "../components/ThemeToggle";
+import Logo from "@/components/Logo";
 
 import {
   PersonIcon,
@@ -91,9 +92,7 @@ function SignupPageContent() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="w-full flex justify-between items-center px-8 py-4">
-        <span className="text-lg font-bold text-accent">
-          LevelUp Fitness
-        </span>
+        <Logo size="large" />
 
         <div className="flex items-center gap-4">
           <ThemeToggle />

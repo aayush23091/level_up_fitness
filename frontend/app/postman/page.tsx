@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
+import Logo from "@/components/Logo";
 
 interface RequestOption {
   method: 'POST';
@@ -85,7 +86,7 @@ export default function PostmanTesterPage() {
       {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-accent font-bold text-xl tracking-wider">LevelUp Fitness</span>
+          <Logo size="medium" />
           <span className="text-xs bg-card-secondary text-muted px-2 py-0.5 rounded font-mono">MockPostman v1.0</span>
         </div>
         <div className="flex items-center gap-4">

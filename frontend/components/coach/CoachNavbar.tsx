@@ -7,6 +7,7 @@ import { getProfileImageUrl } from "@/lib/getProfileImageUrl";
 import { coachAPI } from "@/lib/api";
 import CoinBalance from "../CoinBalance";
 import ThemeToggle from "@/app/components/ThemeToggle";
+import Logo from "@/components/Logo";
 
 interface CoachNavbarProps {
   onMenuToggle: () => void;
@@ -76,12 +77,7 @@ export default function CoachNavbar({ onMenuToggle }: CoachNavbarProps) {
 
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Link href="/coach-dashboard" className="flex items-center shrink-0">
-            <span className="text-base sm:text-lg md:text-xl font-black text-foreground tracking-wider uppercase">
-              LevelUp{" "}
-              <span className="text-accent drop-shadow-[0_0_10px_rgba(250,204,21,0.15)]">
-                Fitness
-              </span>
-            </span>
+            <Logo size="medium" />
           </Link>
 
           <span className="h-4 w-px bg-border hidden sm:block shrink-0" />

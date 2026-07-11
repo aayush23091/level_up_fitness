@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/app/context/AuthContext";
 import { getDashboardPath } from "@/lib/auth";
 import ThemeToggle from "./ThemeToggle";
+import Logo from "@/components/Logo";
 
 export default function LandingNavbar() {
   const { user } = useAuth();
@@ -17,12 +18,7 @@ export default function LandingNavbar() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
-              <span className="text-gray-900 font-bold text-xl">L</span>
-            </div>
-            <span className="text-foreground font-bold text-xl tracking-tight">
-              LevelUp Fitness
-            </span>
+            <Logo size="medium" />
           </Link>
 
 

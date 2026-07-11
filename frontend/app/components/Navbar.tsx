@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/app/context/AuthContext";
 import CoinBalance from "@/components/CoinBalance";
 import ThemeToggle from "./ThemeToggle";
+import Logo from "@/components/Logo";
 
 interface NavbarProps {
   onMenuToggle: () => void;
@@ -59,6 +60,10 @@ export default function Navbar({ onMenuToggle }: NavbarProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
+
+        <Link href="/dashboard" className="flex items-center">
+          <Logo size="medium" />
+        </Link>
       </div>
 
       {/* Right: Coin Balance, Theme Toggle & User Dropdown */}

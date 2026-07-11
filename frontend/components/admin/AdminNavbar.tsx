@@ -6,6 +6,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import { adminAPI } from "@/lib/api";
 import CoinBalance from "../CoinBalance";
 import ThemeToggle from "@/app/components/ThemeToggle";
+import Logo from "@/components/Logo";
 
 interface AdminNavbarProps {
   onMenuToggle: () => void;
@@ -82,9 +83,7 @@ export default function AdminNavbar({ onMenuToggle }: AdminNavbarProps) {
         {/* Brand Logo & Context */}
         <div className="flex items-center gap-3">
           <Link href="/admin-dashboard" className="flex items-center">
-            <span className="text-lg md:text-xl font-black text-foreground tracking-wider uppercase font-sans">
-              LevelUp <span className="text-accent drop-shadow-[0_0_10px_rgba(234,179,8,0.15)]">Fitness</span>
-            </span>
+            <Logo size="medium" />
           </Link>
           
           <span className="h-4 w-[1px] bg-border hidden sm:block"></span>

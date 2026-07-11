@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
+import Logo from "@/components/Logo";
 
 interface AdminSidebarProps {
   isOpen: boolean;
@@ -108,6 +109,13 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
+        {/* Branding */}
+        <div className="h-16 px-6 flex items-center border-b border-border">
+          <Link href="/admin-dashboard" className="flex items-center">
+            <Logo size="medium" />
+          </Link>
+        </div>
+
         {/* Navigation Links */}
         <div className="pt-6">
           <nav className="space-y-1">
