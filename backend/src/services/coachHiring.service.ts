@@ -37,6 +37,7 @@ export class CoachHiringService {
     private transformCoachUser(coach: IUser): any {
         return {
             _id: coach._id,
+            id: coach._id.toString(),
             name: coach.name || "Coach",
             username: coach.username || "",
             email: coach.email || "",
@@ -46,6 +47,7 @@ export class CoachHiringService {
                 specialization: coach.coachProfile?.specialization,
                 experience: coach.coachProfile?.experience,
                 hireCost: coach.coachProfile?.hireCost,
+                rating: coach.coachProfile?.rating,
                 availability: coach.coachProfile?.availability,
                 profileImage: coach.coachProfile?.profileImage
             }

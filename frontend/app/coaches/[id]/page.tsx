@@ -174,10 +174,10 @@ function CoachProfilePageContent() {
                     )}
                   </div>
                   <p className="text-gray-400 text-sm mt-1">@{coach.username}</p>
-                  {coach.rating && (
+                  {typeof coach.coachProfile?.rating === "number" && (
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-yellow-500 text-lg">⭐</span>
-                      <span className="text-lg font-bold text-white">{coach.rating.toFixed(1)}</span>
+                      <span className="text-lg font-bold text-white">{coach.coachProfile.rating.toFixed(1)}</span>
                       <span className="text-gray-500 text-xs">Rating</span>
                     </div>
                   )}
@@ -195,19 +195,19 @@ function CoachProfilePageContent() {
             </div>
 
             {/* About Section */}
-            {coach.bio && (
+            {coach.coachProfile?.bio && (
               <div className="bg-[#0e0e12] border border-[#1e1e24] p-8 rounded-2xl">
                 <h3 className="text-lg font-bold text-white mb-4">About</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{coach.bio}</p>
+                <p className="text-gray-400 text-sm leading-relaxed">{coach.coachProfile.bio}</p>
               </div>
             )}
 
             {/* Specializations */}
-            {coach.specialization && coach.specialization.length > 0 && (
+            {coach.coachProfile?.specialization && coach.coachProfile.specialization.length > 0 && (
               <div className="bg-[#0e0e12] border border-[#1e1e24] p-8 rounded-2xl">
                 <h3 className="text-lg font-bold text-white mb-4">Specializations</h3>
                 <div className="flex flex-wrap gap-2">
-                  {coach.specialization.map((spec, idx) => (
+                  {coach.coachProfile.specialization.map((spec, idx) => (
                     <span
                       key={idx}
                       className="text-xs text-yellow-500 font-semibold uppercase tracking-wider bg-yellow-500/10 border border-yellow-500/20 px-3 py-1.5 rounded-lg"
@@ -226,7 +226,7 @@ function CoachProfilePageContent() {
                 <div className="flex items-center gap-3">
                   <span className="text-3xl">💼</span>
                   <div>
-                    <p className="text-3xl font-black text-white">{coach.experience || 0}</p>
+                    <p className="text-3xl font-black text-white">{Number(coach.coachProfile?.experience) || 0}</p>
                     <p className="text-gray-500 text-xs uppercase tracking-wider">Years</p>
                   </div>
                 </div>
@@ -237,7 +237,7 @@ function CoachProfilePageContent() {
                 <div className="flex items-center gap-3">
                   <span className="text-3xl">🪙</span>
                   <div>
-                    <p className="text-3xl font-black text-yellow-500">{coach.hireCost || 0}</p>
+                    <p className="text-3xl font-black text-yellow-500">{Number(coach.coachProfile?.hireCost) || 0}</p>
                     <p className="text-gray-500 text-xs uppercase tracking-wider">Coins</p>
                   </div>
                 </div>

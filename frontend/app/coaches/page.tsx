@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import DashboardLayout from "../components/DashboardLayout";
 import { coachAPI, Coach } from "@/lib/api";
 import { withProtectedRoute } from "@/lib/protectedRoute";
 import { getProfileImageUrl } from "@/lib/getProfileImageUrl";
@@ -75,20 +76,18 @@ function CoachesMarketplacePageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#030303]">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-[#0e0e12] to-[#16161c] border-b border-[#1e1e24] px-6 lg:px-8 py-8">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl lg:text-4xl font-black text-white">
-            COACH <span className="text-yellow-500">MARKETPLACE</span>
+    <DashboardLayout>
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8 space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-black text-white">
+            Find Your <span className="text-yellow-500">Coach</span>
           </h1>
           <p className="text-gray-400 text-sm mt-2">
-            Find and hire expert coaches to level up your fitness journey
+            Discover and hire expert coaches to level up your fitness journey
           </p>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8 space-y-6">
         {/* Search & Filters Row */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#0e0e12] border border-[#1e1e24] p-4 rounded-2xl shadow-md">
           {/* Search */}
@@ -227,10 +226,10 @@ function CoachesMarketplacePageContent() {
                         {coach.name}
                       </h3>
                       <p className="text-xs text-gray-500 mt-0.5">@{coach.username}</p>
-                      {coach.rating && (
+                      {typeof coach.coachProfile?.rating === "number" && (
                         <div className="flex items-center gap-1 mt-1">
                           <span className="text-yellow-500 text-xs">⭐</span>
-                          <span className="text-xs text-white font-semibold">{coach.rating.toFixed(1)}</span>
+                          <span className="text-xs text-white font-semibold">{coach.coachProfile.rating.toFixed(1)}</span>
                         </div>
                       )}
                     </div>
@@ -265,11 +264,24 @@ function CoachesMarketplacePageContent() {
                   {/* Coach Specs Grid */}
                   <div className="grid grid-cols-2 gap-2.5 mt-auto pt-4 border-t border-[#1e1e24] text-[11px] text-gray-400 font-semibold font-mono">
                     <div className="flex items-center gap-1.5">
-                      <span>💼</span> {coach.coachProfile?.experience || 0} Years
+                      <span>💼</span> {Number(coach.coachProfile?.experience) || 0} Years
                     </div>
                     <div className="flex items-center gap-1.5 text-yellow-500">
-                      <span>🪙</span> {coach.coachProfile?.hireCost || 0} Coins
+                      <span>🪙</span> {Number(coach.coachProfile?.hireCost) || 0} Coins
                     </div>
+                  </div>
+
+                  {/* View Profile Button */}
+                  <div className="mt-4 pt-3 border-t border-[#1e1e24]">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/coaches/${coachIdStr}`);
+                      }}
+                      className="w-full py-2 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors"
+                    >
+                      View Profile
+                    </button>
                   </div>
 
                   {/* Hire Status Badge */}
@@ -310,7 +322,7 @@ function CoachesMarketplacePageContent() {
           </div>
         )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
 

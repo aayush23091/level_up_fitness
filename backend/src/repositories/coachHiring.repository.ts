@@ -6,8 +6,8 @@ export class CoachHiringRepository {
     async getAllCoaches(page: number = 1, limit: number = 10, search?: string, specialization?: string): Promise<{ coaches: IUser[]; total: number }> {
         const skip = (page - 1) * limit;
 
-        // Build base query
-        const query: any = { role: "coach", availability: true };
+        // Build base query: only coach users
+        const query: any = { role: "coach" };
 
         // Add search filter if provided
         if (search) {
@@ -17,9 +17,9 @@ export class CoachHiringRepository {
             ];
         }
 
-        // Add specialization filter if provided
+        // Add specialization filter if provided (nested inside coachProfile)
         if (specialization && specialization !== "all") {
-            query.specialization = { $in: [specialization] };
+            query["coachProfile.specialization"] = { $in: [specialization] };
         }
 
         // Get total count

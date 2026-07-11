@@ -5,6 +5,7 @@ export interface ICoachProfile {
     specialization?: string[];
     experience?: number;
     hireCost?: number;
+    rating?: number;
     availability?: boolean;
     profileImage?: string;
 }
@@ -60,6 +61,7 @@ const UserMongoSchema: Schema = new Schema<IUser>(
     specialization: { type: [String], required: false },
     experience: { type: Number, required: false },
     hireCost: { type: Number, required: false },
+    rating: { type: Number, required: false },
     availability: { type: Boolean, default: true },
     profileImage: { type: String, required: false }
   },
