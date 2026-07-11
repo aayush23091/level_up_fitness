@@ -1,5 +1,6 @@
 import request from "supertest";
 import app from "../../app";
+import { UserModel } from "../../models/user.model";
 
 jest.mock("../../services/email.service", () => ({
     __esModule: true,
@@ -314,7 +315,6 @@ describe("Authentication API", () => {
         expect(response.body.success).toBe(true);
 
         // Verify database has reset tokens
-        const UserModel = (await import("../../models/user.model")).UserModel;
         const userInDb = await UserModel.findOne({ email: testUser.email });
         expect(userInDb?.resetPasswordToken).toBeDefined();
         expect(userInDb?.resetPasswordExpires).toBeDefined();

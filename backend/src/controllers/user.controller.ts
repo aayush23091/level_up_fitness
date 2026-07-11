@@ -216,7 +216,8 @@ export class UserController {
     // POST /auth/reset-password/:token
     resetPassword = async (req: Request, res: Response) => {
         try {
-            const { token } = req.params;
+            const { token: tokenParam } = req.params;
+            const token = Array.isArray(tokenParam) ? tokenParam[0] : tokenParam;
             const parsed = ResetPasswordDTO.safeParse(req.body ?? {});
             if (!parsed.success) {
                 const message = parsed.error.issues[0]?.message || "Invalid payload";

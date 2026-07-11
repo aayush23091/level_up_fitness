@@ -6,7 +6,7 @@
     "dev": "npx tsx --watch index.ts",
     "start": "npx tsx index.ts",
     "start-day2": "node day2.js",
-    "test": "jest --verbose --detectOpenHandles",
+    "test": "jest --verbose --detectOpenHandles --runInBand",
     "seed:achievements": "npx tsx migrations/seed-achievements.ts"
   },
   "keywords": [],
