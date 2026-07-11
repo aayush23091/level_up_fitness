@@ -12,5 +12,13 @@ module.exports = {
     ],
     setupFilesAfterEnv: [
         "<rootDir>/src/__tests__/setup.ts"
-    ]
+    ],
+    transform: {
+        "^.+\\.ts$": [
+            "ts-jest",
+            {
+                tsconfig: "<rootDir>/tsconfig.test.json"
+            }
+        ]
+    }
 };

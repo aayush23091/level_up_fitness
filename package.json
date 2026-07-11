@@ -15,6 +15,7 @@
     "lint:frontend": "npm run lint -w frontend"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "ts-node": "^10.9.2"
   }
 }
