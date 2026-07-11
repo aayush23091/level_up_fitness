@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import AuthCard from "../components/AuthCard";
 import InputField from "../components/InputField";
-import SocialButton from "../components/SocialButton";
 import ThemeToggle from "../components/ThemeToggle";
 import Logo from "@/components/Logo";
 import { MailIcon, LockIcon } from "../components/Icons";
@@ -119,19 +118,6 @@ const LoginPageContent = () => {
               {isLoading ? "Logging in..." : "Login"}
             </button>
           </form>
-
-          <div className="my-4 flex items-center">
-            <div className="h-px flex-grow bg-border" />
-            <span className="mx-2 text-xs text-muted">
-              OR CONTINUE WITH
-            </span>
-            <div className="h-px flex-grow bg-border" />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <SocialButton provider="Google" />
-            <SocialButton provider="Apple" />
-          </div>
 
           <div className="mt-4 text-center text-sm text-muted">
             Don't have an account?{" "}
