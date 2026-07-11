@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import LandingNavbar from "./components/LandingNavbar";
 import Logo from "@/components/Logo";
 
@@ -55,57 +56,16 @@ export default function LandingPage() {
               </div>
 
               <div className="relative">
-                <div className="relative bg-card/80 backdrop-blur-xl border border-border rounded-3xl p-8 shadow-2xl">
-                  <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent rounded-3xl"></div>
-                  
-                  <div className="relative space-y-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-muted text-sm">Current Phase</p>
-                        <p className="text-foreground font-bold text-lg">Strength Building</p>
-                      </div>
-                      <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
-                        <span className="text-accent text-2xl">💪</span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex justify-between text-sm mb-2">
-                          <span className="text-muted">Strength</span>
-                          <span className="text-accent font-semibold">78%</span>
-                        </div>
-                        <div className="h-2 bg-card-secondary rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-accent to-accent/80 rounded-full" style={{ width: "78%" }}></div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between text-sm mb-2">
-                          <span className="text-muted">Progress</span>
-                          <span className="text-accent font-semibold">65%</span>
-                        </div>
-                        <div className="h-2 bg-card-secondary rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-accent to-accent/80 rounded-full" style={{ width: "65%" }}></div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-4 pt-4">
-                      <div className="bg-card-secondary rounded-xl p-4 text-center">
-                        <p className="text-2xl font-bold text-foreground">12</p>
-                        <p className="text-xs text-muted">Level</p>
-                      </div>
-                      <div className="bg-card-secondary rounded-xl p-4 text-center">
-                        <p className="text-2xl font-bold text-foreground">5</p>
-                        <p className="text-xs text-muted">Streak</p>
-                      </div>
-                      <div className="bg-card-secondary rounded-xl p-4 text-center">
-                        <p className="text-2xl font-bold text-foreground">2.4k</p>
-                        <p className="text-xs text-muted">XP</p>
-                      </div>
-                    </div>
-                  </div>
+                <div className="group relative rounded-3xl overflow-hidden shadow-xl aspect-[4/5] sm:aspect-[5/4] lg:aspect-[4/3]">
+                  <Image
+                    src="/hero.jpg"
+                    alt="Athlete training for peak performance"
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent dark:from-black/80 dark:via-black/40 dark:to-black/20"></div>
                 </div>
 
                 <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-accent/20 rounded-full blur-2xl"></div>
