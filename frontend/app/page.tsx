@@ -271,6 +271,11 @@ export default function LandingPage() {
             </div>
 
             <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex flex-wrap justify-center gap-6 text-sm text-muted">
+                <Link href="/privacy-policy" className="hover:text-accent transition-colors">Privacy Policy</Link>
+                <Link href="/terms" className="hover:text-accent transition-colors">Terms of Service</Link>
+                <Link href="/cookies" className="hover:text-accent transition-colors">Cookie Policy</Link>
+              </div>
               <p className="text-muted text-sm">
                 © 2026 LevelUp Fitness. All rights reserved.
               </p>

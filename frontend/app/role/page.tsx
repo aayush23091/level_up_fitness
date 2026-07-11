@@ -191,9 +191,9 @@ export default function RoleSelectionPage() {
 
       {/* Footer */}
       <footer className="relative z-10 flex w-full justify-center gap-8 py-8 text-[10px] tracking-wider font-semibold text-muted">
-        <a href="#" className="hover:text-accent transition-colors duration-200 uppercase">Privacy Policy</a>
-        <a href="#" className="hover:text-accent transition-colors duration-200 uppercase">Terms of Service</a>
-        <a href="#" className="hover:text-accent transition-colors duration-200 uppercase">Cookie Policy</a>
+        <Link href="/privacy-policy" className="hover:text-accent transition-colors duration-200 uppercase">Privacy Policy</Link>
+        <Link href="/terms" className="hover:text-accent transition-colors duration-200 uppercase">Terms of Service</Link>
+        <Link href="/cookies" className="hover:text-accent transition-colors duration-200 uppercase">Cookie Policy</Link>
       </footer>
     </div>
   );

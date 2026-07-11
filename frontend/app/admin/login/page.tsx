@@ -104,9 +104,9 @@ const AdminLoginPageContent = () => {
       </main>
 
       <footer className="flex w-full justify-center gap-8 py-4 text-xs text-muted">
-        <a href="#">PRIVACY POLICY</a>
-        <a href="#">TERMS OF SERVICE</a>
-        <a href="#">COOKIE POLICY</a>
+        <a href="/privacy-policy">PRIVACY POLICY</a>
+        <a href="/terms">TERMS OF SERVICE</a>
+        <a href="/cookies">COOKIE POLICY</a>
       </footer>
     </div>
   );

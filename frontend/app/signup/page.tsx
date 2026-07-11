@@ -208,21 +208,21 @@ function SignupPageContent() {
               }
               label={
                 <span>
-                  I agree to the{" "}
-                  <a
-                    href="#"
-                    className="underline text-accent"
-                  >
-                    Terms of Service
-                  </a>{" "}
-                  and{" "}
-                  <a
-                    href="#"
-                    className="underline text-accent"
-                  >
-                    Privacy Policy
-                  </a>
-                  .
+                   I agree to the{" "}
+                   <a
+                     href="/terms"
+                     className="underline text-accent"
+                   >
+                     Terms of Service
+                   </a>{" "}
+                   and{" "}
+                   <a
+                     href="/privacy-policy"
+                     className="underline text-accent"
+                   >
+                     Privacy Policy
+                   </a>
+                   .
                 </span>
               }
             />
@@ -251,6 +251,12 @@ function SignupPageContent() {
           </div>
         </AuthCard>
       </main>
+
+      <footer className="flex w-full justify-center gap-8 py-4 text-xs text-muted">
+        <a href="/privacy-policy" className="hover:text-accent transition-colors duration-200 uppercase font-semibold">Privacy Policy</a>
+        <a href="/terms" className="hover:text-accent transition-colors duration-200 uppercase font-semibold">Terms of Service</a>
+        <a href="/cookies" className="hover:text-accent transition-colors duration-200 uppercase font-semibold">Cookie Policy</a>
+      </footer>
     </div>
   );
 }
