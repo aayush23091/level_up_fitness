@@ -138,7 +138,7 @@ export default function RoleSelectionPage() {
 
           {/* Admin Card */}
           <Link
-            href="/login?role=admin"
+            href="/admin/login"
             id="role-card-admin"
             className="group relative flex flex-col bg-card/40 backdrop-blur-md border border-border/80 rounded-2xl p-8 transition-all duration-300 ease-out hover:-translate-y-2 hover:border-accent/50 hover:shadow-[0_0_35px_-5px_rgba(234,179,8,0.15)] overflow-hidden"
           >
