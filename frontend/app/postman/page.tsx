@@ -86,7 +86,7 @@ export default function PostmanTesterPage() {
       {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Logo size="medium" />
+          <Logo size="navbar" />
           <span className="text-xs bg-card-secondary text-muted px-2 py-0.5 rounded font-mono">MockPostman v1.0</span>
         </div>
         <div className="flex items-center gap-4">

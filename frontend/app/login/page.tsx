@@ -68,7 +68,7 @@ const LoginPageContent = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="w-full flex justify-between items-center px-8 py-8">
-        <Logo size="large" />
+        <Logo size="auth" />
         <ThemeToggle />
       </header>
 

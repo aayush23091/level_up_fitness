@@ -83,7 +83,7 @@ export default function AdminNavbar({ onMenuToggle }: AdminNavbarProps) {
         {/* Brand Logo & Context */}
         <div className="flex items-center gap-3">
           <Link href="/admin-dashboard" className="flex items-center">
-            <Logo size="medium" />
+            <Logo size="navbar" />
           </Link>
           
           <span className="h-4 w-[1px] bg-border hidden sm:block"></span>

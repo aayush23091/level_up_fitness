@@ -195,7 +195,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div>
           <div className="h-16 px-6 border-b border-border flex items-center justify-between">
             <Link href="/app-dashboard" className="flex items-center">
-              <Logo size="medium" />
+              <Logo size="sidebar" />
             </Link>
             <button
               onClick={onClose}

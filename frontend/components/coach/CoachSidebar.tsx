@@ -121,7 +121,7 @@ export default function CoachSidebar({ isOpen, onClose }: CoachSidebarProps) {
         {/* Branding */}
         <div className="h-16 px-6 flex items-center border-b border-border">
           <Link href="/coach-dashboard" className="flex items-center">
-            <Logo size="medium" />
+            <Logo size="sidebar" />
           </Link>
         </div>
 

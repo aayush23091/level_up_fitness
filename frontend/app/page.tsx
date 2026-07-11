@@ -292,7 +292,7 @@ export default function LandingPage() {
             <div className="grid md:grid-cols-2 gap-12">
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <Logo size="small" />
+                  <Logo size="mobile" />
                 </div>
                 <p className="text-muted text-sm">
                   Your personal fitness journey platform.

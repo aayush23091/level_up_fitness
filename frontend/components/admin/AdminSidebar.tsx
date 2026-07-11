@@ -112,7 +112,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         {/* Branding */}
         <div className="h-16 px-6 flex items-center border-b border-border">
           <Link href="/admin-dashboard" className="flex items-center">
-            <Logo size="medium" />
+            <Logo size="sidebar" />
           </Link>
         </div>
 

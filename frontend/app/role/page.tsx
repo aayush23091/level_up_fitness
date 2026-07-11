@@ -25,7 +25,7 @@ export default function RoleSelectionPage() {
         {/* Header Section */}
         <header className="text-center mb-12 lg:mb-16 space-y-4">
           <div className="flex justify-center">
-            <Logo size="large" />
+            <Logo size="auth" />
           </div>
           <p className="text-muted text-sm sm:text-base md:text-lg max-w-md mx-auto font-medium">
             Choose your role to continue

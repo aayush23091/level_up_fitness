@@ -77,7 +77,7 @@ export default function CoachNavbar({ onMenuToggle }: CoachNavbarProps) {
 
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Link href="/coach-dashboard" className="flex items-center shrink-0">
-            <Logo size="medium" />
+            <Logo size="navbar" />
           </Link>
 
           <span className="h-4 w-px bg-border hidden sm:block shrink-0" />

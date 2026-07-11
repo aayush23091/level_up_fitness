@@ -62,7 +62,7 @@ export default function Navbar({ onMenuToggle }: NavbarProps) {
         </button>
 
         <Link href="/dashboard" className="flex items-center">
-          <Logo size="medium" />
+          <Logo size="navbar" />
         </Link>
       </div>
 

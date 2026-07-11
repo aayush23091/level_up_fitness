@@ -92,7 +92,7 @@ function SignupPageContent() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="w-full flex justify-between items-center px-8 py-4">
-        <Logo size="large" />
+        <Logo size="auth" />
 
         <div className="flex items-center gap-4">
           <ThemeToggle />
