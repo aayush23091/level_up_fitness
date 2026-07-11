@@ -35,7 +35,7 @@ export class WorkoutService {
     }
     
     // Check if the requesting coach is the creator
-    if (workout.createdBy.toString() !== coachId) {
+    if (workout.createdBy._id.toString() !== coachId) {
       throw new HttpException(403, "You can only edit your own workouts");
     }
     
@@ -49,7 +49,7 @@ export class WorkoutService {
     }
     
     // Check if the requesting coach is the creator
-    if (workout.createdBy.toString() !== coachId) {
+    if (workout.createdBy._id.toString() !== coachId) {
       throw new HttpException(403, "You can only delete your own workouts");
     }
     

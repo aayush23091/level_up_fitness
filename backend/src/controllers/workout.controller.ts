@@ -64,7 +64,7 @@ export class WorkoutController {
       return ApiResponseHelper.success(res, workout, "Workout created successfully", 201);
     } catch (err: any) {
       if (err.name === "ZodError") {
-        return next(new HttpException(400, err.errors[0].message));
+        return next(new HttpException(400, err.issues[0].message));
       }
       return next(err);
     }
@@ -85,7 +85,7 @@ export class WorkoutController {
       return ApiResponseHelper.success(res, workout, "Workout updated successfully", 200);
     } catch (err: any) {
       if (err.name === "ZodError") {
-        return next(new HttpException(400, err.errors[0].message));
+        return next(new HttpException(400, err.issues[0].message));
       }
       return next(err);
     }
