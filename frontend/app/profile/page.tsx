@@ -7,6 +7,7 @@ import CoachLayout from "@/components/coach/CoachLayout";
 import { useAuth } from "../context/AuthContext";
 import { authAPI } from "@/lib/api";
 import { getProfileImageUrl } from "@/lib/getProfileImageUrl";
+import { cmToInches, kgToLbs, inchesToCm, lbsToKg } from "@/lib/measurements";
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
@@ -114,7 +115,7 @@ export default function ProfilePage() {
       formData.append("email", email);
       formData.append("phoneNumber", phoneNumber);
       formData.append("gender", gender);
-      // Append measurement fields
+      // State is already in metric (cm/kg) — inputs convert on change, just pass through
       if (height) formData.append("height", height);
       if (weight) formData.append("weight", weight);
       if (chest) formData.append("chest", chest);
@@ -418,36 +419,36 @@ export default function ProfilePage() {
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Height (cm)</p>
-                    <p className="text-lg font-bold text-white">{user?.height || "Not added"}</p>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Height (in)</p>
+                    <p className="text-lg font-bold text-white">{user?.height ? `${cmToInches(user.height)} in` : "Not added"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Weight (kg)</p>
-                    <p className="text-lg font-bold text-white">{user?.weight || "Not added"}</p>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Weight (lbs)</p>
+                    <p className="text-lg font-bold text-white">{user?.weight ? `${kgToLbs(user.weight)} lbs` : "Not added"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Chest (cm)</p>
-                    <p className="text-lg font-bold text-white">{user?.chest || "Not added"}</p>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Chest (in)</p>
+                    <p className="text-lg font-bold text-white">{user?.chest ? `${cmToInches(user.chest)} in` : "Not added"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Waist (cm)</p>
-                    <p className="text-lg font-bold text-white">{user?.waist || "Not added"}</p>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Waist (in)</p>
+                    <p className="text-lg font-bold text-white">{user?.waist ? `${cmToInches(user.waist)} in` : "Not added"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Arms (cm)</p>
-                    <p className="text-lg font-bold text-white">{user?.arms || "Not added"}</p>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Arms (in)</p>
+                    <p className="text-lg font-bold text-white">{user?.arms ? `${cmToInches(user.arms)} in` : "Not added"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Shoulders (cm)</p>
-                    <p className="text-lg font-bold text-white">{user?.shoulders || "Not added"}</p>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Shoulders (in)</p>
+                    <p className="text-lg font-bold text-white">{user?.shoulders ? `${cmToInches(user.shoulders)} in` : "Not added"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Legs (cm)</p>
-                    <p className="text-lg font-bold text-white">{user?.legs || "Not added"}</p>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Legs (in)</p>
+                    <p className="text-lg font-bold text-white">{user?.legs ? `${cmToInches(user.legs)} in` : "Not added"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Calves (cm)</p>
-                    <p className="text-lg font-bold text-white">{user?.calves || "Not added"}</p>
+                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Calves (in)</p>
+                    <p className="text-lg font-bold text-white">{user?.calves ? `${cmToInches(user.calves)} in` : "Not added"}</p>
                   </div>
                 </div>
               </div>
@@ -565,85 +566,85 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="border-t border-[#1e1e24] pt-4">
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Body Measurements (cm)</p>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Body Measurements (in)</p>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Height</label>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Height (in)</label>
                         <input
                           type="number"
-                          value={height}
-                          onChange={(e) => setHeight(e.target.value)}
-                          placeholder="173"
+                          value={height ? cmToInches(height) : ""}
+                          onChange={(e) => setHeight(inchesToCm(e.target.value).toString())}
+                          placeholder="68"
                           className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Weight</label>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Weight (lbs)</label>
                         <input
                           type="number"
-                          value={weight}
-                          onChange={(e) => setWeight(e.target.value)}
-                          placeholder="75"
+                          value={weight ? kgToLbs(weight) : ""}
+                          onChange={(e) => setWeight(lbsToKg(e.target.value).toString())}
+                          placeholder="165"
                           className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Chest</label>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Chest (in)</label>
                         <input
                           type="number"
-                          value={chest}
-                          onChange={(e) => setChest(e.target.value)}
-                          placeholder="109"
+                          value={chest ? cmToInches(chest) : ""}
+                          onChange={(e) => setChest(inchesToCm(e.target.value).toString())}
+                          placeholder="43"
                           className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Waist</label>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Waist (in)</label>
                         <input
                           type="number"
-                          value={waist}
-                          onChange={(e) => setWaist(e.target.value)}
-                          placeholder="81"
+                          value={waist ? cmToInches(waist) : ""}
+                          onChange={(e) => setWaist(inchesToCm(e.target.value).toString())}
+                          placeholder="32"
                           className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Arms</label>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Arms (in)</label>
                         <input
                           type="number"
-                          value={arms}
-                          onChange={(e) => setArms(e.target.value)}
-                          placeholder="40"
+                          value={arms ? cmToInches(arms) : ""}
+                          onChange={(e) => setArms(inchesToCm(e.target.value).toString())}
+                          placeholder="16"
                           className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Shoulders</label>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Shoulders (in)</label>
                         <input
                           type="number"
-                          value={shoulders}
-                          onChange={(e) => setShoulders(e.target.value)}
-                          placeholder="127"
+                          value={shoulders ? cmToInches(shoulders) : ""}
+                          onChange={(e) => setShoulders(inchesToCm(e.target.value).toString())}
+                          placeholder="50"
                           className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Legs</label>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Legs (in)</label>
                         <input
                           type="number"
-                          value={legs}
-                          onChange={(e) => setLegs(e.target.value)}
-                          placeholder="63"
+                          value={legs ? cmToInches(legs) : ""}
+                          onChange={(e) => setLegs(inchesToCm(e.target.value).toString())}
+                          placeholder="25"
                           className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Calves</label>
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Calves (in)</label>
                         <input
                           type="number"
-                          value={calves}
-                          onChange={(e) => setCalves(e.target.value)}
-                          placeholder="38"
+                          value={calves ? cmToInches(calves) : ""}
+                          onChange={(e) => setCalves(inchesToCm(e.target.value).toString())}
+                          placeholder="15"
                           className="w-full bg-[#121216] border border-[#1e1e24] focus:border-yellow-500 text-sm text-white rounded-lg px-4 py-2 focus:outline-none transition-all placeholder:text-gray-600"
                         />
                       </div>

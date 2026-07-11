@@ -6,6 +6,7 @@ import Link from "next/link";
 import { withProtectedRoute } from "@/lib/protectedRoute";
 import { useAuth } from "../context/AuthContext";
 import { authAPI } from "@/lib/api";
+import { cmToInches, kgToLbs, inchesToCm, lbsToKg } from "@/lib/measurements";
 
 function SettingsPageContent() {
   const { user, refreshUser } = useAuth();
@@ -24,15 +25,16 @@ function SettingsPageContent() {
 
   useEffect(() => {
     if (user) {
+      // Convert stored metric values to imperial for display
       setMeasurements({
-        height: user.height?.toString() || "",
-        weight: user.weight?.toString() || "",
-        chest: user.chest?.toString() || "",
-        waist: user.waist?.toString() || "",
-        arms: user.arms?.toString() || "",
-        shoulders: user.shoulders?.toString() || "",
-        legs: user.legs?.toString() || "",
-        calves: user.calves?.toString() || ""
+        height: user.height ? cmToInches(user.height).toString() : "",
+        weight: user.weight ? kgToLbs(user.weight).toString() : "",
+        chest: user.chest ? cmToInches(user.chest).toString() : "",
+        waist: user.waist ? cmToInches(user.waist).toString() : "",
+        arms: user.arms ? cmToInches(user.arms).toString() : "",
+        shoulders: user.shoulders ? cmToInches(user.shoulders).toString() : "",
+        legs: user.legs ? cmToInches(user.legs).toString() : "",
+        calves: user.calves ? cmToInches(user.calves).toString() : ""
       });
     }
   }, [user]);
@@ -51,13 +53,19 @@ function SettingsPageContent() {
     setSuccess(false);
 
     try {
+      // Convert imperial input values back to metric for the backend
       const formData = new FormData();
-      
-      Object.entries(measurements).forEach(([key, value]) => {
-        if (value) {
-          formData.append(key, value);
+      const cmFields: (keyof typeof measurements)[] = [
+        "height", "chest", "waist", "arms", "shoulders", "legs", "calves"
+      ];
+      cmFields.forEach((key) => {
+        if (measurements[key]) {
+          formData.append(key, inchesToCm(measurements[key]).toString());
         }
       });
+      if (measurements.weight) {
+        formData.append("weight", lbsToKg(measurements.weight).toString());
+      }
 
       await authAPI.updateProfile(formData);
       await refreshUser();
