@@ -6,7 +6,6 @@ import { useAuth } from "@/app/context/AuthContext";
 import { adminAPI } from "@/lib/api";
 import CoinBalance from "../CoinBalance";
 import ThemeToggle from "@/app/components/ThemeToggle";
-import Logo from "@/components/Logo";
 
 interface AdminNavbarProps {
   onMenuToggle: () => void;
@@ -68,7 +67,7 @@ export default function AdminNavbar({ onMenuToggle }: AdminNavbarProps) {
 
   return (
     <header className="h-16 bg-card border-b border-border px-6 lg:px-8 flex items-center justify-between sticky top-0 z-30 w-full">
-      {/* Left: Mobile Toggle & Logo/Dashboard Title */}
+      {/* Left: Mobile Toggle & Dashboard Title */}
       <div className="flex items-center gap-4">
         {/* Mobile Hamburger menu toggle */}
         <button
@@ -80,15 +79,9 @@ export default function AdminNavbar({ onMenuToggle }: AdminNavbarProps) {
           </svg>
         </button>
 
-        {/* Brand Logo & Context */}
+        {/* Dashboard Context */}
         <div className="flex items-center gap-3">
-          <Link href="/admin-dashboard" className="flex items-center">
-            <Logo size="navbar" />
-          </Link>
-          
-          <span className="h-4 w-[1px] bg-border hidden sm:block"></span>
-          
-          <span className="text-muted text-xs md:text-sm font-semibold tracking-wide uppercase hidden sm:block">
+          <span className="text-foreground text-sm md:text-base font-semibold tracking-wide uppercase">
             Admin Dashboard
           </span>
         </div>

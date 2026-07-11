@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
-import Logo from "@/components/Logo";
+import Image from "next/image";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -193,13 +193,20 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       >
         {/* Top Header / Branding */}
         <div>
-          <div className="h-16 px-6 border-b border-border flex items-center justify-between">
-            <Link href="/app-dashboard" className="flex items-center">
-              <Logo size="sidebar" />
+          <div className="relative h-16 px-4 border-b border-border flex items-center justify-center">
+            <Link href="/app-dashboard" className="flex items-center justify-center">
+              <Image
+                src="/logo.png"
+                alt="LevelUp Fitness"
+                width={140}
+                height={45}
+                priority
+                className="object-contain w-[120px] h-[40px] lg:w-[140px] lg:h-[45px]"
+              />
             </Link>
             <button
               onClick={onClose}
-              className="p-1 rounded text-muted hover:text-foreground lg:hidden focus:outline-none"
+              className="absolute right-3 p-1 rounded text-muted hover:text-foreground lg:hidden focus:outline-none"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

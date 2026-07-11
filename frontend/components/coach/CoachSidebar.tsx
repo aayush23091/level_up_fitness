@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
-import Logo from "@/components/Logo";
+import Image from "next/image";
 
 interface CoachSidebarProps {
   isOpen: boolean;
@@ -119,9 +119,16 @@ export default function CoachSidebar({ isOpen, onClose }: CoachSidebarProps) {
         }`}
       >
         {/* Branding */}
-        <div className="h-16 px-6 flex items-center border-b border-border">
-          <Link href="/coach-dashboard" className="flex items-center">
-            <Logo size="sidebar" />
+        <div className="h-16 px-4 flex items-center justify-center border-b border-border">
+          <Link href="/coach-dashboard" className="flex items-center justify-center">
+            <Image
+              src="/logo.png"
+              alt="LevelUp Fitness"
+              width={140}
+              height={45}
+              priority
+              className="object-contain w-[120px] h-[40px] lg:w-[140px] lg:h-[45px]"
+            />
           </Link>
         </div>
 

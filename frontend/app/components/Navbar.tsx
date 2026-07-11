@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useAuth } from "@/app/context/AuthContext";
 import CoinBalance from "@/components/CoinBalance";
 import ThemeToggle from "./ThemeToggle";
-import Logo from "@/components/Logo";
 
 interface NavbarProps {
   onMenuToggle: () => void;
@@ -62,7 +61,9 @@ export default function Navbar({ onMenuToggle }: NavbarProps) {
         </button>
 
         <Link href="/dashboard" className="flex items-center">
-          <Logo size="navbar" />
+          <span className="text-foreground text-sm md:text-base font-semibold tracking-wide">
+            Dashboard
+          </span>
         </Link>
       </div>
 
