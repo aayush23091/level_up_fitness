@@ -1,0 +1,344 @@
+import { Request, Response } from "express";
+import { UserService } from "../services/user.service";
+import { UserAchievementService } from "../services/userAchievement.service";
+import { GeminiService } from "../services/gemini.service";
+import { ApiResponseHelper } from "../utils/apihelper.util";
+import { HttpException } from "../exceptions/http-exception";
+import { CreateUserDTO, LoginUserDTO, ChangePasswordDTO, ForgotPasswordDTO, ResetPasswordDTO } from "../dtos/user.dto";
+import { IUser } from "../models/user.model";
+import { coachProfileUploadMiddleware } from "../middlewares/upload.middleware";
+
+const userService = new UserService();
+const userAchievementService = new UserAchievementService();
+const geminiService = new GeminiService();
+
+function toUploadsUrl(filePath: string): string {
+    // Example Windows path:
+    // C:\Users\...\backend\uploads\avatars\avatar-123.jpg
+    // We want: /uploads/avatars/avatar-123.jpg
+    const normalized = filePath.replace(/\\/g, "/");
+
+    const idx = normalized.lastIndexOf("/uploads/");
+    if (idx >= 0) {
+        return normalized.slice(idx).replace(/\/+$/g, "");
+    }
+
+    // Fallback: if it contains uploads without trailing slash
+    const idx2 = normalized.lastIndexOf("/uploads");
+    if (idx2 >= 0) {
+        return normalized.slice(idx2);
+    }
+
+    // As a last resort, return filename as /uploads/<filename>
+    const filename = normalized.split("/").pop();
+    return filename ? `/uploads/${filename}` : "";
+}
+
+
+export class UserController {
+    // POST /auth/register
+    createUser = async (req: Request, res: Response) => {
+        try {
+            const payload = req.body as CreateUserDTO;
+            if (!payload?.email || !payload?.password || !payload?.username) {
+                throw new HttpException(400, "Invalid payload");
+            }
+
+            const { user, token } = await userService.createUser(payload);
+
+            return ApiResponseHelper.success(res, { user, token }, "User created", 201);
+        } catch (err: any) {
+            return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
+        }
+    };
+
+    // POST /auth/login
+    loginUser = async (req: Request, res: Response) => {
+        try {
+            const payload = req.body as LoginUserDTO;
+            if (!payload?.email || !payload?.password) {
+                throw new HttpException(400, "Invalid payload");
+            }
+
+            const { user, token } = await userService.loginUser(payload);
+
+            return ApiResponseHelper.success(res, { user, token }, "Login successful", 200);
+        } catch (err: any) {
+            return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
+        }
+    };
+
+    // GET /auth/whoami
+    whoAmI = async (req: Request, res: Response) => {
+        try {
+            if (!req.user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            return ApiResponseHelper.success(res, req.user as IUser, "User info", 200);
+        } catch (err: any) {
+            return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
+        }
+    };
+
+    // PUT /auth/update
+    // (profileUploadMiddleware runs before this)
+    updateProfile = async (req: Request, res: Response) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            // multer stores files on req.files when using fields()
+            const files = (req as any).files as { [key: string]: Express.Multer.File[] } | undefined;
+            const photoFile = files?.["photo"]?.[0];
+            const profileImageFile = files?.["profileImage"]?.[0];
+            
+            const profilePhoto = photoFile?.path ? toUploadsUrl(photoFile.path) : undefined;
+            const coachProfileImage = profileImageFile?.path ? toUploadsUrl(profileImageFile.path) : undefined;
+
+
+            const { name, username, phoneNumber, gender, password, bio, specialization, experience, hireCost, availability, height, weight, chest, waist, arms, shoulders, legs, calves } = req.body ?? {};
+
+            const updateData: Partial<IUser> & { password?: string; profilePhoto?: string } = {
+                name,
+                username,
+                phoneNumber,
+                gender,
+                ...(password ? { password } : {}),
+                ...(profilePhoto ? { profilePhoto } : {}),
+            };
+
+            // Add measurement fields
+            if (height !== undefined) {
+                const h = Number(height);
+                if (!isNaN(h) && h >= 0) updateData.height = h;
+            }
+            if (weight !== undefined) {
+                const w = Number(weight);
+                if (!isNaN(w) && w >= 0) updateData.weight = w;
+            }
+            if (chest !== undefined) {
+                const c = Number(chest);
+                if (!isNaN(c) && c >= 0) updateData.chest = c;
+            }
+            if (waist !== undefined) {
+                const w = Number(waist);
+                if (!isNaN(w) && w >= 0) updateData.waist = w;
+            }
+            if (arms !== undefined) {
+                const a = Number(arms);
+                if (!isNaN(a) && a >= 0) updateData.arms = a;
+            }
+            if (shoulders !== undefined) {
+                const s = Number(shoulders);
+                if (!isNaN(s) && s >= 0) updateData.shoulders = s;
+            }
+            if (legs !== undefined) {
+                const l = Number(legs);
+                if (!isNaN(l) && l >= 0) updateData.legs = l;
+            }
+            if (calves !== undefined) {
+                const c = Number(calves);
+                if (!isNaN(c) && c >= 0) updateData.calves = c;
+            }
+
+            // Add coach-specific fields if user is a coach
+            if (user.role === "coach") {
+                const coachProfile: any = {};
+                if (bio !== undefined) coachProfile.bio = bio;
+                if (specialization !== undefined) coachProfile.specialization = Array.isArray(specialization) ? specialization : specialization ? [specialization] : [];
+                if (experience !== undefined) coachProfile.experience = Number(experience);
+                if (hireCost !== undefined) coachProfile.hireCost = Number(hireCost);
+                if (availability !== undefined) coachProfile.availability = availability;
+                if (coachProfileImage !== undefined) coachProfile.profileImage = coachProfileImage;
+                
+                if (Object.keys(coachProfile).length > 0) {
+                    updateData.coachProfile = coachProfile;
+                }
+            }
+
+            const updatedUser = await userService.updateUser(user._id.toString(), updateData);
+
+            return ApiResponseHelper.success(res, updatedUser, "Profile updated", 200);
+        } catch (err: any) {
+            return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
+        }
+    };
+
+    // PATCH /auth/change-password
+    changePassword = async (req: Request, res: Response) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            const parsed = ChangePasswordDTO.safeParse(req.body ?? {});
+            if (!parsed.success) {
+                const message = parsed.error.issues[0]?.message || "Invalid payload";
+                throw new HttpException(400, message);
+            }
+
+            const { currentPassword, newPassword } = parsed.data;
+
+
+            await userService.changePassword(
+                user._id.toString(),
+                currentPassword,
+                newPassword
+            );
+
+            return ApiResponseHelper.success(res, {}, "Password updated successfully", 200);
+        } catch (err: any) {
+            return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
+        }
+    };
+
+    // POST /auth/forgot-password
+    forgotPassword = async (req: Request, res: Response) => {
+        try {
+            const parsed = ForgotPasswordDTO.safeParse(req.body ?? {});
+            if (!parsed.success) {
+                const message = parsed.error.issues[0]?.message || "Invalid payload";
+                throw new HttpException(400, message);
+            }
+
+            await userService.forgotPassword(parsed.data);
+
+            return ApiResponseHelper.success(res, {}, "Password reset email sent successfully", 200);
+        } catch (err: any) {
+            return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
+        }
+    };
+
+    // POST /auth/reset-password/:token
+    resetPassword = async (req: Request, res: Response) => {
+        try {
+            const { token: tokenParam } = req.params;
+            const token = Array.isArray(tokenParam) ? tokenParam[0] : tokenParam;
+            const parsed = ResetPasswordDTO.safeParse(req.body ?? {});
+            if (!parsed.success) {
+                const message = parsed.error.issues[0]?.message || "Invalid payload";
+                throw new HttpException(400, message);
+            }
+
+            await userService.resetPassword(parsed.data, token);
+
+            return ApiResponseHelper.success(res, {}, "Password reset successfully", 200);
+        } catch (err: any) {
+            return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
+        }
+    };
+
+    // POST /upload/photo
+    // (kept for compatibility with /user.route.ts)
+    uploadPhoto = async (req: Request, res: Response) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            const file = (req as any).file as Express.Multer.File | undefined;
+            if (!file?.path) {
+                throw new HttpException(400, "No photo uploaded");
+            }
+
+            const profilePhoto = toUploadsUrl(file.path);
+            await userService.updateProfilePhoto(user._id.toString(), profilePhoto);
+
+            return ApiResponseHelper.success(res, { profilePhoto }, "Photo uploaded", 200);
+
+        } catch (err: any) {
+            return ApiResponseHelper.error(res, err.message || "Internal Server Error", err.status || 500);
+        }
+    };
+
+    // GET /user/achievements
+    getAchievements = async (req: Request, res: Response, next: Function) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            const achievements = await userAchievementService.getUserAchievements(user._id.toString());
+
+            return ApiResponseHelper.success(res, achievements, "Achievements fetched successfully", 200);
+        } catch (err: any) {
+            return next(err);
+        }
+    };
+
+    // GET /user/streak
+    getStreak = async (req: Request, res: Response, next: Function) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            const streak = await userService.getStreak(user._id.toString());
+
+            return ApiResponseHelper.success(res, streak, "Streak fetched successfully", 200);
+        } catch (err: any) {
+            return next(err);
+        }
+    };
+
+    // GET /user/dashboard
+    getDashboard = async (req: Request, res: Response, next: Function) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            const dashboard = await userService.getDashboard(user._id.toString());
+
+            return ApiResponseHelper.success(res, dashboard, "Dashboard data fetched successfully", 200);
+        } catch (err: any) {
+            return next(err);
+        }
+    };
+
+    // GET /user/analytics
+    getAnalytics = async (req: Request, res: Response, next: Function) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            const analytics = await userService.getAnalytics(user._id.toString());
+
+            return ApiResponseHelper.success(res, analytics, "Analytics data fetched successfully", 200);
+        } catch (err: any) {
+            return next(err);
+        }
+    };
+
+    // POST /user/chatbot
+    chatWithAI = async (req: Request, res: Response, next: Function) => {
+        try {
+            const user = req.user as IUser | undefined;
+            if (!user) {
+                throw new HttpException(401, "Unauthorized");
+            }
+
+            const { message } = req.body;
+            if (!message) {
+                throw new HttpException(400, "Message is required");
+            }
+
+            const reply = await geminiService.chatWithAI(user._id.toString(), message);
+
+            return ApiResponseHelper.success(res, { reply }, "AI response generated successfully", 200);
+        } catch (err: any) {
+            return next(err);
+        }
+    };
+}
+

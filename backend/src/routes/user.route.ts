@@ -1,0 +1,68 @@
+import { UserController } from "../controllers/user.controller";
+import { AssignedWorkoutPlanController } from "../controllers/assignedWorkoutPlan.controller";
+import { WorkoutCompletionController } from "../controllers/workoutCompletion.controller";
+import { authorizedMiddleware } from "../middlewares/authorized.middleware";
+import { avatarUploadMiddleware } from "../middlewares/upload.middleware";
+import { Router } from "express";
+
+const userRouter = Router();
+const userController = new UserController();
+const assignedWorkoutPlanController = new AssignedWorkoutPlanController();
+const workoutCompletionController = new WorkoutCompletionController();
+
+userRouter.post(
+    "/upload/photo",
+    authorizedMiddleware,
+    avatarUploadMiddleware,
+    userController.uploadPhoto
+);
+
+userRouter.get(
+    "/workout-plans",
+    authorizedMiddleware,
+    assignedWorkoutPlanController.getUserWorkoutPlans
+);
+
+userRouter.post(
+    "/workouts/:id/complete",
+    authorizedMiddleware,
+    workoutCompletionController.completeWorkout
+);
+
+userRouter.get(
+    "/workout-completions",
+    authorizedMiddleware,
+    workoutCompletionController.getUserCompletions
+);
+
+userRouter.get(
+    "/achievements",
+    authorizedMiddleware,
+    userController.getAchievements
+);
+
+userRouter.get(
+    "/streak",
+    authorizedMiddleware,
+    userController.getStreak
+);
+
+userRouter.get(
+    "/dashboard",
+    authorizedMiddleware,
+    userController.getDashboard
+);
+
+userRouter.get(
+    "/analytics",
+    authorizedMiddleware,
+    userController.getAnalytics
+);
+
+userRouter.post(
+    "/chatbot",
+    authorizedMiddleware,
+    userController.chatWithAI
+);
+
+export default userRouter;

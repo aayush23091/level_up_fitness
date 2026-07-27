@@ -1,0 +1,44 @@
+{
+  "name": "36a-revision",
+  "version": "1.0.0",
+  "main": "day1.js",
+  "scripts": {
+    "dev": "npx tsx --watch index.ts",
+    "start": "npx tsx index.ts",
+    "start-day2": "node day2.js",
+    "test": "jest --verbose --detectOpenHandles --runInBand",
+    "seed:achievements": "npx tsx migrations/seed-achievements.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/jest": "^30.0.0",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^25.6.0",
+    "@types/supertest": "^7.2.0",
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.2",
+    "morgan": "^1.11.0",
+    "multer": "^2.2.0",
+    "nodemailer": "^9.0.3",
+    "tsx": "^4.21.0",
+    "zod": "^4.4.2"
+  }
+}
