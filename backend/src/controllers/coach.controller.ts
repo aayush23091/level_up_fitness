@@ -42,6 +42,8 @@ export class CoachController {
           profilePhoto: u.profilePhoto,
           level: u.level || 0,
           xp: u.xp || 0,
+          completedWorkouts: u.completedWorkouts || 0,
+          totalAssignedWorkouts: u.totalAssignedWorkouts || 0,
           status: coachClient.status || "active",
           hiredAt: coachClient.hiredAt,
           createdAt: u.createdAt,

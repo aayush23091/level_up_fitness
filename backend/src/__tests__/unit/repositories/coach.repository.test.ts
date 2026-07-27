@@ -17,6 +17,9 @@ jest.mock("../../../models/workoutPlan.model", () => {
 jest.mock("../../../models/assignedWorkoutPlan.model", () => {
     return { AssignedWorkoutPlanModel: { countDocuments: jest.fn(), find: jest.fn(), aggregate: jest.fn() } };
 });
+jest.mock("../../../models/workoutCompletion.model", () => {
+    return { WorkoutCompletionModel: { aggregate: jest.fn() } };
+});
 
 const mockedUserModel = UserModel as jest.Mocked<typeof UserModel>;
 const mockedCoachClientModel = CoachClientModel as jest.Mocked<typeof CoachClientModel>;

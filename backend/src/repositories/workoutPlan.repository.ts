@@ -1,4 +1,5 @@
 import { WorkoutPlanModel, IWorkoutPlan } from "../models/workoutPlan.model";
+import { AssignedWorkoutPlanModel } from "../models/assignedWorkoutPlan.model";
 
 export class WorkoutPlanRepository {
   async getWorkoutPlans(
@@ -25,8 +26,22 @@ export class WorkoutPlanRepository {
       WorkoutPlanModel.countDocuments(query).exec(),
     ]);
 
-    // Post-process to handle inline exercises (when exerciseId is not present)
+    // Batch count active assignments per workout plan
+    const planIds = workoutPlans.map((plan: any) => plan._id);
+    const assignedCounts: Record<string, number> = {};
+    if (planIds.length > 0) {
+      const assignmentAgg = await AssignedWorkoutPlanModel.aggregate([
+        { $match: { workoutPlanId: { $in: planIds }, status: "active" } },
+        { $group: { _id: "$workoutPlanId", count: { $sum: 1 } } },
+      ]);
+      assignmentAgg.forEach((item: any) => {
+        assignedCounts[item._id.toString()] = item.count;
+      });
+    }
+
+    // Post-process to handle inline exercises and add assignedAthletes
     workoutPlans.forEach(plan => {
+      plan.assignedAthletes = assignedCounts[plan._id.toString()] || 0;
       plan.exercises.forEach(exercise => {
         if (!exercise.exerciseId && exercise.exerciseName) {
           // Inline exercise: data is already in the exercise object
@@ -38,14 +53,42 @@ export class WorkoutPlanRepository {
     return { workoutPlans, total };
   }
 
-  async getWorkoutPlanById(id: string, coachId: string): Promise<IWorkoutPlan | null> {
-    return WorkoutPlanModel.findOne({ _id: id, coachId })
+    async getWorkoutPlanById(id: string, coachId: string): Promise<IWorkoutPlan | null> {
+    const plan = await WorkoutPlanModel.findOne({ _id: id, coachId })
       .populate("exercises.exerciseId", "name category bodyPart equipment difficulty description instructions thumbnail videoUrl")
       .exec();
+
+    if (plan) {
+      const assignmentCount = await AssignedWorkoutPlanModel.countDocuments({
+        workoutPlanId: plan._id,
+        status: "active",
+      }).exec();
+      (plan as any).assignedAthletes = assignmentCount;
+    }
+
+    return plan;
+  }
+
+    async getWorkoutPlanByIdPublic(id: string): Promise<IWorkoutPlan | null> {
+    const plan = await WorkoutPlanModel.findById(id)
+      .populate("exercises.exerciseId", "name category bodyPart equipment difficulty description instructions thumbnail videoUrl")
+      .exec();
+
+    if (plan) {
+      const assignmentCount = await AssignedWorkoutPlanModel.countDocuments({
+        workoutPlanId: plan._id,
+        status: "active",
+      }).exec();
+      (plan as any).assignedAthletes = assignmentCount;
+    }
+
+    return plan;
   }
 
   async createWorkoutPlan(workoutPlanData: Partial<IWorkoutPlan>): Promise<IWorkoutPlan> {
-    return WorkoutPlanModel.create(workoutPlanData);
+    const created = await WorkoutPlanModel.create(workoutPlanData);
+    (created as any).assignedAthletes = 0;
+    return created;
   }
 
   async updateWorkoutPlan(id: string, coachId: string, workoutPlanData: Partial<IWorkoutPlan>): Promise<IWorkoutPlan | null> {
@@ -55,8 +98,14 @@ export class WorkoutPlanRepository {
       { new: true }
     ).populate("exercises.exerciseId", "name category bodyPart equipment difficulty").exec();
 
-    // Post-process to handle inline exercises (when exerciseId is not present)
     if (updated) {
+      const assignmentCount = await AssignedWorkoutPlanModel.countDocuments({
+        workoutPlanId: updated._id,
+        status: "active",
+      }).exec();
+      (updated as any).assignedAthletes = assignmentCount;
+
+      // Post-process to handle inline exercises (when exerciseId is not present)
       updated.exercises.forEach(exercise => {
         if (!exercise.exerciseId && exercise.exerciseName) {
           // Inline exercise: data is already in the exercise object

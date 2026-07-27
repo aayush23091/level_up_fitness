@@ -3,9 +3,11 @@ import { UserModel, IUser } from "../models/user.model";
 import { CoachClientModel, ICoachClient } from "../models/coachClient.model";
 import { WorkoutPlanModel } from "../models/workoutPlan.model";
 import { AssignedWorkoutPlanModel } from "../models/assignedWorkoutPlan.model";
+import { WorkoutCompletionModel } from "../models/workoutCompletion.model";
+import { TransactionModel } from "../models/transaction.model";
 
 export interface RecentActivity {
-  type: "client_hire" | "plan_created" | "plan_assigned";
+  type: "client_hire" | "plan_created" | "plan_assigned" | "earnings";
   title: string;
   description: string;
   date: Date;
@@ -54,16 +56,48 @@ export class CoachRepository {
       .sort({ createdAt: -1 })
       .exec();
 
+    // Extract user IDs for batch aggregation queries
+    const athleteIds = coachClients
+      .map((cc: any) => cc.athleteId)
+      .filter((id: any) => id != null);
+
+    // Batch count total assigned workouts per athlete
+    const assignedCounts: Record<string, number> = {};
+    if (athleteIds.length > 0) {
+      const assignedAgg = await AssignedWorkoutPlanModel.aggregate([
+        { $match: { athleteId: { $in: athleteIds } } },
+        { $group: { _id: "$athleteId", count: { $sum: 1 } } },
+      ]) || [];
+      assignedAgg.forEach((item: any) => {
+        assignedCounts[item._id.toString()] = item.count;
+      });
+    }
+
+    // Batch count completed workouts per athlete
+    const completedCounts: Record<string, number> = {};
+    if (athleteIds.length > 0) {
+      const completedAgg = await WorkoutCompletionModel.aggregate([
+        { $match: { userId: { $in: athleteIds } } },
+        { $group: { _id: "$userId", count: { $sum: 1 } } },
+      ]) || [];
+      completedAgg.forEach((item: any) => {
+        completedCounts[item._id.toString()] = item.count;
+      });
+    }
+
     // Extract users from populated relationships and attach coachClient data
     let users = coachClients
       .map((cc: any) => {
         if (!cc.athleteId) return null;
         const user = cc.athleteId.toObject ? cc.athleteId.toObject() : cc.athleteId;
+        const athleteIdStr = user._id.toString();
         // Attach coachClient data to user object
         user.coachClient = {
           status: cc.status,
           hiredAt: cc.hiredAt,
         };
+        user.completedWorkouts = completedCounts[athleteIdStr] || 0;
+        user.totalAssignedWorkouts = assignedCounts[athleteIdStr] || 0;
         return user;
       })
       .filter((user: any) => user !== null && user !== undefined);
@@ -152,6 +186,7 @@ export class CoachRepository {
       publishedPlans,
       draftPlans,
       assignedPlans,
+      totalCompletedWorkouts,
       coach,
     ] = await Promise.all([
       CoachClientModel.countDocuments({ coachId, status: "active" }).exec(),
@@ -160,11 +195,15 @@ export class CoachRepository {
       WorkoutPlanModel.countDocuments({ coachId, status: "Published" }).exec(),
       WorkoutPlanModel.countDocuments({ coachId, status: "Draft" }).exec(),
       AssignedWorkoutPlanModel.countDocuments({ coachId, status: "active" }).exec(),
+      AssignedWorkoutPlanModel.countDocuments({ coachId, status: "completed" }).exec(),
       UserModel.findById(coachId).exec(),
     ]);
 
-    const hireCost = (coach as any)?.coachProfile?.hireCost || 0;
-    const totalRevenue = hireCost * activeAthletes;
+    const totalRevenueResult = await TransactionModel.aggregate([
+      { $match: { coachId: coachObjectId, status: "completed" } },
+      { $group: { _id: null, total: { $sum: "$coachEarning" } } },
+    ]);
+    const totalRevenue = totalRevenueResult.length > 0 ? totalRevenueResult[0].total : 0;
 
     const coachClients = await CoachClientModel.find({
       coachId,
@@ -184,7 +223,7 @@ export class CoachRepository {
 
     const averageAthleteLevel = athleteCount > 0 ? Math.round(totalLevel / athleteCount) : 0;
 
-    const [newClients, plans, assignments] = await Promise.all([
+    const [newClients, plans, assignments, recentTransactions] = await Promise.all([
       CoachClientModel.find({ coachId, status: "active" })
         .sort({ createdAt: -1 })
         .limit(10)
@@ -196,6 +235,11 @@ export class CoachRepository {
         .limit(10)
         .populate("athleteId", "name")
         .populate("workoutPlanId", "title")
+        .exec(),
+      TransactionModel.find({ coachId: coachObjectId, status: "completed" })
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .populate("userId", "name")
         .exec(),
     ]);
 
@@ -231,6 +275,16 @@ export class CoachRepository {
       });
     }
 
+    for (const tx of recentTransactions) {
+      const athlete = (tx as any).userId;
+      activities.push({
+        type: "earnings",
+        title: `Earnings: ${athlete?.name || "Athlete"}`,
+        description: `Earned $${tx.coachEarning} from ${athlete?.name || "an athlete"}`,
+        date: tx.createdAt,
+      });
+    }
+
     activities.sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
@@ -244,6 +298,7 @@ export class CoachRepository {
       publishedPlans,
       draftPlans,
       assignedPlans,
+      totalCompletedWorkouts,
       totalRevenue,
       averageAthleteLevel,
       recentActivities,

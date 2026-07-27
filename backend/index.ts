@@ -1,15 +1,13 @@
 import app from "./src/app";
-// importing same variable 
 import { PORT as API_PORT } from "./src/configs/constant";
 import { connectToMongoDB } from "./src/database/mongodb";
 
 connectToMongoDB();
 
 app.listen(
-    API_PORT,  // start backend in this PORT
+    API_PORT,
+    "0.0.0.0",
     () => {
-        console.log(`Server: http://localhost:${API_PORT}`); // backtick
+        console.log(`Server running on port ${API_PORT}`);
     }
 );
-// execute: npx tsx --watch index.ts
-// http://localhost:8089
